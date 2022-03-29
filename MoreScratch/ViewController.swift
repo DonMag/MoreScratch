@@ -1819,7 +1819,7 @@ class xStackAnimVC: UIViewController {
 
 // labels outside stack view
 // with ContentMode toggle
-class yStackAnimVC: UIViewController {
+class outcmStackAnimVC: UIViewController {
 	
 	let stackView: UIStackView = {
 		let v = UIStackView()
@@ -1989,7 +1989,7 @@ class TopAlignedLabelView: UIView {
 
 // labels outside stack view
 // with custom view
-class cvStackAnimVC: UIViewController {
+class outcvStackAnimVC: UIViewController {
 	
 	let stackView: UIStackView = {
 		let v = UIStackView()
@@ -2102,7 +2102,7 @@ class cvStackAnimVC: UIViewController {
 
 // labels inside stack view
 // with ContentMode toggle
-class spStackAnimVC: UIViewController {
+class liStackAnimVC: UIViewController {
 	
 	let stackView: UIStackView = {
 		let v = UIStackView()
@@ -2318,7 +2318,7 @@ class StackAnimVC: UIViewController {
 	}
 	
 	@objc func btnTap(_ sender: UIButton) {
-		
+
 		UIView.animate(withDuration: 1.0) {
 			
 			// toggle hidden and alpha on stack view labels
@@ -2334,3 +2334,81 @@ class StackAnimVC: UIViewController {
 	}
 }
 
+class RPViewController: UIViewController {
+	
+	let mainLabelLet: UILabel = {
+		let v = UILabel()
+		v.translatesAutoresizingMaskIntoConstraints = false
+		v.text = "let dummy text..."
+		v.backgroundColor = .cyan
+		//...
+		return v
+	}()
+	
+	var mainLabelVar: UILabel {
+		let v = UILabel()
+		v.translatesAutoresizingMaskIntoConstraints = false
+		v.text = "var dummy text..."
+		v.backgroundColor = .yellow
+		//...
+		return v
+	}
+	
+	private func createMainLabel(with text:String) -> UILabel {
+		let v = UILabel()
+		v.translatesAutoresizingMaskIntoConstraints = false
+		v.text = text
+		v.backgroundColor = .green
+		//...
+		return v
+	}
+	
+	let stackView: UIStackView = {
+		let v = UIStackView()
+		v.axis = .vertical
+		v.spacing = 0
+		return v
+	}()
+	
+
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		view.backgroundColor = .systemYellow
+		
+		let g = view.safeAreaLayoutGuide
+		
+		[stackView].forEach { v in
+			
+			v.translatesAutoresizingMaskIntoConstraints = false
+			view.addSubview(v)
+			
+			NSLayoutConstraint.activate([
+				v.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+				v.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20.0),
+			])
+		}
+		
+		NSLayoutConstraint.activate([
+			
+			stackView.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
+			
+		])
+
+		stackView.addArrangedSubview(mainLabelLet)
+		stackView.addArrangedSubview(mainLabelVar)
+
+		let ml = createMainLabel(with: "created")
+		stackView.addArrangedSubview(ml)
+		
+	}
+	
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+
+//		let n = mainLabelVar
+//		n.text = "new mlv"
+		mainLabelVar.text = "new mlv"
+		//stackView.addArrangedSubview(mainLabelVar)
+
+	}
+	
+}
