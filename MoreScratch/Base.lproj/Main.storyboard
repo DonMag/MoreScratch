@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="ffJ-7O-g2m">
-    <device id="retina3_5" orientation="portrait" appearance="light"/>
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -13,11 +13,11 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="PeerSupportVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="5Pg-uZ-o6r">
-                                <rect key="frame" x="40" y="40" width="240" height="400"/>
+                                <rect key="frame" x="40" y="40" width="295" height="587"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
                         </subviews>
@@ -38,12 +38,12 @@
             </objects>
             <point key="canvasLocation" x="20" y="98"/>
         </scene>
-        <!--View Controller-->
+        <!--ExampleVC-->
         <scene sceneID="h0V-HU-nfO">
             <objects>
-                <viewController id="QRM-Qr-kMD" customClass="RPViewController" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="QRM-Qr-kMD" customClass="ExampleVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ZRB-TM-kdI">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="tyI-oq-O88"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -58,7 +58,7 @@
             <objects>
                 <viewController id="ffJ-7O-g2m" customClass="StackAnimVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="pkg-Ug-vJL">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="Spw-HF-3IZ"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -68,10 +68,117 @@
             </objects>
             <point key="canvasLocation" x="1320" y="97.5"/>
         </scene>
+        <!--New Popup Test View Controller-->
+        <scene sceneID="k7v-Wi-YPB">
+            <objects>
+                <viewController id="uEQ-6T-i1d" customClass="NewPopupTestViewController" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="fpC-9u-fga">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="XNw-XP-0jx"/>
+                        <color key="backgroundColor" systemColor="systemYellowColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Dis-Ym-sH7" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="681" y="806"/>
+        </scene>
+        <!--Story Board ExampleVC-->
+        <scene sceneID="JhD-zN-Da0">
+            <objects>
+                <viewController id="iJR-zr-ko1" customClass="StoryBoardExampleVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="5D9-sj-DGn">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8Ka-fa-V9U">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="toI-4D-DO1">
+                                        <rect key="frame" x="0.0" y="200" width="375" height="100"/>
+                                        <color key="backgroundColor" systemColor="systemYellowColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="100" id="jyW-Yt-jXN"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LYx-JT-cZQ">
+                                        <rect key="frame" x="0.0" y="200" width="375" height="1330.5"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XFt-aa-bFL">
+                                                <rect key="frame" x="16" y="16" width="343" height="1298.5"/>
+                                                <mutableString key="text">What is Lorem Ipsum?
+
+Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+
+Why do we use it?
+
+It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
+
+Where does it come from?
+
+Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.
+
+The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.</mutableString>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <color key="backgroundColor" red="0.99664253000000003" green="0.1960611343" blue="0.36663538220000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="bottom" secondItem="XFt-aa-bFL" secondAttribute="bottom" constant="16" id="Du2-97-jIo"/>
+                                            <constraint firstAttribute="trailing" secondItem="XFt-aa-bFL" secondAttribute="trailing" constant="16" id="V3T-Ur-1UJ"/>
+                                            <constraint firstItem="XFt-aa-bFL" firstAttribute="top" secondItem="LYx-JT-cZQ" secondAttribute="top" constant="16" id="iu2-mD-I4x"/>
+                                            <constraint firstItem="XFt-aa-bFL" firstAttribute="leading" secondItem="LYx-JT-cZQ" secondAttribute="leading" constant="16" id="kEx-lN-lgD"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NX7-6B-eJz">
+                                        <rect key="frame" x="0.0" y="200" width="375" height="100"/>
+                                        <color key="backgroundColor" red="0.2323301435" green="0.80301553010000004" blue="0.38312712310000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="100" id="5QG-IG-vfZ"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="NX7-6B-eJz" firstAttribute="leading" secondItem="5Ax-uR-yyC" secondAttribute="leading" id="7i8-Lz-Pag"/>
+                                    <constraint firstItem="LYx-JT-cZQ" firstAttribute="top" secondItem="3pN-LR-C0V" secondAttribute="top" constant="200" id="QeU-Fe-RdO"/>
+                                    <constraint firstItem="5Ax-uR-yyC" firstAttribute="trailing" secondItem="NX7-6B-eJz" secondAttribute="trailing" id="Raj-CW-dcW"/>
+                                    <constraint firstItem="5Ax-uR-yyC" firstAttribute="trailing" secondItem="toI-4D-DO1" secondAttribute="trailing" id="Uw1-RL-xtR"/>
+                                    <constraint firstItem="toI-4D-DO1" firstAttribute="top" secondItem="5Ax-uR-yyC" secondAttribute="top" id="bWP-lX-Pe2"/>
+                                    <constraint firstItem="LYx-JT-cZQ" firstAttribute="top" secondItem="NX7-6B-eJz" secondAttribute="bottom" priority="750" id="cVg-W9-0xL"/>
+                                    <constraint firstItem="LYx-JT-cZQ" firstAttribute="width" secondItem="5Ax-uR-yyC" secondAttribute="width" id="fwM-zg-RSq"/>
+                                    <constraint firstItem="NX7-6B-eJz" firstAttribute="top" relation="greaterThanOrEqual" secondItem="5Ax-uR-yyC" secondAttribute="top" id="fwv-8m-uXl"/>
+                                    <constraint firstItem="toI-4D-DO1" firstAttribute="leading" secondItem="5Ax-uR-yyC" secondAttribute="leading" id="wIU-CV-XlX"/>
+                                    <constraint firstItem="LYx-JT-cZQ" firstAttribute="trailing" secondItem="3pN-LR-C0V" secondAttribute="trailing" constant="240" id="wdI-iJ-fex"/>
+                                    <constraint firstItem="LYx-JT-cZQ" firstAttribute="bottom" secondItem="3pN-LR-C0V" secondAttribute="bottom" constant="300" id="xmm-fL-mqg"/>
+                                    <constraint firstItem="LYx-JT-cZQ" firstAttribute="leading" secondItem="3pN-LR-C0V" secondAttribute="leading" id="z9b-X6-HxE"/>
+                                </constraints>
+                                <viewLayoutGuide key="contentLayoutGuide" id="3pN-LR-C0V"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="5Ax-uR-yyC"/>
+                            </scrollView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="2db-Bv-7LI"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="8Ka-fa-V9U" firstAttribute="top" secondItem="2db-Bv-7LI" secondAttribute="top" id="Lb0-hP-tix"/>
+                            <constraint firstItem="8Ka-fa-V9U" firstAttribute="leading" secondItem="2db-Bv-7LI" secondAttribute="leading" id="iD5-Dr-8Y9"/>
+                            <constraint firstItem="2db-Bv-7LI" firstAttribute="bottom" secondItem="8Ka-fa-V9U" secondAttribute="bottom" id="lSG-b6-ywP"/>
+                            <constraint firstItem="2db-Bv-7LI" firstAttribute="trailing" secondItem="8Ka-fa-V9U" secondAttribute="trailing" id="rlR-Bj-hwZ"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="85h-8G-SeJ" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="680.625" y="-587.5"/>
+        </scene>
     </scenes>
     <resources>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemYellowColor">
+            <color red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

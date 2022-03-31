@@ -2228,6 +2228,7 @@ class liStackAnimVC: UIViewController {
 	}
 }
 
+
 // labels inside stack view
 // with custom view
 class StackAnimVC: UIViewController {
@@ -2255,7 +2256,7 @@ class StackAnimVC: UIViewController {
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
+				
 		// label setup
 		let colors: [UIColor] = [
 			.systemYellow,
@@ -2336,79 +2337,183 @@ class StackAnimVC: UIViewController {
 
 class RPViewController: UIViewController {
 	
-	let mainLabelLet: UILabel = {
-		let v = UILabel()
-		v.translatesAutoresizingMaskIntoConstraints = false
-		v.text = "let dummy text..."
-		v.backgroundColor = .cyan
-		//...
-		return v
-	}()
-	
-	var mainLabelVar: UILabel {
-		let v = UILabel()
-		v.translatesAutoresizingMaskIntoConstraints = false
-		v.text = "var dummy text..."
-		v.backgroundColor = .yellow
-		//...
-		return v
-	}
-	
-	private func createMainLabel(with text:String) -> UILabel {
-		let v = UILabel()
-		v.translatesAutoresizingMaskIntoConstraints = false
-		v.text = text
-		v.backgroundColor = .green
-		//...
-		return v
-	}
-	
-	let stackView: UIStackView = {
-		let v = UIStackView()
-		v.axis = .vertical
-		v.spacing = 0
-		return v
-	}()
-	
+}
 
+class ExampleVC: UIViewController {
+	
+	let yellowView: UIView = {
+		let v = UIView()
+		v.backgroundColor = .systemYellow
+		return v
+	}()
+	let greenView: UIView = {
+		let v = UIView()
+		v.backgroundColor = .green
+		return v
+	}()
+	let redView: UIView = {
+		let v = UIView()
+		v.backgroundColor = .systemRed
+		return v
+	}()
+	
+	let scrollView: UIScrollView = {
+		let v = UIScrollView()
+		v.backgroundColor = .systemBlue
+		return v
+	}()
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		view.backgroundColor = .systemYellow
 		
-		let g = view.safeAreaLayoutGuide
+		// create a vertical stack view
+		let stack = UIStackView()
+		stack.axis = .vertical
+		stack.spacing = 16
 		
-		[stackView].forEach { v in
-			
-			v.translatesAutoresizingMaskIntoConstraints = false
-			view.addSubview(v)
-			
-			NSLayoutConstraint.activate([
-				v.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
-				v.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20.0),
-			])
+		// let's add some labels to the stack view
+		//  so we have something to scroll
+		(1...30).forEach { n in
+			let v = UILabel()
+			v.backgroundColor = .yellow
+			v.text = "Label \(n)"
+			v.textAlignment = .center
+			stack.addArrangedSubview(v)
 		}
+		
+		// add the stack view to the red view
+		redView.addSubview(stack)
+		
+		// add these views to scroll view in this order
+		[yellowView, redView, greenView].forEach { v in
+			scrollView.addSubview(v)
+		}
+		
+		// add scroll view to view
+		view.addSubview(scrollView)
+		
+		// they will all use auto-layout
+		[stack, yellowView, redView, greenView, scrollView].forEach { v in
+			v.translatesAutoresizingMaskIntoConstraints = false
+		}
+		
+		// always respect safe area
+		let safeG = view.safeAreaLayoutGuide
+		
+		let contentG = scrollView.contentLayoutGuide
+		let frameG = scrollView.frameLayoutGuide
 		
 		NSLayoutConstraint.activate([
 			
-			stackView.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
+			// constrain scroll view to safe area
+			scrollView.topAnchor.constraint(equalTo: safeG.topAnchor),
+			scrollView.leadingAnchor.constraint(equalTo: safeG.leadingAnchor),
+			scrollView.trailingAnchor.constraint(equalTo: safeG.trailingAnchor),
+			scrollView.bottomAnchor.constraint(equalTo: safeG.bottomAnchor),
+			
+			// we need yellow view to
+			//  fill width of scroll view FRAME
+			//  height: 100-pts
+			//  "stick" to top of scroll view FRAME
+			yellowView.leadingAnchor.constraint(equalTo: frameG.leadingAnchor),
+			yellowView.trailingAnchor.constraint(equalTo: frameG.trailingAnchor),
+			yellowView.heightAnchor.constraint(equalToConstant: 100.0),
+			yellowView.topAnchor.constraint(equalTo: frameG.topAnchor),
+			
+			// we need green view to
+			//  fill width of scroll view FRAME
+			//  height: 100-pts
+			//  start at bottom of yellow view
+			//  "stick" to top of scroll view FRAME when scrolled up
+			greenView.leadingAnchor.constraint(equalTo: frameG.leadingAnchor),
+			// we'll use a constant of -40 here to leave a "gap" on the right, so it's
+			//  easy to see what's happening...
+			greenView.trailingAnchor.constraint(equalTo: frameG.trailingAnchor, constant: -40),
+			greenView.heightAnchor.constraint(equalToConstant: 100.0),
+			greenView.topAnchor.constraint(greaterThanOrEqualTo: frameG.topAnchor),
+			
+			// we need red view to
+			//  fill width of scroll view FRAME
+			//  dynamic height (determined by its contents - the stack view)
+			//  start at bottom of green view
+			//  "push / pull" green view when scrolled
+			//  go under green view when green view is at top
+			// red view will be controlling the scrollable area
+			redView.leadingAnchor.constraint(equalTo: contentG.leadingAnchor),
+			redView.trailingAnchor.constraint(equalTo: contentG.trailingAnchor),
+			redView.bottomAnchor.constraint(equalTo: contentG.bottomAnchor),
+			redView.widthAnchor.constraint(equalTo: frameG.widthAnchor),
+			
+			// let's inset the stack view 16-pts on all 4 sides
+			stack.topAnchor.constraint(equalTo: redView.topAnchor, constant: 16.0),
+			stack.leadingAnchor.constraint(equalTo: redView.leadingAnchor, constant: 16.0),
+			stack.trailingAnchor.constraint(equalTo: redView.trailingAnchor, constant: -16.0),
+			stack.bottomAnchor.constraint(equalTo: redView.bottomAnchor, constant: -16.0),
 			
 		])
-
-		stackView.addArrangedSubview(mainLabelLet)
-		stackView.addArrangedSubview(mainLabelVar)
-
-		let ml = createMainLabel(with: "created")
-		stackView.addArrangedSubview(ml)
+		
+		var c: NSLayoutConstraint!
+		
+		// these constraints need Priority adjustments
+		
+		// keep green view above red view, until green view is at top
+		c = redView.topAnchor.constraint(equalTo: greenView.bottomAnchor)
+		c.priority = .defaultHigh
+		c.isActive = true
+		
+		// since yellow and green view Heights are constant 100-pts each
+		c = redView.topAnchor.constraint(equalTo: contentG.topAnchor, constant: 200.0)
+		c.isActive = true
 		
 	}
 	
-	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-
-//		let n = mainLabelVar
-//		n.text = "new mlv"
-		mainLabelVar.text = "new mlv"
-		//stackView.addArrangedSubview(mainLabelVar)
-
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+		scrollView.delegate = self
 	}
+}
+
+extension ExampleVC: UIScrollViewDelegate {
+	func scrollViewDidScroll(_ scrollView: UIScrollView) {
+		// set yellowView alpha to the percentage that it is covered
+		yellowView.alpha = (100.0 - min(100.0, scrollView.contentOffset.y)) / 100.0
+	}
+}
+
+class StoryBoardExampleVC: UIViewController, UIScrollViewDelegate {
+	
+	
 	
 }
+
+
+
+//		// list of button titles
+//		let btnList: [String] = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
+//
+//		// create vertical stack view
+//		print("New vStack")
+//
+//		// array index var
+//		var idx: Int = 0
+//
+//		while idx < btnList.count {
+//			// create horizontal stack view and
+//			// add it to vertical stack view
+//			print("New hStack - add to vertical stack view")
+//			for _ in 1...3 {
+//				if idx < btnList.count {
+//					let nextTitle = btnList[idx]
+//					// create a new button with title
+//					// add it to the horizontal stack view
+//					print("add button \(nextTitle) to hStack")
+//					// increment the array index
+//					idx += 1
+//				}
+//			}
+//		}
+//
+//		print("done")
+//
+//
+//		print()
