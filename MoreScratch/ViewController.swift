@@ -2102,7 +2102,7 @@ class outcvStackAnimVC: UIViewController {
 
 // labels inside stack view
 // with ContentMode toggle
-class liStackAnimVC: UIViewController {
+class iscmStackAnimVC: UIViewController {
 	
 	let stackView: UIStackView = {
 		let v = UIStackView()
@@ -2213,7 +2213,7 @@ class liStackAnimVC: UIViewController {
 	}
 	@objc func btnTap(_ sender: UIButton) {
 		
-		UIView.animate(withDuration: 1.0) {
+		UIView.animate(withDuration: 0.5) {
 			
 			// toggle hidden and alpha on stack view labels
 			self.topLabel.alpha = self.topLabel.isHidden ? 1.0 : 0.0
@@ -2221,7 +2221,6 @@ class liStackAnimVC: UIViewController {
 			
 			self.topLabel.isHidden.toggle()
 			self.botLabel.isHidden.toggle()
-			
 			
 		}
 		
@@ -2320,7 +2319,7 @@ class StackAnimVC: UIViewController {
 	
 	@objc func btnTap(_ sender: UIButton) {
 
-		UIView.animate(withDuration: 1.0) {
+		UIView.animate(withDuration: 0.5) {
 			
 			// toggle hidden and alpha on stack view labels
 			self.topLabel.alpha = self.topLabel.isHidden ? 1.0 : 0.0
@@ -2328,7 +2327,6 @@ class StackAnimVC: UIViewController {
 			
 			self.topLabel.isHidden.toggle()
 			self.botLabel.isHidden.toggle()
-			
 			
 		}
 		
@@ -2517,3 +2515,159 @@ class StoryBoardExampleVC: UIViewController, UIScrollViewDelegate {
 //
 //
 //		print()
+
+class aBtnVC: UIViewController {
+	
+	let b = UIButton()
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		b.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(b)
+		
+		NSLayoutConstraint.activate([
+			b.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+			b.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+			b.widthAnchor.constraint(equalToConstant: 200.0),
+			b.heightAnchor.constraint(equalToConstant: 50.0),
+		])
+		
+	}
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+		print(b.subviews.count, b.subviews)
+	}
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+		print(b.subviews.count, b.subviews)
+	}
+}
+class BtnVC: UIViewController {
+
+	var buttons: [UIButton] = []
+	
+	let stack = UIStackView()
+
+	let infoLabel: UILabel = {
+		let v = UILabel()
+		v.numberOfLines = 0
+		v.font = .monospacedSystemFont(ofSize: 14, weight: .regular)
+		return v
+	}()
+	
+	var didLoadStr: String = ""
+	var didLayoutStr: String = ""
+	var didAppearStr: String = ""
+
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		let largeFont = UIFont.systemFont(ofSize: 32)
+		let configuration = UIImage.SymbolConfiguration(font: largeFont) // <1>
+
+		guard let img2 = UIImage(systemName: "02.circle.fill", withConfiguration: configuration),
+			  let img3 = UIImage(systemName: "03.circle.fill"),
+			  let img4 = UIImage(systemName: "04.circle.fill")
+		else {
+			return
+		}
+		
+		var b: UIButton!
+		
+		b = UIButton()
+		buttons.append(b)
+		
+		b = UIButton()
+		b.setTitle("1", for: [])
+		buttons.append(b)
+		
+		b = UIButton()
+		b.setTitle("1", for: [])
+		b.setImage(img2, for: [])
+		buttons.append(b)
+		
+		b = UIButton()
+		b.setTitle("1", for: [])
+		b.setImage(img2, for: [])
+		b.setBackgroundImage(img3.withTintColor(.systemGreen, renderingMode: .alwaysOriginal), for: [])
+		buttons.append(b)
+		
+		b = UIButton()
+		b.setTitle("1", for: [])
+		b.setImage(img2, for: [])
+		b.setBackgroundImage(img3.withTintColor(.systemGreen, renderingMode: .alwaysOriginal), for: [])
+		let v = UIImageView(image: img4)
+		v.tintColor = .systemRed
+		v.frame = CGRect(x: 0, y: 0, width: 32, height: 32)
+		b.addSubview(v)
+		buttons.append(b)
+
+		stack.axis = .vertical
+		stack.spacing = 8
+		stack.distribution = .fillEqually
+		stack.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(stack)
+		
+		let g = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			stack.topAnchor.constraint(equalTo: g.topAnchor, constant: 120.0),
+			stack.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+			stack.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20.0),
+			stack.bottomAnchor.constraint(equalTo: g.bottomAnchor, constant: -20.0),
+		])
+		
+		// add this first button *without* auto-layout
+		buttons[0].frame = CGRect(x: 80, y: 40, width: 200, height: 50)
+		view.addSubview(buttons[0])
+
+		// add the rest of the buttons to the stack view
+		buttons.forEach { v in
+			v.backgroundColor = .systemYellow
+			v.setTitleColor(.black, for: [])
+			if v != buttons.first {
+				stack.addArrangedSubview(v)
+			}
+		}
+
+		stack.addArrangedSubview(infoLabel)
+		
+		var s = "didLoad  : "
+		buttons.forEach { v in
+			s += "\(v.subviews.count) / "
+		}
+		didLoadStr += s + "\n"
+
+	}
+
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+		
+		// first button is not using auto-layout constraints, so
+		//	let's size it to match the buttons in the stack view
+		//	and posiiton it 8-pts above the stack view
+		var r = buttons[1].bounds
+		r.origin.y = stack.frame.origin.y - r.height - 8.0
+		r.origin.x = stack.frame.origin.x
+		buttons[0].frame = r
+		
+		var s = "didLayout: "
+		buttons.forEach { v in
+			s += "\(v.subviews.count) / "
+		}
+		didLayoutStr += s + "\n"
+
+	}
+	
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+		
+		var s = "didAppear: "
+		buttons.forEach { v in
+			s += "\(v.subviews.count) / "
+		}
+		didAppearStr += s + "\n"
+
+		infoLabel.text = didLoadStr + didLayoutStr + didAppearStr
+	}
+
+}
