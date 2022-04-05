@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="ffJ-7O-g2m">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="fNR-oc-u7t">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
@@ -53,10 +53,10 @@
             </objects>
             <point key="canvasLocation" x="681" y="98"/>
         </scene>
-        <!--Stack AnimVC-->
+        <!--Shadow PathVC-->
         <scene sceneID="QbF-BI-Ku7">
             <objects>
-                <viewController id="ffJ-7O-g2m" customClass="StackAnimVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="ffJ-7O-g2m" customClass="ShadowPathVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="pkg-Ug-vJL">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -82,6 +82,24 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Dis-Ym-sH7" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="681" y="806"/>
+        </scene>
+        <!--MenuVC-->
+        <scene sceneID="9OE-QV-3u4">
+            <objects>
+                <viewController storyboardIdentifier="didStart" id="fNR-oc-u7t" customClass="MenuVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="x61-2W-Euq">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="a2z-Td-l0f"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <connections>
+                        <segue destination="42C-up-bN0" kind="presentation" identifier="didStart" id="KGo-wq-Pbp"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="WzZ-QP-Ebc" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="113" y="1512"/>
         </scene>
         <!--Story Board ExampleVC-->
         <scene sceneID="JhD-zN-Da0">
@@ -171,6 +189,25 @@ The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for t
                 <placeholder placeholderIdentifier="IBFirstResponder" id="85h-8G-SeJ" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="680.625" y="-587.5"/>
+        </scene>
+        <!--Now PlayingVC-->
+        <scene sceneID="z2w-61-E7B">
+            <objects>
+                <viewController id="42C-up-bN0" customClass="NowPlayingVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="RmS-8R-ocq">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="KrN-oB-OiA"/>
+                        <color key="backgroundColor" systemColor="systemYellowColor"/>
+                    </view>
+                    <connections>
+                        <segue destination="hSf-Ov-X4W" kind="unwind" identifier="unwind" unwindAction="unwind:" id="xum-ic-wqN"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="hrF-bH-ImH" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="hSf-Ov-X4W" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="767" y="1512"/>
         </scene>
     </scenes>
     <resources>
