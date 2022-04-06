@@ -965,111 +965,62 @@ class zShadowPathVC: UIViewController {
 }
 
 class ShadowPathVC: UIViewController {
-
-	let sampleTitles: [[String]] = [
-		["Left", "Right"],
-		["Left", "Right title is longer"],
-		["Left title is longer", "Right"],
-		["Left title", "Right button has longer title"],
-
-	]
 	
-	let b1 = UIButton()
-	let b2 = UIButton()
+	// two of our custom ShadowPathView
+	let v1 = ShadowPathView()
+	let v2 = ShadowPathView()
 	
-	var wConstraint: NSLayoutConstraint!
-	var idx: Int = 0
-
-	let b3 = UIButton()
-	let b4 = UIButton()
-
+	// a label to put UNDER the second view
+	let underLabel = UILabel()
+	
+	// a label to add as a SUVBVIEW of the second view
+	let subLabel = UILabel()
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		b1.setTitle("Short title", for: [])
-		b2.setTitle("This is a long title", for: [])
+		view.backgroundColor = UIColor(red: 0.8, green: 0.92, blue: 0.97, alpha: 1.0)
+		
+		[underLabel, subLabel].forEach { v in
+			v.textAlignment = .center
+			v.backgroundColor = .green
+		}
+		[v1, v2, underLabel, subLabel].forEach { v in
+			v.translatesAutoresizingMaskIntoConstraints = false
+		}
+		[v1, underLabel, v2].forEach { v in
+			view.addSubview(v)
+		}
+		v2.addSubview(subLabel)
+		underLabel.text = "This label is Under the shadow view"
+		subLabel.text = "This label is a subview of the shadow view"
+		subLabel.numberOfLines = 0
 		
 		let g = view.safeAreaLayoutGuide
 		
-		[b1, b2, b3, b4].forEach { b in
-			b.backgroundColor = .red
-			b.titleLabel?.font = .systemFont(ofSize: 30.0, weight: .regular)
-			b.titleLabel?.adjustsFontSizeToFitWidth = true
-			b.titleLabel?.minimumScaleFactor = 0.5
-			b.translatesAutoresizingMaskIntoConstraints = false
-			view.addSubview(b)
-		}
-
-		let maxWidth: CGFloat = 200.0
-		let sp: CGFloat = 8.0
-		
-		b1.sizeToFit()
-		b2.sizeToFit()
-		let factor = b1.frame.width / b2.frame.width
-
-		wConstraint = b1.widthAnchor.constraint(equalTo: b2.widthAnchor, multiplier: factor)
-		
-		let stackView = UIStackView()
-		stackView.distribution = .fillProportionally
-		stackView.spacing = 20 // change space betwenn buttons
-		stackView.translatesAutoresizingMaskIntoConstraints = false
-		
-		stackView.addArrangedSubview(b3)
-		stackView.addArrangedSubview(b4)
-
-		view.addSubview(stackView)
-
-		
 		NSLayoutConstraint.activate([
-
-			b1.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
-			b2.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
-
-			b1.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 40.0),
-			b2.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -40.0),
-			b2.leadingAnchor.constraint(equalTo: b1.trailingAnchor, constant: 8.0),
 			
-			wConstraint,
-
-			stackView.topAnchor.constraint(equalTo: g.topAnchor, constant: 100),
-			stackView.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 40),
-			stackView.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -40),
-			stackView.heightAnchor.constraint(equalToConstant: 50),
-
+			v1.topAnchor.constraint(equalTo: g.topAnchor, constant: 40.0),
+			v1.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 40.0),
+			v1.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -40.0),
+			v1.heightAnchor.constraint(equalToConstant: 120.0),
+			
+			v2.topAnchor.constraint(equalTo: v1.bottomAnchor, constant: 80.0),
+			v2.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 40.0),
+			v2.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -40.0),
+			v2.heightAnchor.constraint(equalToConstant: 160.0),
+			
+			underLabel.leadingAnchor.constraint(equalTo: v2.leadingAnchor, constant: -20.0),
+			underLabel.topAnchor.constraint(equalTo: v2.topAnchor, constant: -20.0),
+			underLabel.heightAnchor.constraint(equalToConstant: 80.0),
+			
+			subLabel.bottomAnchor.constraint(equalTo: v2.bottomAnchor, constant: -12.0),
+			subLabel.trailingAnchor.constraint(equalTo: v2.trailingAnchor, constant: -40.0),
+			subLabel.widthAnchor.constraint(equalToConstant: 120.0),
+			
 		])
-		
-		
-		print(b1.frame, b2.frame)
-		
 	}
-	
-	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-
-		let titles = sampleTitles[idx % sampleTitles.count]
-		idx += 1
-		
-		b1.setTitle(titles[0], for: [])
-		b2.setTitle(titles[1], for: [])
-
-		b1.sizeToFit()
-		b2.sizeToFit()
-
-		print(b1.frame, b2.frame)
-
-		let factor = b1.frame.width / b2.frame.width
-
-		wConstraint.isActive = false
-		wConstraint = b1.widthAnchor.constraint(equalTo: b2.widthAnchor, multiplier: factor)
-		wConstraint.isActive = true
-
-		b3.setTitle(titles[0], for: [])
-		b4.setTitle(titles[1], for: [])
-		
-
-	}
-	
 }
-
 @objc protocol MQTTDelegate {
 	@objc optional func didStart()
 	@objc optional func didFinish()
@@ -1145,5 +1096,424 @@ class NowPlayingVC: UIViewController, MQTTDelegate {
 	// mqtt sends a "player started playing" to its delegate (which is self)
 	func didFinish() {
 		performSegue(withIdentifier: "unwind", sender: self)
+	}
+}
+
+class MainView: UIView {
+	@available(*, unavailable)
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+	
+	// ------------------------------------------------
+	
+	@objc func onLeftAddressTap() {
+		print("Left Address Selected")
+		leftLabel.isHidden = false
+		rightLabel.isHidden = !leftLabel.isHidden
+		leftContainerView.layer.borderColor = UIColor.green.cgColor
+		rightContainerView.layer.borderColor = UIColor.lightGray.cgColor
+	}
+	
+	@objc func onRightAddressTap() {
+		print("Right Address Selected")
+		leftLabel.isHidden = true
+		rightLabel.isHidden = !leftLabel.isHidden
+		rightContainerView.layer.borderColor = UIColor.green.cgColor
+		leftContainerView.layer.borderColor = UIColor.lightGray.cgColor
+	}
+	
+	// ------------------------------------------------
+	
+	let leftLabel = UILabel()
+	let rightLabel = UILabel()
+	
+	let leftContainerView: UIView = {
+		let view = UIView(frame: CGRect())
+		view.layer.borderWidth = 1.0
+		view.layer.borderColor = UIColor.green.cgColor
+		return view
+	}()
+	
+	let rightContainerView: UIView = {
+		let view = UIView(frame: CGRect())
+		view.layer.borderWidth = 1.0
+		view.layer.borderColor = UIColor.lightGray.cgColor
+		return view
+	}()
+	
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		self.backgroundColor = .white
+		setupViews()
+	}
+	
+	// ------------------------------------------------
+	
+	fileprivate func setupAddressStack() -> UIStackView {
+		setupLeftAddress()
+		setupRightAddress()
+		
+		// ------------------------------------------------
+		// Address StackView:
+		
+		let addressStackView = UIStackView(arrangedSubviews: [leftContainerView, rightContainerView])
+		addressStackView.axis = .horizontal
+		addressStackView.spacing = 10
+		addressStackView.distribution = .fillEqually
+		addressStackView.alignment = .fill
+		
+		return addressStackView
+	}
+	
+	// ------------------------------------------------
+	
+	fileprivate func setupViews() {
+		// Image Logol
+		let ratImageview = UIImageView(image: UIImage(named: "Rat"))
+		ratImageview.frame = CGRect(x: 0, y: 0, width: 68, height: 68)
+		
+		// TitleLabel
+		let titleLabel = UILabel(frame: CGRect())
+		let titleString = "Where should we send your card?  We'll cancel it and send you a new one."
+		titleLabel.text = titleString
+		titleLabel.textAlignment = .center
+		titleLabel.font = .systemFont(ofSize: 12)
+		titleLabel.lineBreakMode = .byWordWrapping
+		titleLabel.numberOfLines = 0
+		
+		// Status Label:
+		let statusLabel = UILabel(frame: CGRect())
+		let statusString = "Your existing card ending in 0492 will be cancelled and yournew card shoud arrive withi 6 business days via USPS."
+		statusLabel.text = statusString
+		statusLabel.textAlignment = .center
+		statusLabel.font = .systemFont(ofSize: 12)
+		statusLabel.lineBreakMode = .byWordWrapping
+		statusLabel.numberOfLines = 0
+		
+		// ------------------------------------------------
+		// Container SackView:
+		let ContainerStackView = UIStackView(arrangedSubviews: [titleLabel, setupAddressStack(), statusLabel])
+		ContainerStackView.axis = .vertical
+		//ContainerStackView.distribution = .fillEqually
+		ContainerStackView.distribution = .fill
+		ContainerStackView.spacing = 20
+		
+		// Logo:
+		addSubview(ratImageview)
+		ratImageview.translatesAutoresizingMaskIntoConstraints = false
+		ratImageview.centerXAnchor.constraint(equalTo: centerXAnchor, constant: 0).isActive = true
+		ratImageview.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 10).isActive = true
+		
+		// StackView:
+		addSubview(ContainerStackView)
+		
+		ContainerStackView.translatesAutoresizingMaskIntoConstraints = false
+		ContainerStackView.leftAnchor.constraint(equalTo: leftAnchor, constant: 10).isActive = true
+		ContainerStackView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 75).isActive = true
+		ContainerStackView.rightAnchor.constraint(equalTo: rightAnchor, constant: -10).isActive = true
+		ContainerStackView.bottomAnchor.constraint(equalTo: centerYAnchor, constant: 0).isActive = true
+	}
+}
+
+// ==============================================================================================
+
+private extension MainView {
+	func setupLeftAddress() {
+		// LeftLabel:
+		leftLabel.numberOfLines = 0
+		leftLabel.text = "Mother had a feeling, I might be too appealing."
+		leftLabel.font = UIFont.systemFont(ofSize: 9)
+		leftLabel.adjustsFontSizeToFitWidth = true
+		leftLabel.isHidden = false
+		
+		leftContainerView.addSubview(leftLabel)
+		
+		leftContainerView.heightAnchor.constraint(equalTo: leftContainerView.widthAnchor).isActive = true
+		
+		leftLabel.translatesAutoresizingMaskIntoConstraints = false
+		leftLabel.leftAnchor.constraint(equalTo: leftContainerView.leftAnchor, constant: 10).isActive = true
+		leftLabel.rightAnchor.constraint(equalTo: leftContainerView.rightAnchor, constant: -10).isActive = true
+		leftLabel.centerYAnchor.constraint(equalTo: leftContainerView.centerYAnchor).isActive = true
+		
+		let leftButton = UIButton()
+		leftButton.addTarget(self, action: #selector(onLeftAddressTap), for: .touchUpInside)
+		
+		leftContainerView.addSubview(leftButton)
+		
+		leftButton.translatesAutoresizingMaskIntoConstraints = false
+		leftButton.leftAnchor.constraint(equalTo: leftContainerView.leftAnchor).isActive = true
+		leftButton.rightAnchor.constraint(equalTo: leftContainerView.rightAnchor).isActive = true
+		leftButton.topAnchor.constraint(equalTo: leftContainerView.topAnchor).isActive = true
+		leftButton.bottomAnchor.constraint(equalTo: leftContainerView.bottomAnchor).isActive = true
+	}
+	
+	func setupRightAddress() {
+		rightLabel.numberOfLines = 0
+		rightLabel.text = "This is the right label."
+		rightLabel.font = UIFont.systemFont(ofSize: 9)
+		rightLabel.adjustsFontSizeToFitWidth = true
+		rightLabel.isHidden = true
+		
+		rightContainerView.addSubview(rightLabel)
+		
+		rightContainerView.heightAnchor.constraint(equalTo: rightContainerView.widthAnchor).isActive = true
+
+		rightLabel.translatesAutoresizingMaskIntoConstraints = false
+		rightLabel.leftAnchor.constraint(equalTo: rightContainerView.leftAnchor, constant: 10).isActive = true
+		rightLabel.rightAnchor.constraint(equalTo: rightContainerView.rightAnchor, constant: -10).isActive = true
+		rightLabel.centerYAnchor.constraint(equalTo: rightContainerView.centerYAnchor).isActive = true
+		
+		let rightButton = UIButton()
+		rightButton.addTarget(self, action: #selector(onRightAddressTap), for: .touchUpInside)
+		rightContainerView.addSubview(rightButton)
+		rightButton.translatesAutoresizingMaskIntoConstraints = false
+		
+		rightButton.leftAnchor.constraint(equalTo: rightContainerView.leftAnchor).isActive = true
+		rightButton.rightAnchor.constraint(equalTo: rightContainerView.rightAnchor).isActive = true
+		rightButton.topAnchor.constraint(equalTo: rightContainerView.topAnchor).isActive = true
+		rightButton.bottomAnchor.constraint(equalTo: rightContainerView.bottomAnchor).isActive = true
+	}
+}
+
+class MainViewTestVC: UIViewController {
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+
+		
+		//let tv = FloatingLabelTextView.init("Public Bio")
+		let tv = FloatingLabelTextView()
+		//let tv = GrrView()
+
+		tv.addTitle("Testing 1 2 3")
+		tv.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(tv)
+		let g = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			tv.topAnchor.constraint(equalTo: g.topAnchor, constant: 40.0),
+			tv.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 40.0),
+			tv.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -40.0),
+			tv.heightAnchor.constraint(equalToConstant: 160.0),
+		])
+	}
+}
+
+class GrrView: UIView {
+
+	let textViewBorder = CAShapeLayer()
+	let titleLabel = UILabel()
+
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		print(bounds)
+		let bez = UIBezierPath(roundedRect: self.bounds, cornerRadius: 7)
+		textViewBorder.path = bez.cgPath
+	}
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	func commonInit() {
+		self.layer.cornerRadius = 7
+		self.layer.addSublayer(textViewBorder)
+		textViewBorder.strokeColor = UIColor.red.cgColor
+		textViewBorder.fillColor = UIColor.clear.cgColor
+	}
+	
+	func addTitle(_ title: String) {
+	}
+
+}
+class FloatingLabelTextView: UITextView {
+	var sTitle: String = "Test"
+	let textViewBorder = CAShapeLayer()
+	let titleLabel = UILabel()
+
+	override func layoutSubviews() {
+		print(#function, bounds)
+		super.layoutSubviews()
+		let bez = UIBezierPath(roundedRect: self.bounds, cornerRadius: 7)
+		textViewBorder.path = bez.cgPath
+
+	}
+	override init(frame: CGRect, textContainer: NSTextContainer?) {
+		super.init(frame: frame, textContainer: textContainer)
+		commonInit()
+	}
+	
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+//	convenience init(_ title: String) {
+//		self.init(frame: .zero, textContainer: nil)
+//		self.layer.cornerRadius = 7
+//		self.sTitle = title
+//		self.layer.addSublayer(textViewBorder)
+//		textViewBorder.strokeColor = UIColor.red.cgColor
+//		textViewBorder.fillColor = UIColor.clear.cgColor
+//		self.createFloatingLabel()
+//		self.clipsToBounds = false
+//	}
+
+	func commonInit() {
+		self.layer.cornerRadius = 7
+		self.layer.addSublayer(textViewBorder)
+		textViewBorder.strokeColor = UIColor.red.cgColor
+		textViewBorder.fillColor = UIColor.clear.cgColor
+		//self.createFloatingLabel()
+		//self.clipsToBounds = false
+	}
+
+	func addTitle(_ title: String) {
+		self.sTitle = title
+		titleLabel.text = " " + sTitle + " "
+	}
+
+	func createFloatingLabel() {
+		titleLabel.textColor = .blue
+		titleLabel.backgroundColor = .white
+		titleLabel.translatesAutoresizingMaskIntoConstraints = false
+		addSubview(titleLabel)
+		NSLayoutConstraint.activate([
+			titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20.0),
+			titleLabel.centerYAnchor.constraint(equalTo: topAnchor),
+		])
+		titleLabel.text = " " + sTitle + " "
+		return()
+
+		titleLabel.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+		titleLabel.sizeToFit()
+
+		titleLabel.adjustsFontSizeToFitWidth = true
+		titleLabel.frame = CGRect(x: 16, y: -7.5, width: 32, height: 15)
+		titleLabel.text = "test" //sTitle
+		self.addSubview(titleLabel)
+		//self.textViewBorder.addSublayer(titleLabel.layer)
+		//print(titleLabel.layer.frame)
+		return()
+
+		/* some styling code */
+		titleLabel.translatesAutoresizingMaskIntoConstraints = false
+		addSubview(titleLabel)
+		NSLayoutConstraint.activate([
+			titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20.0),
+			titleLabel.centerYAnchor.constraint(equalTo: topAnchor),
+		])
+//		titleLabel.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+//		titleLabel.sizeToFit()
+//		titleLabel.adjustsFontSizeToFitWidth = true
+//		titleLabel.frame = CGRect(x: 16, y: -7.5, width: 32, height: 15)
+		titleLabel.text = sTitle
+//		self.layer.insertSublayer(titleLabel.layer, above: textViewBorder)
+	}
+	
+}
+
+
+class FloraCell: UITableViewCell {
+	
+	let contentStack: UIStackView = {
+		var view = UIStackView()
+		view.axis = .horizontal
+		view.spacing = 16
+		view.distribution = .equalSpacing
+		view.alignment = .top // .center
+		view.translatesAutoresizingMaskIntoConstraints  = false
+		return view }()
+	
+	let labelStack: UIStackView = {
+		var view = UIStackView()
+		view.axis = .vertical
+		view.spacing = 5
+		view.translatesAutoresizingMaskIntoConstraints = false
+		view.distribution = .fill // .fillProportionally
+		return view }()
+	
+	let titleLabel: UILabel = {
+		let v = UILabel()
+		v.font = .systemFont(ofSize: 15, weight: .bold)
+		return v
+	}()
+	let descriptionLabel: UILabel = {
+		let v = UILabel()
+		v.numberOfLines = 0
+		v.font = .systemFont(ofSize: 13, weight: .light)
+		return v
+	}()
+	let iconView = UIImageView()
+	
+	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+		super.init(style: style, reuseIdentifier: reuseIdentifier)
+		setupUI()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		setupUI()
+	}
+	func setupUI() {
+		contentView.addSubview(contentStack)
+		labelStack.addArrangedSubview(titleLabel)
+		labelStack.addArrangedSubview(descriptionLabel)
+		contentStack.addArrangedSubview(labelStack)
+		contentStack.addArrangedSubview(iconView)
+		
+		NSLayoutConstraint.activate([
+			
+			iconView.heightAnchor.constraint(equalToConstant: 80),
+			iconView.widthAnchor.constraint(equalToConstant: 80),
+			
+			contentStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+			contentStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+			contentStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+			contentStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+			
+		])
+
+		titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+		descriptionLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+		
+		[titleLabel, descriptionLabel].forEach { v in
+			v.setContentCompressionResistancePriority(.required, for: .vertical)
+			v.backgroundColor = .cyan
+		}
+	}
+	func fillData(_ d: MyDataStruct) {
+		titleLabel.text = d.title
+		descriptionLabel.text = d.desc
+		if !d.imgName.isEmpty {
+			if let img = UIImage(systemName: "\(d.imgName).circle") {
+				iconView.image = img
+			}
+		}
+		iconView.isHidden = d.imgName.isEmpty
+	}
+}
+
+class FloraTableVC: UITableViewController {
+
+	var myData: [MyDataStruct] = []
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		myData = SampleData().getSampleData()
+
+		tableView.register(FloraCell.self, forCellReuseIdentifier: "cell")
+		
+	}
+	
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		return myData.count
+	}
+	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let c = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! FloraCell
+		c.fillData(myData[indexPath.row])
+		return c
 	}
 }
