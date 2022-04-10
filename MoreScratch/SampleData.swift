@@ -25,6 +25,18 @@ class SampleData: NSObject {
 			"""
 		],
 		[
+			"Very Short",
+			"""
+			One line description without image.
+			"""
+		],
+		[
+			"Very Short",
+   """
+   One line description with image.
+   """
+		],
+		[
 			"Button",
 			"""
 			You can set the title, image, and other appearance properties of a button. In addition, you can specify a different appearance for each button state.

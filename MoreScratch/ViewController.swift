@@ -2230,7 +2230,7 @@ class iscmStackAnimVC: UIViewController {
 
 // labels inside stack view
 // with custom view
-class StackAnimVC: UIViewController {
+class cviStackAnimVC: UIViewController {
 	
 	let stackView: UIStackView = {
 		let v = UIStackView()
@@ -2332,6 +2332,137 @@ class StackAnimVC: UIViewController {
 		
 	}
 }
+
+class StackAnimVC: UIViewController {
+	
+	let outerStackView: UIStackView = {
+		let v = UIStackView()
+		v.axis = .vertical
+		v.spacing = 0
+		return v
+	}()
+	
+	// create an "inner" stack view
+	//	this will hold topLabel and botLabel
+	let innerStackView: UIStackView = {
+		let v = UIStackView()
+		v.axis = .vertical
+		v.spacing = 8
+		return v
+	}()
+
+	// container for the inner stack view
+	let innerStackContainer: UIView = {
+		let v = UIView()
+		v.clipsToBounds = true
+		return v
+	}()
+	
+	// we can use standard UILabels instead of custom views
+	let topLabel = UILabel()
+	let botLabel = UILabel()
+	
+	let headerLabel = UILabel()
+	let threeLabel = UILabel()
+	let footerLabel = UILabel()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		// label setup
+		let colors: [UIColor] = [
+			.systemYellow,
+			.cyan,
+			UIColor(red: 1.0, green: 0.85, blue: 0.9, alpha: 1.0),
+			UIColor(red: 0.7, green: 0.5, blue: 0.4, alpha: 1.0),
+			UIColor(white: 0.9, alpha: 1.0),
+		]
+		for (c, v) in zip(colors, [headerLabel, topLabel, botLabel, threeLabel, footerLabel]) {
+			v.backgroundColor = c
+			v.font = .systemFont(ofSize: 24.0, weight: .light)
+			v.setContentCompressionResistancePriority(.required, for: .vertical)
+		}
+		
+		// add top and bottom labels to inner stack view
+		innerStackView.addArrangedSubview(topLabel)
+		innerStackView.addArrangedSubview(botLabel)
+
+		// add inner stack view to container
+		innerStackView.translatesAutoresizingMaskIntoConstraints = false
+		innerStackContainer.addSubview(innerStackView)
+		
+		// constraints for inner stack view
+		//	bottom constraint must be less-than-required
+		//	so it doesn't compress when the container compresses
+		let isvBottom: NSLayoutConstraint = innerStackView.bottomAnchor.constraint(equalTo: innerStackContainer.bottomAnchor, constant: -8.0)
+		isvBottom.priority = .defaultHigh
+		
+		NSLayoutConstraint.activate([
+			innerStackView.topAnchor.constraint(equalTo: innerStackContainer.topAnchor, constant: 0.0),
+			innerStackView.leadingAnchor.constraint(equalTo: innerStackContainer.leadingAnchor, constant: 0.0),
+			innerStackView.trailingAnchor.constraint(equalTo: innerStackContainer.trailingAnchor, constant: 0.0),
+			isvBottom,
+		])
+
+		topLabel.numberOfLines = 0
+		botLabel.numberOfLines = 0
+		
+		topLabel.text = "It seems that even without a stack view, if I animate the height constraint, you get this \"squeeze\" effect."
+		botLabel.text = "I still want to hide the labels, but want an animation where the alpha changes but the labels don't \"slide\"."
+		
+		headerLabel.text = "Header"
+		threeLabel.text = "Three"
+		footerLabel.text = "Footer"
+
+		// add views to outer stack view
+		[headerLabel, innerStackContainer, threeLabel, footerLabel].forEach { v in
+			outerStackView.addArrangedSubview(v)
+		}
+		
+		// add an Animate button
+		let btn = UIButton(type: .system)
+		btn.setTitle("Animate", for: [])
+		btn.titleLabel?.font = .systemFont(ofSize: 24.0, weight: .regular)
+		btn.addTarget(self, action: #selector(btnTap(_:)), for: .touchUpInside)
+		
+		let g = view.safeAreaLayoutGuide
+		
+		// add elements to view and give them all the same Leading and Trailing constraints
+		[outerStackView, btn].forEach { v in
+			
+			v.translatesAutoresizingMaskIntoConstraints = false
+			view.addSubview(v)
+			
+			NSLayoutConstraint.activate([
+				v.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+				v.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20.0),
+			])
+		}
+		
+		NSLayoutConstraint.activate([
+			
+			outerStackView.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
+			
+			// put button near bottom
+			btn.bottomAnchor.constraint(equalTo: g.bottomAnchor, constant: -40.0),
+			
+		])
+		
+	}
+	
+	@objc func btnTap(_ sender: UIButton) {
+
+		UIView.animate(withDuration: 0.5) {
+			
+			// toggle hidden and alpha on inner stack container
+			self.innerStackContainer.alpha = self.innerStackContainer.isHidden ? 1.0 : 0.0
+			self.innerStackContainer.isHidden.toggle()
+			
+		}
+		
+	}
+}
+
 
 class RPViewController: UIViewController {
 	

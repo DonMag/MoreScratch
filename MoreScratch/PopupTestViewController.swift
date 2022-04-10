@@ -1423,7 +1423,8 @@ class FloraCell: UITableViewCell {
 		view.axis = .horizontal
 		view.spacing = 16
 		view.distribution = .equalSpacing
-		view.alignment = .top // .center
+		view.alignment = .top
+		view.alignment = .center
 		view.translatesAutoresizingMaskIntoConstraints  = false
 		return view }()
 	
@@ -1482,6 +1483,7 @@ class FloraCell: UITableViewCell {
 			v.setContentCompressionResistancePriority(.required, for: .vertical)
 			v.backgroundColor = .cyan
 		}
+		iconView.backgroundColor = .systemYellow
 	}
 	func fillData(_ d: MyDataStruct) {
 		titleLabel.text = d.title
@@ -1516,4 +1518,1677 @@ class FloraTableVC: UITableViewController {
 		c.fillData(myData[indexPath.row])
 		return c
 	}
+}
+
+class RevealView: UIView {
+	
+	public var image: UIImage? {
+		didSet {
+			imgLayer.contents = image?.cgImage
+		}
+	}
+	public var duration: TimeInterval = 1.0
+	
+	private let gradLayer = CAGradientLayer()
+	private let imgLayer = CALayer()
+
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	private func commonInit() {
+
+		clipsToBounds = true
+
+		layer.addSublayer(imgLayer)
+		imgLayer.contentsGravity = .resize
+		
+		// white area shows through, clear area is "hidden"
+		gradLayer.colors = [UIColor.white.cgColor, UIColor.clear.cgColor]
+		// left-to-right gradient
+		gradLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
+		gradLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
+		// start locations so entire layer is masked
+		gradLayer.locations = [0.0, 0.0]
+		// set the mask
+		layer.mask = gradLayer
+		
+	}
+	override func layoutSubviews() {
+		super.layoutSubviews()
+
+		// set image layer frame to view bounds
+		imgLayer.frame = bounds
+		// move it half-way to the right
+		imgLayer.position.x = bounds.maxX
+		// set gradient layer frame to view bounds
+		gradLayer.frame = bounds
+	}
+	
+	public func doAnim() {
+		
+		let imgAnim = CABasicAnimation(keyPath: "position.x")
+		let gradAnim = CABasicAnimation(keyPath: "locations")
+		
+		// animate image layer from right-to-left
+		imgAnim.toValue = bounds.midX
+		// animate gradient from left-to-right
+		gradAnim.toValue = [NSNumber(value: 1.0), NSNumber(value: 2.0)]
+
+		imgAnim.duration = self.duration
+		gradAnim.duration = imgAnim.duration * 2.0
+		
+		[imgAnim, gradAnim].forEach { anim in
+			anim.isRemovedOnCompletion = false
+			anim.fillMode = .forwards
+			anim.beginTime = CACurrentMediaTime()
+		}
+		
+		CATransaction.begin()
+		CATransaction.setDisableActions(true)
+		
+		imgLayer.add(imgAnim, forKey: nil)
+		gradLayer.add(gradAnim, forKey: nil)
+		
+		CATransaction.commit()
+
+	}
+}
+
+class xRevealVC: UIViewController {
+	
+	let testView = RevealView()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		guard let img = UIImage(named: "mt") else {
+			fatalError("Could not load image!")
+		}
+		testView.image = img
+		
+		// use longer or shorter animation duration if desired (default is 1.0)
+		//testView.duration = 3.0
+		
+		testView.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(testView)
+		
+		let g = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			testView.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
+			testView.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+			testView.widthAnchor.constraint(equalToConstant: img.size.width),
+			testView.heightAnchor.constraint(equalToConstant: img.size.height),
+		])
+	}
+	
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		testView.doAnim()
+	}
+}
+
+
+class RevealVC: UIViewController {
+	
+	let cv = UIView()
+	let av = UIView()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		cv.backgroundColor = .systemRed
+		av.backgroundColor = .systemBlue
+		
+		cv.frame = CGRect(x: 100, y: 100, width: 80, height: 80)
+		av.frame = CGRect(x: 60, y: 200, width: 160, height: 160)
+		
+		view.addSubview(cv)
+		view.addSubview(av)
+		
+		let g = UILongPressGestureRecognizer(target: self, action: #selector(lp(_:)))
+		cv.addGestureRecognizer(g)
+		
+	}
+	
+	@objc func lp(_ g: UILongPressGestureRecognizer) {
+//		if g.state == .began {
+//			av.addSubview(cv)
+//		}
+		switch g.state {
+			
+		case .possible:
+			()
+		case .began:
+			cv.removeFromSuperview()
+			av.addSubview(cv)
+		case .changed:
+			print("changed")
+		case .ended:
+			print("end")
+		case .cancelled:
+			print("canc")
+		case .failed:
+			print("fail")
+		@unknown default:
+			print("un")
+
+		}
+	}
+}
+
+class MainScrenenViewController: UIViewController {
+	
+	var currentIndex: Int = 0
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		view.backgroundColor = .yellow
+		
+		let label = UILabel()
+		label.text = "\(currentIndex)"
+		label.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(label)
+		label.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+		label.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+	}
+}
+
+class PageViewController: UIViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource {
+	
+	var pageControl = UIPageControl.appearance()
+	
+	var pageController: UIPageViewController!
+	
+	var controllers = [UIViewController]()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		pageController = UIPageViewController(transitionStyle: .scroll,
+											  navigationOrientation: .horizontal,
+											  options: nil)
+		pageController.delegate = self
+		pageController.dataSource = self
+		
+		addChild(pageController)
+		view.addSubview(pageController.view)
+		pageController.didMove(toParent: self)
+
+		let views = ["pageController": pageController.view] as [String: AnyObject]
+		view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[pageController]|", options: [], metrics: nil, views: views))
+		view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[pageController]|", options: [], metrics: nil, views: views))
+		
+		for i in 0..<8 {
+			
+			let mainScreenViewController = MainScrenenViewController()
+			mainScreenViewController.currentIndex = i
+			self.controllers.append(mainScreenViewController)
+		}
+		
+		pageController.setViewControllers([controllers[0]], direction: .forward, animated: false)
+		
+		setupPageControl()
+	}
+	
+	func setupPageControl() {
+		
+		pageControl = UIPageControl(frame: CGRect(x: 0,y: 100,width: UIScreen.main.bounds.width,height: 50))
+		pageControl.numberOfPages = self.controllers.count
+		pageControl.tintColor = UIColor.lightGray
+		pageControl.pageIndicatorTintColor = UIColor.lightGray
+		pageControl.currentPageIndicatorTintColor = UIColor.black
+		pageControl.backgroundColor = UIColor.clear
+		view.addSubview(pageControl)
+		
+	}
+	
+	func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+		
+		if let index = controllers.firstIndex(of: viewController) {
+			if index > 0 {
+
+				return controllers[index - 1]
+
+			} else {
+				return nil
+			}
+		}
+		return nil
+	}
+	
+	func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+		if let index = controllers.firstIndex(of: viewController) {
+			if index < controllers.count - 1 {
+				
+				return controllers[index + 1]
+
+			} else {
+				return nil
+			}
+		}
+		return nil
+	}
+
+}
+
+class Row {
+	var attributes = [UICollectionViewLayoutAttributes]()
+	var spacing: CGFloat = 0
+	
+	init(spacing: CGFloat) {
+		self.spacing = spacing
+	}
+	
+	func add(attribute: UICollectionViewLayoutAttributes) {
+		attributes.append(attribute)
+	}
+	
+	func tagLayout(collectionViewWidth: CGFloat) {
+		let padding = 0
+		var offset = padding
+		for attribute in attributes {
+			attribute.frame.origin.x = CGFloat(offset)
+			offset += Int(attribute.frame.width + spacing)
+		}
+	}
+}
+
+class LeftAlignTagCollectionViewFlowLayout: UICollectionViewFlowLayout {
+	override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+		guard let attributes = super.layoutAttributesForElements(in: rect) else {
+			return nil
+		}
+		
+		var rows = [Row]()
+		var currentRowY: CGFloat = -1
+		
+		for attribute in attributes {
+			if currentRowY != attribute.frame.origin.y {
+				currentRowY = attribute.frame.origin.y
+				rows.append(Row(spacing: 4))
+			}
+			rows.last?.add(attribute: attribute)
+		}
+		
+		rows.forEach {
+			$0.tagLayout(collectionViewWidth: collectionView?.frame.width ?? 0)
+		}
+		return rows.flatMap { $0.attributes }
+	}
+}
+
+class IntrinsicHeightCollectionView: UICollectionView {
+	override var intrinsicContentSize: CGSize {
+		return contentSize
+	}
+}
+class CollectionTableViewCell: UITableViewCell {
+	@IBOutlet weak var collectionView: IntrinsicHeightCollectionView!
+//	@IBOutlet weak var collectionViewHeightConstraint: NSLayoutConstraint! // Required priority (1000)
+	
+	private var collectionItem: [String] = []
+	
+	override func awakeFromNib() {
+		super.awakeFromNib()
+		setupCollectionView()
+		collectionView.dataSource = self
+		collectionView.delegate = self
+		let layout = LeftAlignTagCollectionViewFlowLayout()
+		layout.estimatedItemSize = CGSize(width: 140, height: 40)
+		collectionView.collectionViewLayout = layout
+		
+		collectionView.backgroundColor = .yellow
+	}
+
+	func setTagCount(n: Int) {
+
+		print("cvw:", collectionView.frame.width)
+		
+		// some sample "tags" from Stack Overflow
+		let sampleTags: [String] = [
+			"asp.net-core",
+			"asp.net-mvc",
+			"asp.net",
+			"azure",
+			"bash",
+			"c",
+			"c#",
+			"c++",
+			"class",
+			"codeigniter",
+			"cordova",
+			"css",
+			"csv",
+			"dart",
+			"database",
+			"dataframe",
+		]
+
+		let tags = sampleTags.shuffled()
+
+		collectionItem = []
+		
+		for i in 0..<n {
+			//collectionItem.append("\(tags[i % tags.count]) \(i + 1)")
+			collectionItem.append(sampleTags[i % sampleTags.count])
+		}
+
+	}
+	
+	func setupCell(showFirstItem: Bool, showSecondItem: Bool)  {
+		setupCollectionItem(showFirstItem: showFirstItem, showSecondItem: showSecondItem)
+	}
+	
+	private func setupCollectionItem(showFirstItem: Bool, showSecondItem: Bool) {
+		collectionItem = []
+		if showFirstItem {
+			let data = "TagNumber1"
+			collectionItem.append(data)
+		}
+		
+		if showSecondItem {
+			let data = "TagNumber2"
+			collectionItem.append(data)
+		}
+		
+		for i in 11...15 {
+			collectionItem.append("Tag \(i)")
+		}
+		
+	}
+	
+	override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize {
+		//force layout of all subviews including RectsView, which
+		//updates RectsView's intrinsic height, and thus height of a cell
+		self.setNeedsLayout()
+		self.layoutIfNeeded()
+		
+		//now intrinsic height is correct, so we can call super method
+		return super.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
+	}
+
+}
+
+extension CollectionTableViewCell: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+	private func setupCollectionView() {
+		//collectionView.register(UINib(nibName: "CollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "CollectionViewCell")
+		collectionView.register(UINib(nibName: "ColViewXibCell", bundle: nil), forCellWithReuseIdentifier: "ColViewXibCell")
+	}
+	
+	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+		print(collectionItem.count)
+		return collectionItem.count
+	}
+	
+	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+		//let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CollectionViewCell", for: indexPath) as! CollectionViewCell
+		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ColViewXibCell", for: indexPath) as! ColViewXibCell
+		cell.configCell(model: collectionItem[indexPath.row], maxWidth: collectionView.frame.width - 8)
+		cell.setNeedsLayout()
+		cell.layoutIfNeeded()
+		return cell
+	}
+}
+
+class CodeCollectionTableViewCell: UITableViewCell {
+	
+	var collectionView: IntrinsicHeightCollectionView!
+	var collectionViewHeightConstraint: NSLayoutConstraint! // Required priority (1000)
+	
+	private var collectionItem: [String] = []
+	
+	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+		super.init(style: style, reuseIdentifier: reuseIdentifier)
+		commonInit()
+	}
+	
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	func commonInit() {
+
+		let layout = LeftAlignTagCollectionViewFlowLayout()
+		layout.estimatedItemSize = CGSize(width: 140, height: 40)
+		collectionView = IntrinsicHeightCollectionView(frame: .zero, collectionViewLayout: layout)
+		collectionView.translatesAutoresizingMaskIntoConstraints = false
+		contentView.addSubview(collectionView)
+		let g = contentView.layoutMarginsGuide
+		collectionViewHeightConstraint = collectionView.heightAnchor.constraint(equalToConstant: 200.0)
+		collectionViewHeightConstraint.priority = .required - 1
+		NSLayoutConstraint.activate([
+			collectionView.topAnchor.constraint(equalTo: g.topAnchor),
+			collectionView.leadingAnchor.constraint(equalTo: g.leadingAnchor),
+			collectionView.trailingAnchor.constraint(equalTo: g.trailingAnchor),
+			collectionView.bottomAnchor.constraint(equalTo: g.bottomAnchor),
+			collectionViewHeightConstraint,
+		])
+
+		setupCollectionView()
+		collectionView.dataSource = self
+		collectionView.delegate = self
+		
+		collectionView.backgroundColor = UIColor(red: 1.0, green: 0.8, blue: 0.8, alpha: 1.0)
+	}
+	
+//	override func awakeFromNib() {
+//		super.awakeFromNib()
+//		setupCollectionView()
+//		collectionView.dataSource = self
+//		collectionView.delegate = self
+//		let layout = LeftAlignTagCollectionViewFlowLayout()
+//		layout.estimatedItemSize = CGSize(width: 140, height: 40)
+//		collectionView.collectionViewLayout = layout
+//
+//		collectionView.backgroundColor = .yellow
+//	}
+	
+	func setTagCount(n: Int) {
+		
+		print("cvw:", collectionView.frame.width)
+		
+		// some sample "tags" from Stack Overflow
+		let sampleTags: [String] = [
+			"asp.net-core",
+			"asp.net-mvc",
+			"asp.net",
+			"azure",
+			"bash",
+			"c",
+			"c#",
+			"c++",
+			"class",
+			"codeigniter",
+			"cordova",
+			"css",
+			"csv",
+			"dart",
+			"database",
+			"dataframe",
+		]
+		
+		collectionItem = []
+		
+		for i in 0..<n {
+			//collectionItem.append("\(tags[i % tags.count]) \(i + 1)")
+			collectionItem.append(sampleTags[i % sampleTags.count])
+		}
+		
+	}
+	
+	func setupCell(showFirstItem: Bool, showSecondItem: Bool)  {
+		setupCollectionItem(showFirstItem: showFirstItem, showSecondItem: showSecondItem)
+	}
+	
+	private func setupCollectionItem(showFirstItem: Bool, showSecondItem: Bool) {
+		collectionItem = []
+		if showFirstItem {
+			let data = "TagNumber1"
+			collectionItem.append(data)
+		}
+		
+		if showSecondItem {
+			let data = "TagNumber2"
+			collectionItem.append(data)
+		}
+		
+		for i in 11...15 {
+			collectionItem.append("Tag \(i)")
+		}
+		
+	}
+	
+	override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize {
+		//force layout of all subviews including RectsView, which
+		//updates RectsView's intrinsic height, and thus height of a cell
+		self.setNeedsLayout()
+		self.layoutIfNeeded()
+		
+		let sz = super.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
+		print("t:", targetSize, "sz:", sz)
+		//now intrinsic height is correct, so we can call super method
+		return super.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
+	}
+	
+}
+
+extension CodeCollectionTableViewCell: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+	private func setupCollectionView() {
+		//collectionView.register(UINib(nibName: "CollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "CollectionViewCell")
+		collectionView.register(UINib(nibName: "ColViewXibCell", bundle: nil), forCellWithReuseIdentifier: "ColViewXibCell")
+	}
+	
+	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+		print(collectionItem.count)
+		return collectionItem.count
+	}
+	
+	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+		//let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CollectionViewCell", for: indexPath) as! CollectionViewCell
+		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ColViewXibCell", for: indexPath) as! ColViewXibCell
+		cell.configCell(model: collectionItem[indexPath.row], maxWidth: collectionView.frame.width - 8)
+		cell.setNeedsLayout()
+		cell.layoutIfNeeded()
+		return cell
+	}
+}
+
+class CollectionViewCell: UICollectionViewCell {
+	
+	@IBOutlet weak var theLabel: UILabel!
+	
+	func configCell(model: String, maxWidth: CGFloat) {
+		theLabel.text = model
+	}
+	
+}
+
+class ColViewXibCell: UICollectionViewCell {
+	
+	@IBOutlet weak var theLabel: UILabel!
+	
+	func configCell(model: String, maxWidth: CGFloat) {
+		theLabel.text = model
+	}
+	
+}
+
+class CViewInTViewVC: UITableViewController {
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		tableView.register(CodeCollectionTableViewCell.self, forCellReuseIdentifier: "CodeCollectionTableViewCell")
+		
+	}
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+		tableView.reloadData()
+		//tableView.performBatchUpdates(nil, completion: nil)
+	}
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		return 30
+	}
+	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let c = tableView.dequeueReusableCell(withIdentifier: "CollectionTableViewCell", for: indexPath) as! CollectionTableViewCell
+
+//		let c = tableView.dequeueReusableCell(withIdentifier: "CodeCollectionTableViewCell", for: indexPath) as! CodeCollectionTableViewCell
+
+		c.setTagCount(n: indexPath.row + 1)
+		
+		c.collectionView.reloadData()
+		c.collectionView.invalidateIntrinsicContentSize()
+		c.setNeedsLayout()
+		c.layoutIfNeeded()
+		let height = c.collectionView.collectionViewLayout.collectionViewContentSize.height
+		//c.collectionViewHeightConstraint.constant = height
+		
+		return c
+	}
+}
+
+class TagLabelsView: UIView {
+	
+	var tagNames: [String] = [] {
+		didSet {
+			addTagLabels()
+		}
+	}
+	
+	let tagHeight:CGFloat = 30
+	let tagPadding: CGFloat = 16
+	let tagSpacingX: CGFloat = 8
+	let tagSpacingY: CGFloat = 8
+	
+	var intrinsicHeight: CGFloat = 0
+	
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	
+	func commonInit() -> Void {
+	}
+	
+	func addTagLabels() -> Void {
+		
+		// if we already have tag labels (or buttons, etc)
+		//  remove any excess (e.g. we had 10 tags, new set is only 7)
+		while self.subviews.count > tagNames.count {
+			self.subviews[0].removeFromSuperview()
+		}
+		
+		// if we don't have enough labels, create and add as needed
+		while self.subviews.count < tagNames.count {
+			
+			// create a new label
+			let newLabel = UILabel()
+			
+			// set its properties (title, colors, corners, etc)
+			newLabel.textAlignment = .center
+			newLabel.backgroundColor = UIColor.cyan
+			newLabel.layer.masksToBounds = true
+			newLabel.layer.cornerRadius = 8
+			newLabel.layer.borderColor = UIColor.red.cgColor
+			newLabel.layer.borderWidth = 1
+			
+			addSubview(newLabel)
+			
+		}
+		
+		// now loop through labels and set text and size
+		for (str, v) in zip(tagNames, self.subviews) {
+			guard let label = v as? UILabel else {
+				fatalError("non-UILabel subview found!")
+			}
+			label.text = str
+			label.frame.size.width = label.intrinsicContentSize.width + tagPadding
+			label.frame.size.height = tagHeight
+		}
+		
+	}
+	
+	func displayTagLabels() {
+		
+		var currentOriginX: CGFloat = 0
+		var currentOriginY: CGFloat = 0
+		
+		// for each label in the array
+		self.subviews.forEach { v in
+			
+			guard let label = v as? UILabel else {
+				fatalError("non-UILabel subview found!")
+			}
+			
+			// if current X + label width will be greater than container view width
+			//  "move to next row"
+			if currentOriginX + label.frame.width > bounds.width {
+				currentOriginX = 0
+				currentOriginY += tagHeight + tagSpacingY
+			}
+			
+			// set the btn frame origin
+			label.frame.origin.x = currentOriginX
+			label.frame.origin.y = currentOriginY
+			
+			// increment current X by btn width + spacing
+			currentOriginX += label.frame.width + tagSpacingX
+			
+		}
+		
+		// update intrinsic height
+		intrinsicHeight = currentOriginY + tagHeight
+		invalidateIntrinsicContentSize()
+		
+	}
+	
+	// allow this view to set its own intrinsic height
+	override var intrinsicContentSize: CGSize {
+		var sz = super.intrinsicContentSize
+		sz.height = intrinsicHeight
+		return sz
+	}
+	
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		displayTagLabels()
+	}
+	
+}
+
+class TagsCell: UITableViewCell {
+	
+	let tagsView: TagLabelsView = {
+		let v = TagLabelsView()
+		return v
+	}()
+	
+	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+		super.init(style: style, reuseIdentifier: reuseIdentifier)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	
+	func commonInit() -> Void {
+		
+		// add the container view
+		contentView.addSubview(tagsView)
+		
+		// give it a background color so we can see it
+		tagsView.backgroundColor = .yellow
+		
+		// use autolayout
+		tagsView.translatesAutoresizingMaskIntoConstraints = false
+		
+		// constrain tagsView top / leading / trailing / bottom to
+		//  contentView Layout Margins Guide
+		let g = contentView.layoutMarginsGuide
+		
+		NSLayoutConstraint.activate([
+			tagsView.topAnchor.constraint(equalTo: g.topAnchor, constant: 0.0),
+			tagsView.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 0.0),
+			tagsView.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: 0.0),
+			tagsView.bottomAnchor.constraint(equalTo: g.bottomAnchor, constant: 0.0),
+		])
+		
+	}
+	
+	func fillData(_ tagNames: [String]) -> Void {
+		tagsView.tagNames = tagNames
+	}
+	
+	override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize {
+		//force layout of all subviews including RectsView, which
+		//updates RectsView's intrinsic height, and thus height of a cell
+		self.setNeedsLayout()
+		self.layoutIfNeeded()
+		
+		//now intrinsic height is correct, so we can call super method
+		return super.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
+	}
+	
+}
+
+class TagLabelsViewController: UIViewController {
+	
+	var myData: [[String]] = []
+	
+	let tableView: UITableView = {
+		let v = UITableView()
+		return v
+	}()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		// add the table view
+		view.addSubview(tableView)
+		
+		// use autolayout
+		tableView.translatesAutoresizingMaskIntoConstraints = false
+		
+		let g = view.safeAreaLayoutGuide
+		
+		NSLayoutConstraint.activate([
+			// constrain table view safe-area top / leading / trailing / bottom to view with 20-pts padding
+			tableView.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
+			tableView.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+			tableView.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20.0),
+			tableView.bottomAnchor.constraint(equalTo: g.bottomAnchor, constant: -20.0),
+		])
+		
+		tableView.register(TagsCell.self, forCellReuseIdentifier: "c")
+		tableView.dataSource = self
+		tableView.delegate = self
+		
+		// get some sample tag data
+		myData = SampleTags().samples()
+	}
+	
+}
+
+extension TagLabelsViewController: UITableViewDataSource, UITableViewDelegate {
+	func numberOfSections(in tableView: UITableView) -> Int {
+		return 1
+	}
+	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		return myData.count
+	}
+	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let c = tableView.dequeueReusableCell(withIdentifier: "c", for: indexPath) as! TagsCell
+		c.fillData(myData[indexPath.row])
+		return c
+	}
+}
+
+class SampleTags: NSData {
+	func samples() -> [[String]] {
+		
+		let tmp: [[String]] = [
+			[
+				".htaccess",
+				".net",
+				"ajax",
+				"algorithm",
+			],
+			[
+				"amazon-web-services",
+				"android-layout",
+				"android-studio",
+				"android",
+				"angular",
+				"angularjs",
+				"apache-spark",
+			],
+			[
+				"apache",
+				"api",
+				"arrays",
+			],
+			[
+				"asp.net-core",
+				"asp.net-mvc",
+				"asp.net",
+				"azure",
+				"bash",
+				"c",
+				"c#",
+				"c++",
+				"class",
+				"codeigniter",
+				"cordova",
+				"css",
+				"csv",
+				"dart",
+				"database",
+				"dataframe",
+			],
+			[
+				"date",
+				"datetime",
+				"dictionary",
+				"django",
+				"docker",
+			],
+			[
+				"eclipse",
+				"email",
+				"entity-framework",
+				"excel",
+				"express",
+				"facebook",
+			],
+			[
+				"file",
+				"firebase",
+				"flutter",
+				"for-loop",
+				"forms",
+				"function",
+				"git",
+				"go",
+				"google-chrome",
+				"google-maps",
+				"hibernate",
+				"html",
+				"http",
+			],
+			[
+				"image",
+				"ios",
+				"iphone",
+				"java",
+				"javascript",
+				"jquery",
+				"json",
+				"kotlin",
+				"laravel",
+				"linq",
+				"linux",
+			],
+			[
+				"list",
+				"loops",
+				"macos",
+				"matlab",
+				"matplotlib",
+				"maven",
+				"mongodb",
+				"multithreading",
+				"mysql",
+				"node.js",
+			],
+			[
+				"numpy",
+				"object",
+				"objective-c",
+				"oop",
+				"opencv",
+				"oracle",
+				"pandas",
+				"performance",
+				"perl",
+				"php",
+				"postgresql",
+				"powershell",
+				"python-2.7",
+				"python-3.x",
+				"python",
+			],
+			[
+				"qt",
+				"r",
+				"react-native",
+				"reactjs",
+				"regex",
+				"rest",
+				"ruby-on-rails-3",
+				"ruby-on-rails",
+				"ruby",
+				"scala",
+				"selenium",
+				"shell",
+				"sockets",
+				"sorting",
+				"spring-boot",
+				"spring-mvc",
+				"spring",
+				"sql-server",
+				"sql",
+			],
+			[
+				"sqlite",
+				"string",
+				"swift",
+			],
+			[
+				"swing",
+				"symfony",
+				"tensorflow",
+				"tsql",
+				"twitter-bootstrap",
+				"typescript",
+				"uitableview",
+				"unit-testing",
+				"unity3d",
+				"validation",
+				"vb.net",
+				"vba",
+				"visual-studio",
+				"vue.js",
+				"web-services",
+				"windows",
+				"winforms",
+				"wordpress",
+				"wpf",
+				"xaml",
+				"xcode",
+				"xml",
+			],
+		]
+		
+		return tmp
+	}
+}
+
+
+class TapVC: UIViewController {
+	
+	@IBAction func didTap(_ sender: Any?) {
+		print("Tapped!")
+	}
+	
+}
+
+class RenderView: UIView {
+
+	let myLabel = UILabel()
+	let mySub = UIView()
+
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	func commonInit() {
+		mySub.translatesAutoresizingMaskIntoConstraints = false
+		mySub.backgroundColor = .red
+		myLabel.translatesAutoresizingMaskIntoConstraints = false
+		myLabel.backgroundColor = .yellow
+		mySub.addSubview(myLabel)
+		addSubview(mySub)
+		NSLayoutConstraint.activate([
+			myLabel.centerXAnchor.constraint(equalTo: mySub.centerXAnchor),
+			myLabel.centerYAnchor.constraint(equalTo: mySub.centerYAnchor),
+			
+			mySub.topAnchor.constraint(equalTo: topAnchor, constant: 12.0),
+			mySub.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12.0),
+			mySub.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12.0),
+			mySub.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12.0),
+		])
+	}
+	
+	func toImage(_ targetScale: CGFloat) -> UIImage {
+		
+		var b = bounds
+		b.size.width *= targetScale
+		b.size.height *= targetScale
+		
+		self.layer.transform = CATransform3DMakeScale(targetScale, targetScale, 1.0)
+
+		var csf: CGFloat = UIScreen.main.scale * targetScale
+		//self.contentScaleFactor = csf
+		subviews.forEach { v in
+			v.contentScaleFactor = csf
+		}
+
+		let renderer = UIGraphicsImageRenderer(size: b.size)
+		let image = renderer.image { _ in
+			self.drawHierarchy(in: b, afterScreenUpdates: true)
+		}
+
+		csf = UIScreen.main.scale
+		//self.contentScaleFactor = csf
+		subviews.forEach { v in
+			v.contentScaleFactor = csf
+		}
+		self.layer.transform = CATransform3DIdentity
+		
+		return image
+		
+//		let contentsScale: CGFloat = 1.0
+//		let format = UIGraphicsImageRendererFormat()
+//		format.scale = contentsScale
+//
+//		self.contentScaleFactor = contentsScale
+//		layer.contentsScale = contentsScale
+//		myLabel.layer.contentsScale = contentsScale
+//
+//		let b = bounds.insetBy(dx: -bounds.width * 0.5, dy: -bounds.height * 0.5)
+//
+//		let renderer = UIGraphicsImageRenderer(size: b.size, format: format)
+//		let image = renderer.image { ctx in
+//			self.drawHierarchy(in: b, afterScreenUpdates: true)
+//		}
+//		return image
+	}
+	
+	func toImageA() -> UIImage? {
+		var b = self.frame
+		print(b, self.frame)
+
+		b.origin.x = 0
+		b.origin.y = 0
+		
+		let renderer = UIGraphicsImageRenderer(size: b.size)
+		let image = renderer.image { _ in
+			self.drawHierarchy(in: b, afterScreenUpdates: true)
+		}
+
+		return image
+	}
+}
+
+class RenderTestVC: UIViewController {
+	
+	let myView = RenderView()
+
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		myView.backgroundColor = .systemBlue
+		
+		myView.translatesAutoresizingMaskIntoConstraints = false
+		
+		view.addSubview(myView)
+		
+		let g = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			
+			myView.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
+			myView.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+			myView.widthAnchor.constraint(equalToConstant: 240.0),
+			myView.heightAnchor.constraint(equalToConstant: 160.0),
+			
+		])
+
+		myView.myLabel.text = "This is a test"
+		
+	}
+
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		
+		let imgx = myView.getImage(scale: 10.0)
+		print("x:", imgx.size)
+		print()
+		return()
+		
+		let v: CGFloat = 10.0
+		myView.layer.transform = CATransform3DMakeScale(v, v, 1.0)
+		myView.layer.contentsScale = v * 2.0
+		//myView.contentScaleFactor = v * 2.0
+		myView.myLabel.contentScaleFactor = v * 2.0
+		let img1 = myView.toImageA()
+		print("1:", img1?.size)
+		print()
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+			let img2 = self.myView.toImageA()
+			print("2:", img2?.size)
+			print()
+		})
+//		DispatchQueue.main.asyncAfter(.now() + 0.1) {
+//			self.myView.toImageA()
+//			let img2 = self.myView.toImageA()
+//			print("2:", img2?.size)
+//			print()
+//		})
+		return()
+		
+		let imgA = myView.toImage(2)
+		let imgB = myView.toImage(10)
+		print("a:", imgA.size, "b:", imgB.size)
+		print()
+	}
+}
+
+extension UIView {
+	func scale(by scale: CGFloat) {
+		self.contentScaleFactor = scale
+		for subview in self.subviews {
+			subview.scale(by: scale)
+		}
+	}
+	
+	func getImage(scale: CGFloat? = nil) -> UIImage {
+		let newScale = scale ?? UIScreen.main.scale
+		self.scale(by: newScale)
+		
+		let format = UIGraphicsImageRendererFormat()
+		format.scale = newScale
+		
+		let renderer = UIGraphicsImageRenderer(size: self.bounds.size, format: format)
+		
+		let image = renderer.image { rendererContext in
+			self.layer.render(in: rendererContext.cgContext)
+		}
+		
+		return image
+	}
+}
+
+class ISLabel: UILabel {
+	var myID: Int = -1
+	
+	override var intrinsicContentSize: CGSize {
+		let sz = super.intrinsicContentSize
+		print("l", myID, sz)
+		return sz
+	}
+	
+}
+class ISView: UIView {
+	
+	var myID: Int = -1
+	var h: CGFloat = 40
+
+	override var intrinsicContentSize: CGSize {
+		let sz = super.intrinsicContentSize
+		print(myID, sz, h)
+		if let sv = superview {
+			if myID == 4 {
+				print("sv", myID, sv.frame.width)
+				h = sv.frame.width < 380 ?  120 : 60
+			}
+		}
+		return CGSize(width: 100, height: h)
+	}
+	
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		invalidateIntrinsicContentSize()
+//		if let sv = superview {
+//			if myID == 4 {
+//				print("sv", myID, sv.frame.width)
+//				h = sv.frame.width < 380 ?  120 : 60
+//			}
+//		}
+	}
+
+}
+
+class ISCell: UITableViewCell {
+	let label = ISLabel()
+	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+		super.init(style: style, reuseIdentifier: reuseIdentifier)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	func commonInit() {
+		label.backgroundColor = .yellow
+		label.numberOfLines = 0
+		label.translatesAutoresizingMaskIntoConstraints = false
+		contentView.addSubview(label)
+		let g = contentView.layoutMarginsGuide
+		NSLayoutConstraint.activate([
+			label.topAnchor.constraint(equalTo: g.topAnchor),
+			label.leadingAnchor.constraint(equalTo: g.leadingAnchor),
+			label.trailingAnchor.constraint(equalTo: g.trailingAnchor),
+			label.bottomAnchor.constraint(equalTo: g.bottomAnchor),
+		])
+	}
+	func fillData(_ d: MyDataStruct, n: Int) {
+		label.myID = n
+		label.text = d.title + " - " + d.desc
+	}
+
+}
+class ISVCell: UITableViewCell {
+	let label = ISView()
+	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+		super.init(style: style, reuseIdentifier: reuseIdentifier)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	func commonInit() {
+		label.backgroundColor = .cyan
+		//label.numberOfLines = 0
+		label.translatesAutoresizingMaskIntoConstraints = false
+		contentView.addSubview(label)
+		let g = contentView.layoutMarginsGuide
+		NSLayoutConstraint.activate([
+			label.topAnchor.constraint(equalTo: g.topAnchor),
+			label.leadingAnchor.constraint(equalTo: g.leadingAnchor),
+			label.trailingAnchor.constraint(equalTo: g.trailingAnchor),
+			label.bottomAnchor.constraint(equalTo: g.bottomAnchor),
+		])
+	}
+	func fillData(_ d: MyDataStruct, n: Int) {
+		label.myID = n
+		//label.text = d.title + " - " + d.desc
+	}
+	var w: CGFloat = 0
+//	override func layoutSubviews() {
+//		super.layoutSubviews()
+//		if w != contentView.frame.width {
+//			label.invalidateIntrinsicContentSize()
+//		}
+//	}
+	override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize {
+		//force layout of all subviews including RectsView, which
+		//updates RectsView's intrinsic height, and thus height of a cell
+		self.setNeedsLayout()
+		self.layoutIfNeeded()
+		
+		//now intrinsic height is correct, so we can call super method
+		return super.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
+	}
+
+}
+
+class ISTableVC: UITableViewController {
+	
+	var myData: [MyDataStruct] = []
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		myData = SampleData().getSampleData()
+		
+		tableView.register(ISCell.self, forCellReuseIdentifier: "c")
+		tableView.register(ISVCell.self, forCellReuseIdentifier: "cv")
+
+	}
+	
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		return 6 // myData.count
+	}
+	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		if indexPath.row < 3 {
+			let c = tableView.dequeueReusableCell(withIdentifier: "c", for: indexPath) as! ISCell
+			c.fillData(myData[indexPath.row], n: indexPath.row)
+			return c
+		}
+		let c = tableView.dequeueReusableCell(withIdentifier: "cv", for: indexPath) as! ISVCell
+		c.fillData(myData[indexPath.row], n: indexPath.row)
+		return c
+	}
+
+}
+
+
+class DemoVC: UIViewController {
+
+	var containerViews: [UIView] = []
+	var heightConstraints: [NSLayoutConstraint] = []
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		let g = view.safeAreaLayoutGuide
+
+		// create 4 container views, each with a label as a subview
+		let colors: [UIColor] = [
+			.systemRed, .systemGreen, .systemBlue, .systemYellow,
+		]
+		colors.forEach { bkgColor in
+			let thisContainer = UIView()
+			thisContainer.translatesAutoresizingMaskIntoConstraints = false
+			
+			let thisLabel = UILabel()
+			thisLabel.translatesAutoresizingMaskIntoConstraints = false
+
+			thisContainer.backgroundColor = bkgColor
+			thisLabel.backgroundColor = UIColor(red: 0.75, green: 0.9, blue: 1.0, alpha: 1.0)
+
+			thisLabel.numberOfLines = 0
+			//thisLabel.font = .systemFont(ofSize: 20.0, weight: .light)
+			thisLabel.font = .systemFont(ofSize: 12.0, weight: .light)
+			thisLabel.text = "We want to animate compressing the \"container\" view vertically, without it squeezing or moving this label."
+
+			// add label to container view
+			thisContainer.addSubview(thisLabel)
+			
+			// add container view to array
+			containerViews.append(thisContainer)
+			
+			// add container view to view
+			view.addSubview(thisContainer)
+			
+			NSLayoutConstraint.activate([
+
+				// each example gets the label constrained
+				//	Top / Leading / Trailing to its container view
+				thisLabel.topAnchor.constraint(equalTo: thisContainer.topAnchor, constant: 8.0),
+				thisLabel.leadingAnchor.constraint(equalTo: thisContainer.leadingAnchor, constant: 8.0),
+				thisLabel.trailingAnchor.constraint(equalTo: thisContainer.trailingAnchor, constant: -8.0),
+				
+				// we'll be using different bottom constraints for the examples,
+				//	so don't set it here
+				//thisLabel.bottomAnchor.constraint(equalTo: thisContainer.bottomAnchor, constant: -8.0),
+				
+				// each container view gets constrained to the top
+				thisContainer.topAnchor.constraint(equalTo: g.topAnchor, constant: 60.0),
+
+			])
+
+			// setup the container view height constraints, but don't activate them
+			let hc = thisContainer.heightAnchor.constraint(equalToConstant: 0.0)
+			
+			// add the constraint to the constraints array
+			heightConstraints.append(hc)
+
+		}
+		
+		// couple vars to reuse
+		var prevContainer: UIView!
+		var aContainer: UIView!
+		var itsLabel: UIView!
+		var bc: NSLayoutConstraint!
+		
+		// -------------------------------------------------------------------
+		// first example
+		//	we don't add a bottom constraint for the label
+		//	that means we'll never see its container view
+		//	and changing its height constraint won't do anything to the label
+		
+		// -------------------------------------------------------------------
+		// second example
+		aContainer = containerViews[1]
+		itsLabel = aContainer.subviews.first
+		
+		// we'll add a "standard" bottom constraint
+		//	so now we see its container view
+		bc = itsLabel.bottomAnchor.constraint(equalTo: aContainer.bottomAnchor, constant: -8.0)
+		bc.isActive = true
+		
+		// -------------------------------------------------------------------
+		// third example
+		aContainer = containerViews[2]
+		itsLabel = aContainer.subviews.first
+		
+		// add the same bottom constraint, but give it a
+		//	less-than-required Priority so it won't "squeeze"
+		bc = itsLabel.bottomAnchor.constraint(equalTo: aContainer.bottomAnchor, constant: -8.0)
+		bc.priority = .defaultHigh
+		bc.isActive = true
+		
+		// -------------------------------------------------------------------
+		// fourth example
+		aContainer = containerViews[3]
+		itsLabel = aContainer.subviews.first
+		
+		// same less-than-required Priority bottom constraint,
+		bc = itsLabel.bottomAnchor.constraint(equalTo: aContainer.bottomAnchor, constant: -8.0)
+		bc.priority = .defaultHigh
+		bc.isActive = true
+		
+		// we'll also set clipsToBounds on the container view
+		//	so it will "hide / reveal" the label
+		aContainer.clipsToBounds = true
+		
+		
+		// now we need to layout the views
+		
+		// constrain first example leading
+		aContainer = containerViews[0]
+		aContainer.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 8.0).isActive = true
+		
+		prevContainer = aContainer
+		
+		for i in 1..<containerViews.count {
+			aContainer = containerViews[i]
+			aContainer.leadingAnchor.constraint(equalTo: prevContainer.trailingAnchor, constant: 8.0).isActive = true
+			aContainer.widthAnchor.constraint(equalTo: prevContainer.widthAnchor).isActive = true
+			prevContainer = aContainer
+		}
+		
+		// constrain last example trailing
+		prevContainer.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -8.0).isActive = true
+	
+		// and, let's add labels above the 4 examples
+		for (i, v) in containerViews.enumerated() {
+			let label = UILabel()
+			label.translatesAutoresizingMaskIntoConstraints = false
+			label.text = "Example \(i + 1)"
+			label.font = .systemFont(ofSize: 14.0, weight: .light)
+			view.addSubview(label)
+			NSLayoutConstraint.activate([
+				label.bottomAnchor.constraint(equalTo: v.topAnchor, constant: -4.0),
+				label.centerXAnchor.constraint(equalTo: v.centerXAnchor),
+			])
+
+		}
+		
+	}
+	
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		heightConstraints.forEach { c in
+			c.isActive = !c.isActive
+		}
+		UIView.animate(withDuration: 1.0, animations: {
+			self.view.layoutIfNeeded()
+		})
+	}
+	
+}
+
+class DemoBaseVC: UIViewController {
+	
+	let containerView: UIView = {
+		let v = UIView()
+		v.backgroundColor = .systemYellow
+		return v
+	}()
+
+	let label: UILabel = {
+		let v = UILabel()
+		v.backgroundColor = UIColor(red: 0.75, green: 0.9, blue: 1.0, alpha: 1.0)
+		v.numberOfLines = 0
+		v.font = .systemFont(ofSize: 20.0, weight: .light)
+		v.text = "We want to animate compressing the yellow \"container\" view vertically, without it squeezing or moving this blue label."
+		return v
+	}()
+	
+	// we will toggle .isActive on this constraint
+	//	to animate the height of the container view
+	var cHeight: NSLayoutConstraint!
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		containerView.addSubview(label)
+		view.addSubview(containerView)
+		
+		containerView.translatesAutoresizingMaskIntoConstraints = false
+		label.translatesAutoresizingMaskIntoConstraints = false
+		
+		let g = view.safeAreaLayoutGuide
+
+		// setup the container view height constraint, but don't activate it
+		cHeight = containerView.heightAnchor.constraint(equalToConstant: 0.0)
+		
+		NSLayoutConstraint.activate([
+			
+			label.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8.0),
+			label.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8.0),
+			label.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8.0),
+			
+			// we will set the label's bottom constraint in the sub-classes
+			//label.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -8.0),
+			
+			containerView.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
+			containerView.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 60.0),
+			containerView.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -60.0),
+			
+		])
+		
+	}
+	
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		cHeight.isActive = !cHeight.isActive
+		UIView.animate(withDuration: 1.0, animations: {
+			self.view.layoutIfNeeded()
+		})
+	}
+
+}
+
+class PriorityVC: DemoBaseVC {
+	// without adding a bottom constraint to the label
+	//	we never see the container view
+}
+class bPriorityVC: DemoBaseVC {
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		// adding a "normal" bottom anchor
+		NSLayoutConstraint.activate([
+			label.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -8.0),
+		])
+	}
+	
+}
+class cPriorityVC: DemoBaseVC {
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		// this time, we give the label's Bottom constraint a
+		//	less-than-required Priority to allow auto-layout to "break" it
+		let bc = label.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -8.0)
+		bc.priority = .defaultHigh
+
+		NSLayoutConstraint.activate([
+			bc,
+		])
+	}
+	
+}
+class dPriorityVC: DemoBaseVC {
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		// again, we give the label's Bottom constraint a
+		//	less-than-required Priority to allow auto-layout to "break" it
+		let bc = label.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -8.0)
+		bc.priority = .defaultHigh
+		
+		NSLayoutConstraint.activate([
+			bc,
+		])
+		
+		// now set clipsToBounds on the container view
+		//	so it will "hide" the label
+		containerView.clipsToBounds = true
+	}
+	
+}
+
+
+class xPriorityVC: UIViewController {
+	
+	let containerView: UIView = {
+		let v = UIView()
+		v.backgroundColor = .systemYellow
+		return v
+	}()
+	let label: UILabel = {
+		let v = UILabel()
+		v.backgroundColor = UIColor(red: 0.75, green: 0.9, blue: 1.0, alpha: 1.0)
+		//v.textAlignment = .center
+		v.numberOfLines = 0
+		v.font = .systemFont(ofSize: 20.0, weight: .light)
+		v.text = "We want to animate compressing the yellow \"container\" view vertically, without it squeezing or moving this blue label. Let's use enough text to this label will be tall enough to demonstrate the issue."
+		return v
+	}()
+	
+	var cHeight: NSLayoutConstraint!
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		containerView.addSubview(label)
+		view.addSubview(containerView)
+		
+		containerView.translatesAutoresizingMaskIntoConstraints = false
+		label.translatesAutoresizingMaskIntoConstraints = false
+		
+		let g = view.safeAreaLayoutGuide
+		
+		// we will toggle .isActive on this constraint to animate the height
+		//	of the container view
+		cHeight = containerView.heightAnchor.constraint(equalToConstant: 0.0)
+		
+		// we give the label's Bottom constraint a less-than-required Priority
+		//	to allow auto-layout to "break" it
+		let bc = label.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -8.0)
+		bc.priority = .defaultHigh
+		
+		NSLayoutConstraint.activate([
+			
+			label.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8.0),
+			label.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8.0),
+			label.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8.0),
+			//label.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -8.0),
+			bc,
+
+			containerView.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
+			containerView.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 60.0),
+			containerView.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -60.0),
+			
+		])
+		
+		containerView.clipsToBounds = true
+	}
+	
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		cHeight.isActive = !cHeight.isActive
+		UIView.animate(withDuration: 1.0, animations: {
+			self.view.layoutIfNeeded()
+		})
+	}
+	
 }

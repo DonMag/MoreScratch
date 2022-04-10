@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="9nP-SR-jZT">
-    <device id="retina4_7" orientation="portrait" appearance="light"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="hgh-aX-G45">
+    <device id="retina3_5" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -13,11 +14,11 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="PeerSupportVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="5Pg-uZ-o6r">
-                                <rect key="frame" x="40" y="40" width="295" height="587"/>
+                                <rect key="frame" x="40" y="40" width="240" height="400"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
                         </subviews>
@@ -43,7 +44,7 @@
             <objects>
                 <viewController id="QRM-Qr-kMD" customClass="ExampleVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ZRB-TM-kdI">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="tyI-oq-O88"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -53,12 +54,12 @@
             </objects>
             <point key="canvasLocation" x="681" y="98"/>
         </scene>
-        <!--Shadow PathVC-->
+        <!--Stack AnimVC-->
         <scene sceneID="QbF-BI-Ku7">
             <objects>
-                <viewController id="ffJ-7O-g2m" customClass="ShadowPathVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="ffJ-7O-g2m" customClass="StackAnimVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="pkg-Ug-vJL">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="Spw-HF-3IZ"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -73,19 +74,19 @@
             <objects>
                 <tableViewController id="9nP-SR-jZT" customClass="FloraTableVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="qD3-gi-9AR">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="zw5-TA-PrX" imageView="thW-n0-mtF" style="IBUITableViewCellStyleDefault" id="gIg-Vg-Si3">
-                                <rect key="frame" x="0.0" y="44.5" width="375" height="43.5"/>
+                                <rect key="frame" x="0.0" y="44.5" width="320" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="gIg-Vg-Si3" id="Arv-PX-f9B">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="zw5-TA-PrX">
-                                            <rect key="frame" x="75" y="0.0" width="284" height="43.5"/>
+                                            <rect key="frame" x="75" y="0.0" width="229" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="0.0"/>
                                             <nil key="textColor"/>
@@ -107,14 +108,14 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="y4x-CR-usa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="12" y="901"/>
+            <point key="canvasLocation" x="-148" y="806"/>
         </scene>
-        <!--Main View TestVC-->
+        <!--Page View Controller-->
         <scene sceneID="k7v-Wi-YPB">
             <objects>
-                <viewController id="uEQ-6T-i1d" customClass="MainViewTestVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="uEQ-6T-i1d" customClass="PageViewController" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="fpC-9u-fga">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="XNw-XP-0jx"/>
                         <color key="backgroundColor" systemColor="systemYellowColor"/>
@@ -129,7 +130,7 @@
             <objects>
                 <viewController storyboardIdentifier="didStart" id="fNR-oc-u7t" customClass="MenuVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="x61-2W-Euq">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="a2z-Td-l0f"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -142,29 +143,155 @@
             </objects>
             <point key="canvasLocation" x="113" y="1512"/>
         </scene>
+        <!--View InT ViewVC-->
+        <scene sceneID="GNb-Pe-8yc">
+            <objects>
+                <tableViewController id="Y4z-S9-3Kn" customClass="CViewInTViewVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="7pP-2i-8vT">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="CollectionTableViewCell" rowHeight="218" id="kex-ig-fd8" customClass="CollectionTableViewCell" customModule="MoreScratch" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="44.5" width="320" height="218"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="kex-ig-fd8" id="Pta-55-dgK">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="218"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="biH-16-Vhn" customClass="IntrinsicHeightCollectionView" customModule="MoreScratch" customModuleProvider="target">
+                                            <rect key="frame" x="16" y="11" width="288" height="196"/>
+                                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" priority="1" constant="200" placeholder="YES" id="0xZ-Yw-hGV"/>
+                                            </constraints>
+                                            <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="o6u-wb-wyh">
+                                                <size key="itemSize" width="128" height="128"/>
+                                                <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                                <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                                <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                            </collectionViewFlowLayout>
+                                            <cells>
+                                                <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CollectionViewCell" id="vUs-jY-dv5" customClass="CollectionViewCell" customModule="MoreScratch" customModuleProvider="target">
+                                                    <rect key="frame" x="0.0" y="0.0" width="58" height="37"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="zcV-zt-3yX">
+                                                        <rect key="frame" x="0.0" y="0.0" width="58" height="37"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <subviews>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ouN-os-Ja2">
+                                                                <rect key="frame" x="8" y="8" width="42" height="21"/>
+                                                                <color key="backgroundColor" red="0.99942404029999998" green="0.98555368190000003" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                                <nil key="textColor"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                        </subviews>
+                                                        <constraints>
+                                                            <constraint firstAttribute="trailingMargin" secondItem="ouN-os-Ja2" secondAttribute="trailing" id="BLM-rc-dBX"/>
+                                                            <constraint firstItem="ouN-os-Ja2" firstAttribute="top" secondItem="zcV-zt-3yX" secondAttribute="topMargin" id="CyU-v0-jve"/>
+                                                            <constraint firstAttribute="bottomMargin" secondItem="ouN-os-Ja2" secondAttribute="bottom" id="hKL-Y0-w1C"/>
+                                                            <constraint firstItem="ouN-os-Ja2" firstAttribute="leading" secondItem="zcV-zt-3yX" secondAttribute="leadingMargin" id="iLj-qD-zVi"/>
+                                                        </constraints>
+                                                    </collectionViewCellContentView>
+                                                    <connections>
+                                                        <outlet property="theLabel" destination="ouN-os-Ja2" id="4uV-5c-X3j"/>
+                                                    </connections>
+                                                </collectionViewCell>
+                                            </cells>
+                                        </collectionView>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="biH-16-Vhn" firstAttribute="top" secondItem="Pta-55-dgK" secondAttribute="topMargin" id="GP2-ea-r1a"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="biH-16-Vhn" secondAttribute="bottom" id="LG0-3Y-c2O"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="biH-16-Vhn" secondAttribute="trailing" id="XTE-jt-cQN"/>
+                                        <constraint firstItem="biH-16-Vhn" firstAttribute="leading" secondItem="Pta-55-dgK" secondAttribute="leadingMargin" id="qnR-tE-Zdp"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="collectionView" destination="biH-16-Vhn" id="fFr-F7-Z6V"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="Y4z-S9-3Kn" id="Wkx-kM-1i2"/>
+                            <outlet property="delegate" destination="Y4z-S9-3Kn" id="XY9-Fz-X3W"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="OeR-gk-rJc"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="J4D-vY-qug" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1036" y="2407.6461769115444"/>
+        </scene>
+        <!--TableVC-->
+        <scene sceneID="rrC-sV-Vib">
+            <objects>
+                <tableViewController id="4UY-E7-5H3" customClass="ISTableVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="Lmo-Sf-58o">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="v2x-fV-zZx">
+                                <rect key="frame" x="0.0" y="44.5" width="320" height="43.5"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="v2x-fV-zZx" id="etg-gE-fvN">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="4UY-E7-5H3" id="mps-YE-Epb"/>
+                            <outlet property="delegate" destination="4UY-E7-5H3" id="mCz-aq-A3M"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="ZNL-dY-Ajn"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="DkF-mA-1Wk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="231" y="3194"/>
+        </scene>
+        <!--DemoVC-->
+        <scene sceneID="0ao-U7-gbe">
+            <objects>
+                <viewController id="hgh-aX-G45" customClass="DemoVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="TYS-Lr-XqH">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="y5l-zk-iKP"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="yn2-lb-QDH"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="tfS-R2-VHy" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="981" y="3100"/>
+        </scene>
         <!--Story Board ExampleVC-->
         <scene sceneID="JhD-zN-Da0">
             <objects>
                 <viewController id="iJR-zr-ko1" customClass="StoryBoardExampleVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5D9-sj-DGn">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8Ka-fa-V9U">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="toI-4D-DO1">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="100"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="100"/>
                                         <color key="backgroundColor" systemColor="systemYellowColor"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="100" id="jyW-Yt-jXN"/>
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LYx-JT-cZQ">
-                                        <rect key="frame" x="0.0" y="200" width="375" height="1330.5"/>
+                                        <rect key="frame" x="0.0" y="200" width="320" height="1554"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XFt-aa-bFL">
-                                                <rect key="frame" x="16" y="16" width="343" height="1298.5"/>
+                                                <rect key="frame" x="16" y="16" width="288" height="1522"/>
                                                 <string key="text">What is Lorem Ipsum?
 
 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
@@ -192,7 +319,7 @@ The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for t
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NX7-6B-eJz">
-                                        <rect key="frame" x="0.0" y="100" width="375" height="100"/>
+                                        <rect key="frame" x="0.0" y="100" width="320" height="100"/>
                                         <color key="backgroundColor" red="0.2323301435" green="0.80301553010000004" blue="0.38312712310000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="100" id="5QG-IG-vfZ"/>
@@ -236,7 +363,7 @@ The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for t
             <objects>
                 <viewController id="42C-up-bN0" customClass="NowPlayingVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="RmS-8R-ocq">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="KrN-oB-OiA"/>
                         <color key="backgroundColor" systemColor="systemYellowColor"/>
@@ -249,6 +376,24 @@ The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for t
                 <exit id="hSf-Ov-X4W" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="767" y="1512"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="Kjx-nQ-2UI">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="HAm-4C-8iJ" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="w52-dN-F7S">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="4UY-E7-5H3" kind="relationship" relationship="rootViewController" id="OzH-11-TEh"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="hQ5-kw-UgE" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="96.799999999999997" y="2407.6461769115444"/>
         </scene>
     </scenes>
     <resources>

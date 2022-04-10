@@ -17,6 +17,7 @@
 		FC8E10B327F4C41D00EEBC75 /* PopupView.xib in Resources */ = {isa = PBXBuildFile; fileRef = FC8E10B227F4C41D00EEBC75 /* PopupView.xib */; };
 		FC8E10B527F4C48600EEBC75 /* PopupTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8E10B427F4C48600EEBC75 /* PopupTestViewController.swift */; };
 		FC8E10D727F63C7F00EEBC75 /* Sizing.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC8E10D627F63C7F00EEBC75 /* Sizing.storyboard */; };
+		FC8E110A28006F0400EEBC75 /* ColViewXibCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FC8E110928006F0400EEBC75 /* ColViewXibCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		FC8E10B227F4C41D00EEBC75 /* PopupView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PopupView.xib; sourceTree = "<group>"; };
 		FC8E10B427F4C48600EEBC75 /* PopupTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupTestViewController.swift; sourceTree = "<group>"; };
 		FC8E10D627F63C7F00EEBC75 /* Sizing.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Sizing.storyboard; sourceTree = "<group>"; };
+		FC8E110928006F0400EEBC75 /* ColViewXibCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ColViewXibCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +74,7 @@
 				FC8E10D627F63C7F00EEBC75 /* Sizing.storyboard */,
 				7C947FCB27FE2C8B0051ABEB /* SampleData.swift */,
 				FC8E10B427F4C48600EEBC75 /* PopupTestViewController.swift */,
+				FC8E110928006F0400EEBC75 /* ColViewXibCell.xib */,
 				FC39559827E260D50060734C /* Assets.xcassets */,
 				FC39559A27E260D50060734C /* LaunchScreen.storyboard */,
 				FC39559D27E260D50060734C /* Info.plist */,
@@ -140,6 +143,7 @@
 				FC39559C27E260D50060734C /* LaunchScreen.storyboard in Resources */,
 				FC8E10D727F63C7F00EEBC75 /* Sizing.storyboard in Resources */,
 				FC8E10B327F4C41D00EEBC75 /* PopupView.xib in Resources */,
+				FC8E110A28006F0400EEBC75 /* ColViewXibCell.xib in Resources */,
 				FC39559927E260D50060734C /* Assets.xcassets in Resources */,
 				FC39559727E260D30060734C /* Main.storyboard in Resources */,
 			);
@@ -305,6 +309,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TD2383UF5W;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MoreScratch/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -332,6 +337,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TD2383UF5W;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MoreScratch/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
