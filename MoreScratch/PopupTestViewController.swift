@@ -3013,182 +3013,404 @@ class DemoVC: UIViewController {
 	
 }
 
-class DemoBaseVC: UIViewController {
-	
-	let containerView: UIView = {
-		let v = UIView()
-		v.backgroundColor = .systemYellow
-		return v
-	}()
+typealias DidSelectClosure = ((_ cell: UITableViewCell, _ collectionIndex: Int?) -> Void)
 
-	let label: UILabel = {
-		let v = UILabel()
-		v.backgroundColor = UIColor(red: 0.75, green: 0.9, blue: 1.0, alpha: 1.0)
-		v.numberOfLines = 0
-		v.font = .systemFont(ofSize: 20.0, weight: .light)
-		v.text = "We want to animate compressing the yellow \"container\" view vertically, without it squeezing or moving this blue label."
-		return v
-	}()
-	
-	// we will toggle .isActive on this constraint
-	//	to animate the height of the container view
-	var cHeight: NSLayoutConstraint!
+struct Task {
+	var name: String = ""
+}
+struct TaskList {
+	var name: String = ""
+	var tasks: [Task] = []
+}
+class TaskListViewController: UITableViewController {
+
+	var taskLists: [TaskList] = []
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		containerView.addSubview(label)
-		view.addSubview(containerView)
+		var aTaskList: TaskList!
 		
-		containerView.translatesAutoresizingMaskIntoConstraints = false
-		label.translatesAutoresizingMaskIntoConstraints = false
+		let sampleTaskNames: [[String]] = [
+			["January", "February", "March", "April", "May"],
+			["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"],
+			["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"],
+		]
+		for (i, a) in sampleTaskNames.enumerated() {
+			aTaskList = TaskList()
+			aTaskList.name = "Task List \(i)"
+			var someTasks: [Task] = []
+			a.forEach { str in
+				someTasks.append(Task(name: str))
+			}
+			aTaskList.tasks = someTasks
+			taskLists.append(aTaskList)
+		}
 		
-		let g = view.safeAreaLayoutGuide
-
-		// setup the container view height constraint, but don't activate it
-		cHeight = containerView.heightAnchor.constraint(equalToConstant: 0.0)
-		
-		NSLayoutConstraint.activate([
-			
-			label.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8.0),
-			label.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8.0),
-			label.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8.0),
-			
-			// we will set the label's bottom constraint in the sub-classes
-			//label.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -8.0),
-			
-			containerView.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
-			containerView.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 60.0),
-			containerView.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -60.0),
-			
-		])
-		
+		tableView.register(NewTableViewCell.self, forCellReuseIdentifier: "newCell")
 	}
 	
-	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-		cHeight.isActive = !cHeight.isActive
-		UIView.animate(withDuration: 1.0, animations: {
-			self.view.layoutIfNeeded()
-		})
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		return taskLists.count
 	}
-
+	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let c = tableView.dequeueReusableCell(withIdentifier: "newCell", for: indexPath) as! NewTableViewCell
+		
+		c.configure(with: taskLists[indexPath.row])
+		
+		c.didSelectClosure = {[weak self] tableCell, cIdx in
+			guard let self = self,
+				  let tableIdx = self.tableView.indexPath(for: tableCell),
+				  let collIdx = cIdx
+			else {
+				return
+			}
+			let thisTaskList = self.taskLists[tableIdx.row]
+			let selectedItem = thisTaskList.tasks[collIdx]
+			print("Selected item: \(selectedItem.name) from \(thisTaskList.name)")
+		}
+		
+		return c
+	}
 }
 
-class PriorityVC: DemoBaseVC {
-	// without adding a bottom constraint to the label
-	//	we never see the container view
+class NewTableViewCell: UITableViewCell {
+
+	let taskNameLabel = UILabel()
+	var tasksCollection: UICollectionView!
+	
+	var didSelectClosure: DidSelectClosure?
+	
+	var taskList: TaskList = TaskList()
+	
+	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+		super.init(style: style, reuseIdentifier: reuseIdentifier)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	func commonInit() {
+		
+		let fl = UICollectionViewFlowLayout()
+		fl.scrollDirection = .horizontal
+		tasksCollection = UICollectionView(frame: .zero, collectionViewLayout: fl)
+		fl.estimatedItemSize = CGSize(width: 120, height: 60)
+
+		taskNameLabel.translatesAutoresizingMaskIntoConstraints = false
+		contentView.addSubview(taskNameLabel)
+
+		tasksCollection.translatesAutoresizingMaskIntoConstraints = false
+		contentView.addSubview(tasksCollection)
+
+		let g = contentView.layoutMarginsGuide
+		NSLayoutConstraint.activate([
+			taskNameLabel.topAnchor.constraint(equalTo: g.topAnchor),
+			taskNameLabel.leadingAnchor.constraint(equalTo: g.leadingAnchor),
+			taskNameLabel.trailingAnchor.constraint(equalTo: g.trailingAnchor),
+			
+			tasksCollection.topAnchor.constraint(equalTo: taskNameLabel.bottomAnchor, constant: 4.0),
+			tasksCollection.leadingAnchor.constraint(equalTo: g.leadingAnchor),
+			tasksCollection.trailingAnchor.constraint(equalTo: g.trailingAnchor),
+			tasksCollection.bottomAnchor.constraint(equalTo: g.bottomAnchor),
+			
+			tasksCollection.heightAnchor.constraint(equalToConstant: 80.0),
+		])
+		
+		tasksCollection.register(NewCollectionViewCell.self, forCellWithReuseIdentifier: "CollectionCell")
+		tasksCollection.dataSource = self
+		tasksCollection.delegate = self
+	}
+	func configure(with taskList: TaskList) {
+		taskNameLabel.text = taskList.name
+		self.taskList = taskList
+	}
 }
-class bPriorityVC: DemoBaseVC {
+
+extension NewTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
+	
+	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+		taskList.tasks.count == 0 ? 0 : taskList.tasks.count
+	}
+	
+	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CollectionCell", for: indexPath) as! NewCollectionViewCell
+		
+		if taskList.tasks.count != 0 {
+			cell.taskNameLabel.text = taskList.tasks[indexPath.row].name
+		}
+		cell.backgroundColor = UIColor(ciColor: CIColor(red: 147/255, green: 211/255, blue: 4/255, alpha: 0.4))
+		cell.layer.cornerRadius = 20
+		
+		return cell
+	}
+	
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		didSelectClosure?(self, indexPath.item)
+	}
+	
+}
+class NewCollectionViewCell: UICollectionViewCell {
+	let taskNameLabel = UILabel()
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	func commonInit() {
+		taskNameLabel.translatesAutoresizingMaskIntoConstraints = false
+		contentView.addSubview(taskNameLabel)
+		let g = contentView.layoutMarginsGuide
+		NSLayoutConstraint.activate([
+			taskNameLabel.topAnchor.constraint(equalTo: g.topAnchor),
+			taskNameLabel.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 32.0),
+			taskNameLabel.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -32.0),
+			taskNameLabel.bottomAnchor.constraint(equalTo: g.bottomAnchor),
+			taskNameLabel.heightAnchor.constraint(equalToConstant: 40.0),
+		])
+	}
+	func configure(with task: Task) {
+		taskNameLabel.text = task.name
+	}
+}
+
+struct SortingSection {
+	var title: String = ""
+	var subtitle: String = ""
+	var options: [String] = []
+	var isOpened: Bool = false
+}
+class ExpandCell: UITableViewCell {
+	let titleLabel = UILabel()
+	let subtitleLabel = UILabel()
+	let chevronImageView = UIImageView()
+	
+	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+		super.init(style: style, reuseIdentifier: reuseIdentifier)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	func commonInit() {
+		
+		titleLabel.translatesAutoresizingMaskIntoConstraints = false
+		contentView.addSubview(titleLabel)
+		
+		subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
+		contentView.addSubview(subtitleLabel)
+		
+		chevronImageView.translatesAutoresizingMaskIntoConstraints = false
+		contentView.addSubview(chevronImageView)
+		
+		let g = contentView.layoutMarginsGuide
+		NSLayoutConstraint.activate([
+			titleLabel.topAnchor.constraint(equalTo: g.topAnchor),
+			titleLabel.leadingAnchor.constraint(equalTo: g.leadingAnchor),
+			
+			subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4.0),
+			subtitleLabel.leadingAnchor.constraint(equalTo: g.leadingAnchor),
+			
+			chevronImageView.trailingAnchor.constraint(equalTo: g.trailingAnchor),
+			chevronImageView.widthAnchor.constraint(equalToConstant: 40.0),
+			chevronImageView.heightAnchor.constraint(equalTo: chevronImageView.widthAnchor),
+			chevronImageView.centerYAnchor.constraint(equalTo: g.centerYAnchor),
+			
+			subtitleLabel.bottomAnchor.constraint(equalTo: g.bottomAnchor),
+			
+		])
+	
+		subtitleLabel.font = .systemFont(ofSize: 12.0, weight: .regular)
+		subtitleLabel.textColor = .gray
+		
+		chevronImageView.contentMode = .center
+		let cfg = UIImage.SymbolConfiguration(pointSize: 24.0, weight: .regular)
+		if let img = UIImage(systemName: "chevron.right", withConfiguration: cfg) {
+			chevronImageView.image = img
+		}
+		
+	}
+}
+class SubCell: UITableViewCell {
+	
+	let titleLabel = UILabel()
+	
+	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+		super.init(style: style, reuseIdentifier: reuseIdentifier)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	func commonInit() {
+		
+		titleLabel.translatesAutoresizingMaskIntoConstraints = false
+		contentView.addSubview(titleLabel)
+		
+		let g = contentView.layoutMarginsGuide
+		NSLayoutConstraint.activate([
+			titleLabel.topAnchor.constraint(equalTo: g.topAnchor),
+			titleLabel.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+			titleLabel.bottomAnchor.constraint(equalTo: g.bottomAnchor),
+		])
+		
+		titleLabel.font = .italicSystemFont(ofSize: 15.0)
+		
+	}
+}
+
+class ExpandSectionTableViewController: UITableViewController {
+	
+	var sections: [SortingSection] = []
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		// adding a "normal" bottom anchor
-		NSLayoutConstraint.activate([
-			label.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -8.0),
-		])
+		let optCounts: [Int] = [
+			2, 3, 2, 5, 4, 2, 2, 3, 3, 4, 2, 1, 2, 3, 4, 3, 2
+		]
+		for (i, val) in optCounts.enumerated() {
+			var opts: [String] = []
+			for n in 1...val {
+				opts.append("Section \(i) - Option \(n)")
+			}
+			sections.append(SortingSection(title: "Title \(i)", subtitle: "Subtitle \(i)", options: opts, isOpened: false))
+		}
+		
+		tableView.register(ExpandCell.self, forCellReuseIdentifier: "expCell")
+		tableView.register(SubCell.self, forCellReuseIdentifier: "subCell")
+	}
+	override func numberOfSections(in tableView: UITableView) -> Int {
+		return sections.count * 2
+	}
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		
+		let virtualSection: Int = section / 2
+		let secItem = sections[virtualSection]
+		if section % 2 == 0 {
+			return 1
+		}
+		if secItem.isOpened {
+			return secItem.options.count
+		}
+		return 0
+
+	}
+	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+
+		let virtualSection: Int = indexPath.section / 2
+		let secItem = sections[virtualSection]
+		if indexPath.section % 2 == 0 {
+			let c = tableView.dequeueReusableCell(withIdentifier: "expCell", for: indexPath) as! ExpandCell
+			c.titleLabel.text = secItem.title
+			c.subtitleLabel.text = secItem.subtitle
+			c.chevronImageView.transform = secItem.isOpened ? CGAffineTransform(rotationAngle: .pi/2) : .identity
+			c.selectionStyle = .none
+			return c
+		}
+		let c = tableView.dequeueReusableCell(withIdentifier: "subCell", for: indexPath) as! SubCell
+		c.titleLabel.text = secItem.options[indexPath.row]
+		return c
+
+	}
+	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
+		let virtualSection: Int = indexPath.section / 2
+		// if it's a "header row"
+		if indexPath.section % 2 == 0 {
+			sections[virtualSection].isOpened.toggle()
+			guard let c = tableView.cellForRow(at: indexPath) as? ExpandCell else { return }
+			UIView.animate(withDuration: 0.3) {
+				if self.sections[virtualSection].isOpened {
+					c.chevronImageView.transform = CGAffineTransform(rotationAngle: .pi/2)
+				} else {
+					c.chevronImageView.transform = .identity
+				}
+				// reload the NEXT section
+				tableView.reloadSections([indexPath.section + 1], with: .automatic)
+			}
+		}
+
 	}
 	
 }
-class cPriorityVC: DemoBaseVC {
+
+struct MySortingSection {
+	var isHeader: Bool = false
+	var sectionData: SortingSection = SortingSection()
+}
+
+class xExpandSectionTableViewController: UITableViewController {
+
+	var mySections: [MySortingSection] = []
+	var sections: [SortingSection] = []
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		// this time, we give the label's Bottom constraint a
-		//	less-than-required Priority to allow auto-layout to "break" it
-		let bc = label.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -8.0)
-		bc.priority = .defaultHigh
-
-		NSLayoutConstraint.activate([
-			bc,
-		])
+		for i in 0..<5 {
+			let opts: [String] = [
+				"Option \(i) - 1",
+				"Option \(i) - 2",
+			]
+			sections.append(SortingSection(title: "Title \(i)", subtitle: "Subtitle \(i)", options: opts))
+		}
+		sections.forEach { s in
+			mySections.append(MySortingSection(isHeader: true, sectionData: s))
+			mySections.append(MySortingSection(isHeader: false, sectionData: s))
+		}
+		
+		tableView.register(ExpandCell.self, forCellReuseIdentifier: "expCell")
+		tableView.register(SubCell.self, forCellReuseIdentifier: "subCell")
 	}
-	
+	override func numberOfSections(in tableView: UITableView) -> Int {
+		return mySections.count
+	}
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		if mySections[section].isHeader {
+			return 1
+		}
+		if mySections[section].sectionData.isOpened {
+			return mySections[section].sectionData.options.count
+		}
+		return 0
+	}
+	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let sec = mySections[indexPath.section]
+		if sec.isHeader {
+			let c = tableView.dequeueReusableCell(withIdentifier: "expCell", for: indexPath) as! ExpandCell
+			c.titleLabel.text = sec.sectionData.title
+			c.subtitleLabel.text = sec.sectionData.subtitle
+			c.chevronImageView.transform = sec.sectionData.isOpened ? CGAffineTransform(rotationAngle: .pi/2) : .identity
+			return c
+		}
+		let c = tableView.dequeueReusableCell(withIdentifier: "subCell", for: indexPath) as! SubCell
+		c.titleLabel.text = sec.sectionData.options[indexPath.row]
+		return c
+	}
+	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		let sec = mySections[indexPath.section]
+		if sec.isHeader {
+			mySections[indexPath.section].sectionData.isOpened.toggle()
+			mySections[indexPath.section + 1].sectionData.isOpened.toggle()
+
+			guard let c = tableView.cellForRow(at: indexPath) as? ExpandCell else { return }
+
+			UIView.animate(withDuration: 0.3) {
+				if self.mySections[indexPath.section].sectionData.isOpened {
+					c.chevronImageView.transform = CGAffineTransform(rotationAngle: .pi/2)
+				} else {
+					c.chevronImageView.transform = .identity
+				}
+				tableView.reloadSections([indexPath.section + 1], with: .automatic)
+			}
+		}
+	}
 }
-class dPriorityVC: DemoBaseVC {
-	
-	override func viewDidLoad() {
-		super.viewDidLoad()
-		
-		// again, we give the label's Bottom constraint a
-		//	less-than-required Priority to allow auto-layout to "break" it
-		let bc = label.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -8.0)
-		bc.priority = .defaultHigh
-		
-		NSLayoutConstraint.activate([
-			bc,
-		])
-		
-		// now set clipsToBounds on the container view
-		//	so it will "hide" the label
-		containerView.clipsToBounds = true
-	}
-	
-}
 
-
-class xPriorityVC: UIViewController {
-	
-	let containerView: UIView = {
-		let v = UIView()
-		v.backgroundColor = .systemYellow
-		return v
-	}()
-	let label: UILabel = {
-		let v = UILabel()
-		v.backgroundColor = UIColor(red: 0.75, green: 0.9, blue: 1.0, alpha: 1.0)
-		//v.textAlignment = .center
-		v.numberOfLines = 0
-		v.font = .systemFont(ofSize: 20.0, weight: .light)
-		v.text = "We want to animate compressing the yellow \"container\" view vertically, without it squeezing or moving this blue label. Let's use enough text to this label will be tall enough to demonstrate the issue."
-		return v
-	}()
-	
-	var cHeight: NSLayoutConstraint!
-	
-	override func viewDidLoad() {
-		super.viewDidLoad()
-		
-		containerView.addSubview(label)
-		view.addSubview(containerView)
-		
-		containerView.translatesAutoresizingMaskIntoConstraints = false
-		label.translatesAutoresizingMaskIntoConstraints = false
-		
-		let g = view.safeAreaLayoutGuide
-		
-		// we will toggle .isActive on this constraint to animate the height
-		//	of the container view
-		cHeight = containerView.heightAnchor.constraint(equalToConstant: 0.0)
-		
-		// we give the label's Bottom constraint a less-than-required Priority
-		//	to allow auto-layout to "break" it
-		let bc = label.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -8.0)
-		bc.priority = .defaultHigh
-		
-		NSLayoutConstraint.activate([
-			
-			label.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8.0),
-			label.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8.0),
-			label.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8.0),
-			//label.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -8.0),
-			bc,
-
-			containerView.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
-			containerView.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 60.0),
-			containerView.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -60.0),
-			
-		])
-		
-		containerView.clipsToBounds = true
-	}
-	
-	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-		cHeight.isActive = !cHeight.isActive
-		UIView.animate(withDuration: 1.0, animations: {
-			self.view.layoutIfNeeded()
-		})
-	}
-	
-}
