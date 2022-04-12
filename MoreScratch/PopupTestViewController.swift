@@ -3013,6 +3013,62 @@ class DemoVC: UIViewController {
 	
 }
 
+class SomeView: UIView {
+
+	var focusImageView: UIImageView!
+
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		setupImageViews()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		setupImageViews()
+	}
+	private func setupImageViews() {
+		
+		focusImageView = UIImageView()
+		//focusImageView.image = UIImage(named: "scan_qr_focus")
+		focusImageView.image = UIImage(named: "testing.a")
+		focusImageView.backgroundColor = .cyan
+		addSubview(focusImageView)
+		focusImageView.translatesAutoresizingMaskIntoConstraints = false
+		
+//		// can't set Top equal to a percentage of Height, so use a Layout Guide
+//		let g = UILayoutGuide()
+//		addLayoutGuide(g)
+//		NSLayoutConstraint.activate([
+//			g.topAnchor.constraint(equalTo: topAnchor),
+//			g.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.191),
+//
+//			focusImageView.topAnchor.constraint(equalTo: g.bottomAnchor),
+//			focusImageView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.5),
+//			focusImageView.heightAnchor.constraint(equalTo: focusImageView.widthAnchor),
+//			focusImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
+//		])
+
+		// can't set Top equal to a percentage of Height, so use a Layout Guide
+		let c = NSLayoutConstraint(item: focusImageView as Any,
+								   attribute: .top,
+								   relatedBy: .equal,
+								   toItem: self,
+								   attribute: .bottom,
+								   multiplier: 0.191,
+								   constant: 0.0)
+		
+		NSLayoutConstraint.activate([
+//			focusImageView.topAnchor.constraint(equalTo: g.bottomAnchor),
+			focusImageView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.5),
+			focusImageView.heightAnchor.constraint(equalTo: focusImageView.widthAnchor),
+			focusImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
+			
+			c,
+		])
+
+	}
+	
+}
+
 typealias DidSelectClosure = ((_ cell: UITableViewCell, _ collectionIndex: Int?) -> Void)
 
 struct Task {
@@ -3414,3 +3470,54 @@ class xExpandSectionTableViewController: UITableViewController {
 	}
 }
 
+struct User: Codable {
+//	let userID: String
+//	let idNumber: String
+	let firstName: String
+	let middleName: String?
+//	let lastName: String
+//	let emailAddress: String
+//	let mobileNumber: String
+//	let landline: String?
+}
+
+class CheckOutletsVC: UIViewController {
+
+	@IBOutlet var button: UIButton!
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		let v = UIView()
+		v.backgroundColor = .red
+		button.configuration?.background.customView = v
+		
+	}
+	
+	@IBAction func buttonTouched(_ sender: UIButton) {
+		if let v = sender.configuration?.background.customView {
+			UIView.animate(withDuration: 0.4, delay: 0.5) {
+				v.backgroundColor = v.backgroundColor == .red ? .systemMint : .red
+			}
+		}
+	}
+}
+class ProfileViewController: UIViewController {
+	
+	@IBOutlet weak var fullNameLabel: UILabel!
+
+	var user: User!
+
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		if fullNameLabel == nil { fatalError("@IBOutlet fullNameLabel is not connected !!!!") }
+//		if fullNameLabel == nil {
+//			// crash with message to debug console
+//			fatalError("@IBOutlet fullNameLabel is not connected !!!!")
+//		}
+		
+		self.fullNameLabel.text = self.user.firstName
+		
+	}
+}
