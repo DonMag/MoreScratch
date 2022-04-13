@@ -10,6 +10,7 @@
 		7C947FCC27FE2C8B0051ABEB /* SampleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C947FCB27FE2C8B0051ABEB /* SampleData.swift */; };
 		7C947FCE2805F4600051ABEB /* StretchyHeaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C947FCD2805F4600051ABEB /* StretchyHeaderViewController.swift */; };
 		7C947FD02805FB930051ABEB /* Temp.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7C947FCF2805FB930051ABEB /* Temp.storyboard */; };
+		7C947FD22806F1070051ABEB /* MapPreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C947FD12806F1070051ABEB /* MapPreviewViewController.swift */; };
 		FC39559027E260D30060734C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC39558F27E260D30060734C /* AppDelegate.swift */; };
 		FC39559227E260D30060734C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC39559127E260D30060734C /* SceneDelegate.swift */; };
 		FC39559427E260D30060734C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC39559327E260D30060734C /* ViewController.swift */; };
@@ -26,6 +27,7 @@
 		7C947FCB27FE2C8B0051ABEB /* SampleData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SampleData.swift; sourceTree = "<group>"; };
 		7C947FCD2805F4600051ABEB /* StretchyHeaderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StretchyHeaderViewController.swift; sourceTree = "<group>"; };
 		7C947FCF2805FB930051ABEB /* Temp.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Temp.storyboard; sourceTree = "<group>"; };
+		7C947FD12806F1070051ABEB /* MapPreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPreviewViewController.swift; sourceTree = "<group>"; };
 		FC39558C27E260D30060734C /* MoreScratch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MoreScratch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC39558F27E260D30060734C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FC39559127E260D30060734C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -81,6 +83,7 @@
 				FC8E110928006F0400EEBC75 /* ColViewXibCell.xib */,
 				7C947FCD2805F4600051ABEB /* StretchyHeaderViewController.swift */,
 				7C947FCF2805FB930051ABEB /* Temp.storyboard */,
+				7C947FD12806F1070051ABEB /* MapPreviewViewController.swift */,
 				FC39559827E260D50060734C /* Assets.xcassets */,
 				FC39559A27E260D50060734C /* LaunchScreen.storyboard */,
 				FC39559D27E260D50060734C /* Info.plist */,
@@ -165,6 +168,7 @@
 			files = (
 				FC39559427E260D30060734C /* ViewController.swift in Sources */,
 				FC39559027E260D30060734C /* AppDelegate.swift in Sources */,
+				7C947FD22806F1070051ABEB /* MapPreviewViewController.swift in Sources */,
 				FC39559227E260D30060734C /* SceneDelegate.swift in Sources */,
 				7C947FCE2805F4600051ABEB /* StretchyHeaderViewController.swift in Sources */,
 				7C947FCC27FE2C8B0051ABEB /* SampleData.swift in Sources */,
