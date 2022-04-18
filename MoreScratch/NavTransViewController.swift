@@ -19,6 +19,7 @@ class NavTransViewController: UIViewController {
 
 // Custom Navigation Transition
 //	from: https://ordinarycoding.com/articles/simple-custom-uinavigationcontroller-transitions/
+/*
 final class TransitionAnimator: NSObject, UIViewControllerAnimatedTransitioning {
 	// 1
 	let presenting: Bool
@@ -82,6 +83,83 @@ final class TransitionAnimator: NSObject, UIViewControllerAnimatedTransitioning 
 		})
 	}
 }
+*/
+
+// Custom Navigation Transition
+//	from: https://ordinarycoding.com/articles/simple-custom-uinavigationcontroller-transitions/
+//
+final class TransitionAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+	// 1
+	let presenting: Bool
+	let fade: Bool
+	let overlap: Bool
+	
+	// 2
+	init(presenting: Bool, fade: Bool, overlap: Bool) {
+		self.presenting = presenting
+		self.fade = fade
+		self.overlap = overlap
+	}
+	
+	func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
+		// 3
+		return TimeInterval(UINavigationController.hideShowBarDuration)
+	}
+	
+	func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+		// 4
+		guard let fromView = transitionContext.view(forKey: .from) else { return }
+		guard let toView = transitionContext.view(forKey: .to) else { return }
+		
+		// 5
+		let duration = transitionDuration(using: transitionContext)
+		
+		// 6
+		let container = transitionContext.containerView
+		if presenting {
+			container.addSubview(toView)
+		} else {
+			container.insertSubview(toView, belowSubview: fromView)
+		}
+		
+		// 7
+		let toViewFrame = toView.frame
+		toView.frame = CGRect(x: presenting ? toView.frame.width : -toView.frame.width * (self.overlap ? 0.5 : 1.0), y: toView.frame.origin.y, width: toView.frame.width, height: toView.frame.height)
+		
+		let animations = {
+			UIView.addKeyframe(withRelativeStartTime: 0.0, relativeDuration: 0.5) {
+				toView.alpha = 1
+				if self.presenting {
+					if self.fade {
+						fromView.alpha = 0
+					}
+				}
+			}
+			
+			UIView.addKeyframe(withRelativeStartTime: 0.0, relativeDuration: 1) {
+				toView.frame = toViewFrame
+				fromView.frame = CGRect(x: self.presenting ? -fromView.frame.width * (self.overlap ? 0.5 : 1.0) : fromView.frame.width, y: fromView.frame.origin.y, width: fromView.frame.width, height: fromView.frame.height)
+				if !self.presenting {
+					if self.fade {
+						fromView.alpha = 0
+					}
+				}
+			}
+			
+		}
+		
+		UIView.animateKeyframes(withDuration: duration,
+								delay: 0,
+								options: .calculationModeCubic,
+								animations: animations,
+								completion: { finished in
+			// 8
+			container.addSubview(toView)
+			transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+		})
+	}
+}
+
 
 final class TransitionCoordinator: NSObject, UINavigationControllerDelegate {
 	// 1
@@ -91,9 +169,9 @@ final class TransitionCoordinator: NSObject, UINavigationControllerDelegate {
 	func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
 		switch operation {
 		case .push:
-			return TransitionAnimator(presenting: true)
+			return TransitionAnimator(presenting: true, fade: false, overlap: true)
 		case .pop:
-			return TransitionAnimator(presenting: false)
+			return TransitionAnimator(presenting: false, fade: false, overlap: true)
 		default:
 			return nil
 		}
@@ -313,7 +391,44 @@ class Page2VC: PageBaseVC {
 		labels.forEach { v in
 			v.backgroundColor = .systemRed
 		}
+		let scrollView = UIScrollView()
+		let image = UIImageView()
+		let label = UILabel()
+		let button = UIButton()
 		
+		NSLayoutConstraint.activate([
+			scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+			scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+			scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+			scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+
+			image.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+			
+			image.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+			image.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
+			image.heightAnchor.constraint(equalToConstant: 100),
+			
+			// make the image view the Width of the scroll view
+			image.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
+			
+			label.topAnchor.constraint(equalTo: image.bottomAnchor),
+			label.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+			label.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
+			label.heightAnchor.constraint(equalToConstant: 1000),
+
+			// make the label the Width of the scroll view
+			label.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
+
+			button.topAnchor.constraint(equalTo: label.bottomAnchor),
+			button.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+			button.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
+
+			// make the button the Width of the scroll view
+			button.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
+			
+			button.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor)
+			
+		])
 	}
 	
 }

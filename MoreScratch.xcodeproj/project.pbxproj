@@ -25,6 +25,7 @@
 		FCD4E32028085EB200808073 /* NavTransViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCD4E31F28085EB200808073 /* NavTransViewController.swift */; };
 		FCD4E3222808709000808073 /* 20x45-Model.pdf in Resources */ = {isa = PBXBuildFile; fileRef = FCD4E3212808709000808073 /* 20x45-Model.pdf */; };
 		FCD4E3242808800E00808073 /* us-states-map.pdf in Resources */ = {isa = PBXBuildFile; fileRef = FCD4E3232808800E00808073 /* us-states-map.pdf */; };
+		FCD4E34C280C550800808073 /* TableStuffViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCD4E34B280C550800808073 /* TableStuffViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +49,7 @@
 		FCD4E31F28085EB200808073 /* NavTransViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavTransViewController.swift; sourceTree = "<group>"; };
 		FCD4E3212808709000808073 /* 20x45-Model.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "20x45-Model.pdf"; sourceTree = "<group>"; };
 		FCD4E3232808800E00808073 /* us-states-map.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "us-states-map.pdf"; sourceTree = "<group>"; };
+		FCD4E34B280C550800808073 /* TableStuffViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableStuffViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +96,7 @@
 				7C947FCF2805FB930051ABEB /* Temp.storyboard */,
 				7C947FD12806F1070051ABEB /* MapPreviewViewController.swift */,
 				FCD4E31F28085EB200808073 /* NavTransViewController.swift */,
+				FCD4E34B280C550800808073 /* TableStuffViewController.swift */,
 				FCD4E3212808709000808073 /* 20x45-Model.pdf */,
 				FCD4E3232808800E00808073 /* us-states-map.pdf */,
 				FC39559827E260D50060734C /* Assets.xcassets */,
@@ -188,6 +191,7 @@
 				7C947FCE2805F4600051ABEB /* StretchyHeaderViewController.swift in Sources */,
 				FCD4E32028085EB200808073 /* NavTransViewController.swift in Sources */,
 				7C947FCC27FE2C8B0051ABEB /* SampleData.swift in Sources */,
+				FCD4E34C280C550800808073 /* TableStuffViewController.swift in Sources */,
 				FC8E10B527F4C48600EEBC75 /* PopupTestViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

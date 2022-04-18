@@ -1089,17 +1089,25 @@ class SFVC: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		guard let img = UIImage(named: "ex1") else { return }
-		
-		var d = img.jpegData(compressionQuality: 1.0)
-		print(d?.count)
-		d = img.jpegData(compressionQuality: 1)
-		print(d?.count)
-		d = img.jpegData(compressionQuality: 0.9)
-		print(d?.count)
-		d = img.jpegData(compressionQuality: 0.8)
-		print(d?.count)
+//		guard let img = UIImage(named: "ex1") else { return }
+//		
+//		var d = img.jpegData(compressionQuality: 1.0)
+//		print(d?.count)
+//		d = img.jpegData(compressionQuality: 1)
+//		print(d?.count)
+//		d = img.jpegData(compressionQuality: 0.9)
+//		print(d?.count)
+//		d = img.jpegData(compressionQuality: 0.8)
+//		print(d?.count)
 
 	}
 	
+}
+
+class NavTestVC: UIViewController {
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		navigationController?.addCustomTransitioning()
+	}
 }

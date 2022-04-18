@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="4gs-xT-BVu">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="NYk-0g-HPE">
     <device id="retina4_0" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
@@ -404,28 +404,40 @@ The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for t
             </objects>
             <point key="canvasLocation" x="767" y="1512"/>
         </scene>
-        <!--View Controller-->
+        <!--Nav TestVC-->
         <scene sceneID="uxp-Yq-Wxu">
             <objects>
-                <viewController id="ZzV-Nb-DZP" sceneMemberID="viewController">
+                <viewController id="ZzV-Nb-DZP" customClass="NavTestVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Auq-10-8Bx">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eTZ-Wa-7Fi">
                                 <rect key="frame" x="126.5" y="268.5" width="67" height="31"/>
-                                <color key="backgroundColor" red="0.96099077822030521" green="0.19709292352334573" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="Button"/>
                                 <connections>
-                                    <segue destination="NYk-0g-HPE" kind="show" id="EBG-iS-SB2"/>
+                                    <segue destination="4gs-xT-BVu" kind="show" id="Ahy-dK-iHQ"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="First VC" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B2u-Bt-eZu">
+                                <rect key="frame" x="0.0" y="119" width="320" height="80"/>
+                                <color key="backgroundColor" red="0.99953407049999998" green="0.98835557699999999" blue="0.47265523669999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="80" id="iCq-Gc-wzn"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="v4Q-vn-Nbr"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="B2u-Bt-eZu" firstAttribute="leading" secondItem="v4Q-vn-Nbr" secondAttribute="leading" id="43g-Jw-eas"/>
                             <constraint firstItem="eTZ-Wa-7Fi" firstAttribute="centerY" secondItem="Auq-10-8Bx" secondAttribute="centerY" id="Css-Lp-eeA"/>
+                            <constraint firstItem="B2u-Bt-eZu" firstAttribute="top" secondItem="v4Q-vn-Nbr" secondAttribute="top" constant="75" id="Dk7-jr-Grd"/>
+                            <constraint firstItem="v4Q-vn-Nbr" firstAttribute="trailing" secondItem="B2u-Bt-eZu" secondAttribute="trailing" id="MBQ-5I-eUX"/>
                             <constraint firstItem="eTZ-Wa-7Fi" firstAttribute="centerX" secondItem="Auq-10-8Bx" secondAttribute="centerX" id="i8F-MU-k41"/>
                         </constraints>
                     </view>
@@ -485,8 +497,25 @@ The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for t
                     <view key="view" contentMode="scaleToFill" id="VvG-TM-oyY">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Second VC" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LPe-dZ-XfU">
+                                <rect key="frame" x="0.0" y="144" width="320" height="80"/>
+                                <color key="backgroundColor" red="0.45138680930000002" green="0.99309605359999997" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="80" id="5jZ-oo-fCI"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="IZF-rz-2Yd"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="IZF-rz-2Yd" firstAttribute="trailing" secondItem="LPe-dZ-XfU" secondAttribute="trailing" id="Rrq-86-Jpi"/>
+                            <constraint firstItem="LPe-dZ-XfU" firstAttribute="top" secondItem="IZF-rz-2Yd" secondAttribute="top" constant="100" id="sNx-uU-atP"/>
+                            <constraint firstItem="LPe-dZ-XfU" firstAttribute="leading" secondItem="IZF-rz-2Yd" secondAttribute="leading" id="zWx-W2-QdP"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="h8I-uq-tVy"/>
                 </viewController>
@@ -494,15 +523,39 @@ The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for t
             </objects>
             <point key="canvasLocation" x="-915" y="2108"/>
         </scene>
-        <!--Stretchy Header View Controller-->
+        <!--Stack AnimVC-->
         <scene sceneID="66V-w5-dJk">
             <objects>
-                <viewController id="NYk-0g-HPE" customClass="StretchyHeaderViewController" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="NYk-0g-HPE" customClass="StackAnimVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Kgh-Pr-WeA">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FBE-ue-2Ya">
+                                <rect key="frame" x="80" y="518" width="160" height="30"/>
+                                <color key="backgroundColor" red="0.96099077820000001" green="0.19709292349999999" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" title="1"/>
+                                <connections>
+                                    <action selector="zahl:" destination="NYk-0g-HPE" eventType="touchUpInside" id="eFc-0N-DMe"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Fc-D4-dIB">
+                                <rect key="frame" x="25" y="487" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="p0q-Pd-eGr"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="FBE-ue-2Ya" firstAttribute="leading" secondItem="p0q-Pd-eGr" secondAttribute="leading" constant="80" id="Kdh-85-dtH"/>
+                            <constraint firstItem="p0q-Pd-eGr" firstAttribute="bottom" secondItem="1Fc-D4-dIB" secondAttribute="bottom" constant="60" id="Kg0-am-OfO"/>
+                            <constraint firstItem="1Fc-D4-dIB" firstAttribute="leading" secondItem="p0q-Pd-eGr" secondAttribute="leading" constant="25" id="kV6-pt-rAp"/>
+                            <constraint firstItem="p0q-Pd-eGr" firstAttribute="trailing" secondItem="FBE-ue-2Ya" secondAttribute="trailing" constant="80" id="kjd-I5-luD"/>
+                            <constraint firstItem="p0q-Pd-eGr" firstAttribute="bottom" secondItem="FBE-ue-2Ya" secondAttribute="bottom" constant="20" id="ph6-wc-rYQ"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="b3u-xu-SdU"/>
                 </viewController>

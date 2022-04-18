@@ -2418,7 +2418,11 @@ class StackAnimVC: UIViewController {
 		[headerLabel, innerStackContainer, threeLabel, footerLabel].forEach { v in
 			outerStackView.addArrangedSubview(v)
 		}
-		
+//		let cv = UIView()
+//		[headerLabel, innerStackContainer, cv].forEach { v in
+//			outerStackView.addArrangedSubview(v)
+//		}
+
 		// add an Animate button
 		let btn = UIButton(type: .system)
 		btn.setTitle("Animate", for: [])
@@ -2444,22 +2448,56 @@ class StackAnimVC: UIViewController {
 			outerStackView.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
 			
 			// put button near bottom
-			btn.bottomAnchor.constraint(equalTo: g.bottomAnchor, constant: -40.0),
+			btn.bottomAnchor.constraint(equalTo: g.bottomAnchor, constant: -80.0),
 			
 		])
+		
+//		let uv = UIView()
+//		uv.backgroundColor = .systemRed
+//		uv.translatesAutoresizingMaskIntoConstraints = false
+//		view.addSubview(uv)
+//		NSLayoutConstraint.activate([
+//			uv.topAnchor.constraint(equalTo: outerStackView.bottomAnchor),
+//			uv.centerXAnchor.constraint(equalTo: outerStackView.centerXAnchor),
+//			uv.widthAnchor.constraint(equalTo: outerStackView.widthAnchor, multiplier: 0.5),
+//			uv.heightAnchor.constraint(equalToConstant: 60),
+//		])
 		
 	}
 	
 	@objc func btnTap(_ sender: UIButton) {
 
-		UIView.animate(withDuration: 0.5) {
+		UIView.animate(withDuration: 01.5) {
 			
 			// toggle hidden and alpha on inner stack container
-			self.innerStackContainer.alpha = self.innerStackContainer.isHidden ? 1.0 : 0.0
+			//self.innerStackContainer.alpha = self.innerStackContainer.isHidden ? 1.0 : 0.0
 			self.innerStackContainer.isHidden.toggle()
 			
 		}
 		
+	}
+	
+	var nummerEintippen = false;
+	var ersteZahl = 0;
+	var letzteZahl = 0;
+	var operation = " "
+	let taschenrechnerLabel = UILabel()
+	
+	@IBAction func zahl(_ sender: UIButton) {
+		let number = sender.currentTitle
+		print(number)
+		
+		nummerEintippen = true
+		
+		
+		if nummerEintippen {
+			
+			taschenrechnerLabel.text = taschenrechnerLabel.text! + String(number!)
+		} else {
+			taschenrechnerLabel.text = number
+			nummerEintippen = true
+		}
+
 	}
 }
 
