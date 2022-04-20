@@ -136,6 +136,24 @@ class FollowPathViewController: UIViewController, UIScrollViewDelegate {
 		self.pathView.addPoint(newPT)
 		
 		if true {
+			
+			var r = CGRect(x: newPT.x - 20.0, y: newPT.y - 20.0, width: 40.0, height: 40.0)
+			r = r.applying(CGAffineTransform(scaleX: self.scrollView.zoomScale, y: self.scrollView.zoomScale))
+			
+			if true {
+				// let's slow down the animation a little
+				UIView.animate(withDuration: 0.5, delay: 0.0, options: [.curveEaseInOut], animations: {
+					self.scrollView.scrollRectToVisible(r, animated: false)
+				}, completion: nil)
+			} else {
+				self.scrollView.scrollRectToVisible(r, animated: false)
+			}
+
+		}
+		
+		return()
+		
+		if true {
 			// convert the point to a rect using scroll view's zoomScale
 			let sz: CGFloat = 40.0
 
