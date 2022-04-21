@@ -2711,6 +2711,113 @@ extension UIView {
 	}
 }
 
+class TextViewCapVC: UIViewController {
+	let textView = UITextView()
+	let resultLabel = UILabel()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		// add a stack view with buttons
+		let stack = UIStackView()
+		stack.axis = .vertical
+		stack.spacing = 12
+		
+		[1, 2, 5, 10].forEach { i in
+			let btn = UIButton()
+			btn.setTitle("Create Image at \(i)x scale", for: [])
+			btn.setTitleColor(.white, for: .normal)
+			btn.setTitleColor(.lightGray, for: .highlighted)
+			btn.backgroundColor = .systemBlue
+			btn.tag = i
+			btn.addTarget(self, action: #selector(gotTap(_:)), for: .touchUpInside)
+			stack.addArrangedSubview(btn)
+		}
+		
+		[textView, stack, resultLabel].forEach { v in
+			v.translatesAutoresizingMaskIntoConstraints = false
+			view.addSubview(v)
+		}
+		
+		let g = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			
+			// text view 280x240, 20-points from top, centered horizontally
+			textView.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
+			textView.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+			textView.widthAnchor.constraint(equalToConstant: 240.0),
+			textView.heightAnchor.constraint(equalToConstant: 160.0),
+			
+			// stack view, 20-points from text view, same width, centered horizontally
+			stack.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 20.0),
+			stack.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+			stack.widthAnchor.constraint(equalTo: textView.widthAnchor),
+			
+			// result label, 20-points from stack view
+			//	20-points from leading/trailing
+			resultLabel.topAnchor.constraint(equalTo: stack.bottomAnchor, constant: 20.0),
+			resultLabel.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+			resultLabel.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20.0),
+			
+		])
+		
+		let string = "Test String"
+		
+		let attributes: [NSAttributedString.Key: Any] = [
+			.foregroundColor: UIColor.blue,
+			.font: UIFont.italicSystemFont(ofSize: 60.0),
+		]
+		
+		let attributedString = NSMutableAttributedString(string: string, attributes: attributes)
+		textView.attributedText = attributedString
+		
+		resultLabel.font = .systemFont(ofSize: 14, weight: .light)
+		resultLabel.numberOfLines = 0
+		resultLabel.text = "Results:"
+		
+		// so we can see the view frames
+		textView.backgroundColor = .yellow
+		resultLabel.backgroundColor = .cyan
+		
+	}
+	
+	@objc func gotTap(_ sender: Any?) {
+		guard let btn = sender as? UIButton else { return }
+		
+		let scaleFactor = CGFloat(btn.tag)
+		
+		let img = textView.getImage(scale: scaleFactor)
+		
+		var s: String = "Results:\n\n"
+		
+		let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+		let fName: String = "\(btn.tag)xScale-\(img.size.width * img.scale)x\(img.size.height * img.scale).png"
+		let url = documents.appendingPathComponent(fName)
+		if let data = img.pngData() {
+			do {
+				try data.write(to: url)
+			} catch {
+				s += "Unable to Write Image Data to Disk"
+				resultLabel.text = s
+				return
+			}
+		} else {
+			s += "Could not get png data"
+			resultLabel.text = s
+			return
+		}
+		s += "Logical Size: \(img.size)\n\n"
+		s += "Scale: \(img.scale)\n\n"
+		s += "Actual Size: \(CGSize(width: img.size.width * img.scale, height: img.size.height * img.scale))\n\n"
+		s += "File \"\(fName)\"\n\nsaved to Documents folder\n"
+		resultLabel.text = s
+		
+		// print the path to documents in debug console
+		//	so we can copy/paste into Finder to get to the files
+		print(documents.path)
+	}
+}
+
 class ISLabel: UILabel {
 	var myID: Int = -1
 	
