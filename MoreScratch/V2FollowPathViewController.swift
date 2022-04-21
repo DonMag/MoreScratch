@@ -11,6 +11,7 @@ import PDFKit
 import SwiftUI
 
 
+
 class FollowPathViewController: UIViewController, UIScrollViewDelegate {
 
 	let scrollView: UIScrollView = {
@@ -20,6 +21,11 @@ class FollowPathViewController: UIViewController, UIScrollViewDelegate {
 	}()
 	let pathView: PathView = {
 		let v = PathView()
+		return v
+	}()
+	
+	let carView: UIImageView = {
+		let v = UIImageView()
 		return v
 	}()
 	
@@ -336,6 +342,241 @@ extension gridPathView: CAAnimationDelegate {
 	}
 }
 
+class tryFollowPathViewController: UIViewController, UIScrollViewDelegate {
+	
+	let scrollView: UIScrollView = {
+		let v = UIScrollView()
+		v.contentInsetAdjustmentBehavior = .never
+		return v
+	}()
+	let pathView: PathView = {
+		let v = PathView()
+		return v
+	}()
+	
+	let carView: CarImageView = {
+		let v = CarImageView()
+		return v
+	}()
+	
+	var cvCenterX: NSLayoutConstraint!
+	var cvCenterY: NSLayoutConstraint!
+
+	let pvSize: CGFloat = 1200.0
+	
+	var pts: [CGPoint] = []
+	var markers: [UIView] = []
+	var order: [Int] = []
+	var idx: Int = 0
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		guard let pdfFile = Bundle.main.url(forResource: "us-states-map", withExtension: "pdf") else { return }
+		
+		guard let document = PDFDocument(url: pdfFile) else { return }
+		
+		let pdfView = PDFView()
+		pdfView.document = document
+		pdfView.isUserInteractionEnabled = false
+		
+		guard let pdfR = pdfView.documentView?.frame else { return }
+		
+		[scrollView, pathView, pdfView].forEach { v in
+			v.translatesAutoresizingMaskIntoConstraints = false
+		}
+		
+		// pathView creates its own "car" view, so
+		//	insert pdfView below it
+		pathView.insertSubview(pdfView, at: 0)
+		
+		let xs: CGFloat = pdfR.width / 5.0
+		let ys: CGFloat = pdfR.height / 6.0
+		var x: CGFloat = xs
+		var y: CGFloat = ys
+		var n: Int = 1
+		for i in 1...5 {
+			y = ys * CGFloat(i) - ys * 0.25
+			x = xs * (i % 2 == 1 ? 0.5 : 0.25)
+			for j in 1...5 {
+				let v = UILabel()
+				v.text = "\(n)"
+				v.textAlignment = .center
+				v.textColor = .yellow
+				v.backgroundColor = .systemBlue
+				v.font = .systemFont(ofSize: 14.0, weight: .light)
+				v.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+				v.layer.cornerRadius = 20
+				v.layer.masksToBounds = true
+				pts.append(CGPoint(x: x, y: y + (j % 2 == 1 ? ys * 0.4 : 0)))
+				markers.append(v)
+				x += xs
+				n += 1
+			}
+		}
+		
+		for (v, p) in zip(markers, pts) {
+			pathView.addSubview(v)
+			v.center = p
+		}
+		
+		// let's create a shuffled index for the markers
+		order = Array(0..<markers.count) //.shuffled()
+		
+		// add pathView to the scroll view
+		scrollView.addSubview(pathView)
+		
+		// add scroll view to self.view
+		view.addSubview(scrollView)
+		
+		
+		if let img = UIImage(systemName: "car") {
+			carView.image = img
+		}
+		carView.tintColor = .systemYellow
+		carView.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(carView)
+		
+		let safeG = view.safeAreaLayoutGuide
+		let contentG = scrollView.contentLayoutGuide
+		let frameG = scrollView.frameLayoutGuide
+
+		cvCenterX = carView.leadingAnchor.constraint(equalTo: pathView.leadingAnchor, constant: 80.0)
+		cvCenterY = carView.topAnchor.constraint(equalTo: pathView.topAnchor, constant: 180.0)
+		cvCenterX.priority = .required
+		cvCenterY.priority = .required
+		let cvt = carView.topAnchor.constraint(greaterThanOrEqualTo: scrollView.topAnchor, constant: 8.0)
+		let cvl = carView.leadingAnchor.constraint(greaterThanOrEqualTo: scrollView.leadingAnchor, constant: 8.0)
+		let cvr = carView.trailingAnchor.constraint(lessThanOrEqualTo: scrollView.trailingAnchor, constant: -8.0)
+		let cvb = carView.bottomAnchor.constraint(lessThanOrEqualTo: scrollView.bottomAnchor, constant: -8.0)
+
+		[cvt, cvl, cvr, cvb].forEach { c in
+			c.priority = .required
+		}
+
+		NSLayoutConstraint.activate([
+			
+			// scroll view Top/Leading/Trailing/Bottom to safe area
+			scrollView.topAnchor.constraint(equalTo: safeG.topAnchor, constant: 40.0),
+			scrollView.leadingAnchor.constraint(equalTo: safeG.leadingAnchor, constant: 40.0),
+			scrollView.trailingAnchor.constraint(equalTo: safeG.trailingAnchor, constant: -40.0),
+			scrollView.bottomAnchor.constraint(equalTo: safeG.bottomAnchor, constant: -40.0),
+			
+			// pathView Top/Leading/Trailing/Bottom to scroll view's CONTENT GUIDE
+			pathView.topAnchor.constraint(equalTo: contentG.topAnchor, constant: 0.0),
+			pathView.leadingAnchor.constraint(equalTo: contentG.leadingAnchor, constant: 0.0),
+			pathView.trailingAnchor.constraint(equalTo: contentG.trailingAnchor, constant: 0.0),
+			pathView.bottomAnchor.constraint(equalTo: contentG.bottomAnchor, constant: 0.0),
+			
+			pdfView.topAnchor.constraint(equalTo: pathView.topAnchor, constant: 0.0),
+			pdfView.leadingAnchor.constraint(equalTo: pathView.leadingAnchor, constant: 0.0),
+			pdfView.trailingAnchor.constraint(equalTo: pathView.trailingAnchor, constant: 0.0),
+			pdfView.bottomAnchor.constraint(equalTo: pathView.bottomAnchor, constant: 0.0),
+			
+			pathView.widthAnchor.constraint(equalToConstant: pdfR.width),
+			pathView.heightAnchor.constraint(equalToConstant: pdfR.height),
+			
+			carView.widthAnchor.constraint(equalToConstant: 40.0),
+			carView.heightAnchor.constraint(equalTo: carView.widthAnchor),
+
+//			carView.topAnchor.constraint(greaterThanOrEqualTo: frameG.topAnchor, constant: 8.0),
+//			carView.leadingAnchor.constraint(greaterThanOrEqualTo: frameG.leadingAnchor, constant: 8.0),
+//			carView.trailingAnchor.constraint(lessThanOrEqualTo: frameG.trailingAnchor, constant: -8.0),
+//			carView.bottomAnchor.constraint(lessThanOrEqualTo: frameG.bottomAnchor, constant: -8.0),
+
+			cvt, cvl, cvr, cvb,
+			cvCenterX, cvCenterY,
+			
+		])
+		
+		scrollView.delegate = self
+		scrollView.minimumZoomScale = 0.25
+		scrollView.maximumZoomScale = 3.0
+		
+		// so we can see the scroll view frame
+		scrollView.layer.borderWidth = 2
+		scrollView.layer.borderColor = UIColor.red.cgColor
+		
+	}
+	
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		print(pathView.frame)
+		cvCenterX.constant += 60.0
+		UIView.animate(withDuration: 0.5, animations: {
+			self.view.layoutIfNeeded()
+		})
+		return()
+		
+		self.idx += 1
+		
+		let newPT = self.pts[self.order[self.idx % self.order.count]]
+		
+		self.pathView.addPoint(newPT)
+		
+		if true {
+			// convert the point to a rect using scroll view's zoomScale
+			let sz: CGFloat = 40.0
+			
+			let x = newPT.x * self.scrollView.zoomScale
+			let y = newPT.y * self.scrollView.zoomScale
+			
+			var r = CGRect(x: x, y: y, width: sz, height: sz)
+			r = r.offsetBy(dx: -sz * 0.5, dy: -sz * 0.5)
+			
+			if !self.scrollView.bounds.contains(r) {
+				// convert the point to a rect using scroll view's zoomScale
+				let w: CGFloat = self.scrollView.frame.width
+				let h: CGFloat = self.scrollView.frame.height
+				r = CGRect(x: x, y: y, width: w, height: h)
+				r = r.offsetBy(dx: -w * 0.5, dy: -h * 0.5)
+			}
+			
+			UIView.animate(withDuration: 0.5, delay: 0.0, options: [.curveEaseInOut], animations: {
+				self.scrollView.scrollRectToVisible(r, animated: false)
+			}, completion: nil)
+			
+		} else {
+			// convert the point to a rect using scroll view's zoomScale
+			let w: CGFloat = self.scrollView.frame.width
+			let h: CGFloat = self.scrollView.frame.height
+			let x = newPT.x * self.scrollView.zoomScale
+			let y = newPT.y * self.scrollView.zoomScale
+			var r = CGRect(x: x, y: y, width: w, height: h)
+			r = r.offsetBy(dx: -w * 0.5, dy: -h * 0.5)
+			UIView.animate(withDuration: 0.5, delay: 0.0, options: [.curveEaseInOut], animations: {
+				self.scrollView.scrollRectToVisible(r, animated: false)
+			}, completion: nil)
+		}
+		
+	}
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+		
+		scrollView.contentOffset.x = cvCenterX.constant
+		scrollView.contentOffset.y = cvCenterY.constant
+
+		let x = pts[0].x * self.scrollView.zoomScale
+		let y = pts[0].y * self.scrollView.zoomScale
+		
+		let w: CGFloat = self.scrollView.frame.width
+		let h: CGFloat = self.scrollView.frame.height
+		var r = CGRect(x: x, y: y, width: w, height: h)
+		r = r.offsetBy(dx: -w * 0.5, dy: -h * 0.5)
+		
+		//scrollView.scrollRectToVisible(r, animated: false)
+		//pathView.addPoint(pts[0])
+		
+	}
+	
+//	func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+//		return pathView
+//	}
+	
+}
+
+class CarImageView: UIImageView {
+	
+}
 
 class PathView: UIView {
 	
@@ -468,10 +709,6 @@ class CenterInScrollVC: UIViewController, UIScrollViewDelegate {
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
-		guard let img = UIImage(systemName: "circle") else { return }
-		print()
-		view.backgroundColor = .systemBackground
 		
 		// a button to center the current marker (if needed)
 		let btnA: UIButton = {
