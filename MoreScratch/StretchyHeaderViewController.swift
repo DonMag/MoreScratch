@@ -211,3 +211,198 @@ class SamplePageViewController: UIPageViewController, UIPageViewControllerDelega
 
 }
 
+class SubPageVC: UIViewController {
+	
+	let bkgLayer = CALayer()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		// set to a greter-than-zero value if you want spacing between the "pages"
+		let opts = [UIPageViewController.OptionsKey.interPageSpacing: 0.0]
+		// instantiate the Page View controller
+		let pgVC = NumberPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: opts)
+		// add it as a child controller
+		self.addChild(pgVC)
+		// safe unwrap
+		guard let pgv = pgVC.view else { return }
+		pgv.translatesAutoresizingMaskIntoConstraints = false
+		// add the page controller view to stretchyView
+		view.addSubview(pgv)
+		pgVC.didMove(toParent: self)
+		
+		let g = view.safeAreaLayoutGuide
+		
+		NSLayoutConstraint.activate([
+			// constrain page view controller's view on all 4 sides
+			pgv.topAnchor.constraint(equalTo: g.topAnchor, constant: 40.0),
+			pgv.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+			pgv.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20.0),
+			pgv.bottomAnchor.constraint(equalTo: g.bottomAnchor, constant: -40.0),
+		])
+		
+		view.backgroundColor = .systemYellow
+		
+//		if let img = UIImage(named: "navBKG") {
+//			bkgLayer.contents = img.cgImage
+//		}
+//		view.layer.addSublayer(bkgLayer)
+
+	}
+	
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+		bkgLayer.frame = view.bounds
+	}
+}
+
+class NumberPageVC: UIViewController {
+	
+	var myNum: Int = 0 {
+		didSet {
+			myLabel.text = "\(myNum)"
+		}
+	}
+	let myLabel: UILabel = {
+		let v = UILabel()
+		v.font = .systemFont(ofSize: 120, weight: .light)
+		v.textAlignment = .center
+		v.layer.borderWidth = 2
+		v.layer.borderColor = UIColor.red.cgColor
+		v.translatesAutoresizingMaskIntoConstraints = false
+		return v
+	}()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		view.backgroundColor = .clear
+		
+		view.addSubview(myLabel)
+		
+		let g = view.safeAreaLayoutGuide
+		
+		NSLayoutConstraint.activate([
+			// constrain image view to all 4 sides
+			myLabel.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+			myLabel.centerYAnchor.constraint(equalTo: g.centerYAnchor),
+			myLabel.widthAnchor.constraint(equalTo: g.widthAnchor, multiplier: 0.6),
+			myLabel.heightAnchor.constraint(equalTo: g.heightAnchor, multiplier: 0.4),
+		])
+	}
+}
+
+class NumberPageViewController: UIPageViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource {
+	
+	var controllers: [UIViewController] = []
+	let bkgLayer = CALayer()
+	
+	var theSV: UIScrollView!
+	var cX: CGFloat = 0
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		//view.backgroundColor = .yellow
+		
+		for i in 1...6 {
+			let aViewController = NumberPageVC()
+			aViewController.myNum = i
+			self.controllers.append(aViewController)
+		}
+		
+		self.dataSource = self
+		self.delegate = self
+		
+		self.setViewControllers([controllers[0]], direction: .forward, animated: false)
+		
+		if let img = UIImage(named: "bk1") {
+			bkgLayer.contents = img.cgImage
+		}
+		view.layer.insertSublayer(bkgLayer, at: 0)
+		
+		if let scrollView = self.view.subviews.first(where: { $0 is UIScrollView }) as? UIScrollView {
+			theSV = scrollView
+			theSV.delegate = self
+		}
+	}
+	
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+		bkgLayer.frame = view.bounds
+	}
+
+	func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+		if let index = controllers.firstIndex(of: viewController), index > 0 {
+			return controllers[index - 1]
+		}
+		return nil
+	}
+	
+	func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+		if let index = controllers.firstIndex(of: viewController), index < controllers.count - 1 {
+			return controllers[index + 1]
+		}
+		return nil
+	}
+
+	func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
+		print(pendingViewControllers.count)
+		if let fvc = pendingViewControllers.first as? NumberPageVC {
+			print(fvc.myNum, theSV.contentOffset)
+			cX = theSV.contentOffset.x
+		} else {
+			print("not a npVC?")
+		}
+	}
+	
+}
+
+extension NumberPageViewController: UIScrollViewDelegate {
+	func scrollViewDidScroll(_ scrollView: UIScrollView) {
+		let x: CGFloat = scrollView.contentOffset.x
+		let pct = (x - cX) / scrollView.frame.width
+		
+		print(pct)
+	}
+}
+
+class RoundView: UIView {
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		// this assumes constraints keep
+		//	self at a 1:1 ratio (square)
+		layer.cornerRadius = bounds.height * 0.5
+	}
+}
+
+class RoundDemoVC: UIViewController {
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		let colors: [UIColor] = [
+			.systemRed, .systemGreen, .systemBlue
+		]
+		let widths: [CGFloat] = [
+			200, 140, 140
+		]
+		let xPos: [CGFloat] = [
+			20, 120, 180
+		]
+		let g = view.safeAreaLayoutGuide
+		for i in 0..<colors.count {
+			let v = RoundView()
+			v.backgroundColor = colors[i]
+			view.addSubview(v)
+			v.translatesAutoresizingMaskIntoConstraints = false
+			v.widthAnchor.constraint(equalToConstant: widths[i]).isActive = true
+			// make it square
+			v.heightAnchor.constraint(equalTo: v.widthAnchor).isActive = true
+			v.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: xPos[i]).isActive = true
+			v.centerYAnchor.constraint(equalTo: g.centerYAnchor).isActive = true
+		}
+		
+	}
+	
+}
