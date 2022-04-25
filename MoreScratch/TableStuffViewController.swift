@@ -155,3 +155,133 @@ class CarVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 	}
 	
 }
+
+
+class PeopleCell: UIView {
+	
+	
+	static let identifier = "PeopleCell"
+	
+	private lazy var mainStackView: UIStackView = {
+		let stackView = UIStackView()
+		stackView.translatesAutoresizingMaskIntoConstraints = false
+		stackView.axis = .vertical
+		stackView.distribution = .fill
+		stackView.alignment = .leading
+		return stackView
+	}()
+	
+	private lazy var stackView: UIStackView = {
+		let stackView = UIStackView()
+		stackView.translatesAutoresizingMaskIntoConstraints = false
+		stackView.axis = .horizontal
+		stackView.distribution = .fill
+		stackView.alignment = .center
+		return stackView
+	}()
+	private lazy var lastnameTitleLabel: UILabel = {
+		let label = UILabel()
+		label.translatesAutoresizingMaskIntoConstraints = false
+		label.numberOfLines = 0
+		label.textAlignment = .center
+		return label
+	}()
+	
+	private lazy var firstnameTitleLabel: UILabel = {
+		let label = UILabel()
+		label.translatesAutoresizingMaskIntoConstraints = false
+		label.numberOfLines = 0
+		label.textAlignment = .center
+		return label
+	}()
+	
+	private lazy var peopleImageView: UIImageView = {
+		let imageView = UIImageView()
+		imageView.translatesAutoresizingMaskIntoConstraints = false
+		imageView.contentMode = .scaleAspectFit
+		imageView.backgroundColor = .blue
+		return imageView
+	}()
+	
+//	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+//		super.init(style: style, reuseIdentifier: reuseIdentifier)
+//
+//		setUpUI()
+//	}
+	
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		setUpUI()
+	}
+	
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		setUpUI()
+	}
+	
+	func configureCell(firstName: String, lastName: String) {
+		firstnameTitleLabel.text = "Firstname :\(firstName)"
+		lastnameTitleLabel.text = "Lastname : \(lastName)"
+		if let img = UIImage(named: "sample3") {
+			peopleImageView.image = img
+		}
+	}
+	
+	
+//	func configureImageCell(row: Int, viewModel: ViewModel) {
+//
+//		peopleImageView.image = nil
+//
+//		viewModel
+//			.downloadImage(row: row) { [weak self] data in
+//				let image = UIImage(data: data)
+//				self?.peopleImageView.image = image
+//			}
+//	}
+	
+	private func setUpUI() {
+		
+		mainStackView.axis = .horizontal
+		
+		stackView.axis = .vertical
+		
+		firstnameTitleLabel.backgroundColor = .cyan
+		lastnameTitleLabel.backgroundColor = .yellow
+		
+		mainStackView.layer.borderColor = UIColor.red.cgColor
+		mainStackView.layer.borderWidth = 1
+		
+		stackView.backgroundColor = .green
+		
+		stackView.addArrangedSubview(lastnameTitleLabel)
+		stackView.addArrangedSubview(firstnameTitleLabel)
+		
+		mainStackView.addArrangedSubview(peopleImageView)
+		mainStackView.addArrangedSubview(stackView)
+		
+//		contentView.addSubview(mainStackView)
+//
+//		// constraints
+//		let safeArea = contentView.safeAreaLayoutGuide
+
+		addSubview(mainStackView)
+		
+		// constraints
+		//let safeArea = self.safeAreaLayoutGuide
+		let safeArea = self.layoutMarginsGuide
+
+		mainStackView.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
+		mainStackView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
+		mainStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10).isActive = true
+		mainStackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -10).isActive = true
+		
+		peopleImageView.heightAnchor.constraint(equalToConstant: 140).isActive = true
+		peopleImageView.widthAnchor.constraint(equalToConstant: 140).isActive = true
+		
+		// don't do this
+		//stackView.leadingAnchor.constraint(equalTo: mainStackView.leadingAnchor).isActive = true
+		//stackView.trailingAnchor.constraint(equalTo: mainStackView.trailingAnchor).isActive = true
+		
+		configureCell(firstName: "Bob", lastName: "Tester")
+	}
+}

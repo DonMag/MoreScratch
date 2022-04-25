@@ -27,6 +27,8 @@
 		FCD4E3222808709000808073 /* 20x45-Model.pdf in Resources */ = {isa = PBXBuildFile; fileRef = FCD4E3212808709000808073 /* 20x45-Model.pdf */; };
 		FCD4E3242808800E00808073 /* us-states-map.pdf in Resources */ = {isa = PBXBuildFile; fileRef = FCD4E3232808800E00808073 /* us-states-map.pdf */; };
 		FCD4E34C280C550800808073 /* TableStuffViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCD4E34B280C550800808073 /* TableStuffViewController.swift */; };
+		FCD4E35628119D9500808073 /* TabBarWorkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCD4E35528119D9500808073 /* TabBarWorkViewController.swift */; };
+		FCD4E35828119E3500808073 /* Tabs.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FCD4E35728119E3500808073 /* Tabs.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +54,8 @@
 		FCD4E3212808709000808073 /* 20x45-Model.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "20x45-Model.pdf"; sourceTree = "<group>"; };
 		FCD4E3232808800E00808073 /* us-states-map.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "us-states-map.pdf"; sourceTree = "<group>"; };
 		FCD4E34B280C550800808073 /* TableStuffViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableStuffViewController.swift; sourceTree = "<group>"; };
+		FCD4E35528119D9500808073 /* TabBarWorkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarWorkViewController.swift; sourceTree = "<group>"; };
+		FCD4E35728119E3500808073 /* Tabs.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Tabs.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +104,8 @@
 				FCD4E31F28085EB200808073 /* NavTransViewController.swift */,
 				FCD4E34B280C550800808073 /* TableStuffViewController.swift */,
 				7C947FFD281030170051ABEB /* V2GradWorkViewController.swift */,
+				FCD4E35528119D9500808073 /* TabBarWorkViewController.swift */,
+				FCD4E35728119E3500808073 /* Tabs.storyboard */,
 				FCD4E3212808709000808073 /* 20x45-Model.pdf */,
 				FCD4E3232808800E00808073 /* us-states-map.pdf */,
 				FC39559827E260D50060734C /* Assets.xcassets */,
@@ -169,6 +175,7 @@
 			files = (
 				FCD4E3222808709000808073 /* 20x45-Model.pdf in Resources */,
 				FC39559C27E260D50060734C /* LaunchScreen.storyboard in Resources */,
+				FCD4E35828119E3500808073 /* Tabs.storyboard in Resources */,
 				FC8E10D727F63C7F00EEBC75 /* Sizing.storyboard in Resources */,
 				FC8E10B327F4C41D00EEBC75 /* PopupView.xib in Resources */,
 				FC8E110A28006F0400EEBC75 /* ColViewXibCell.xib in Resources */,
@@ -193,6 +200,7 @@
 				7C947FD22806F1070051ABEB /* MapPreviewViewController.swift in Sources */,
 				FC39559227E260D30060734C /* SceneDelegate.swift in Sources */,
 				7C947FCE2805F4600051ABEB /* StretchyHeaderViewController.swift in Sources */,
+				FCD4E35628119D9500808073 /* TabBarWorkViewController.swift in Sources */,
 				FCD4E32028085EB200808073 /* NavTransViewController.swift in Sources */,
 				7C947FCC27FE2C8B0051ABEB /* SampleData.swift in Sources */,
 				FCD4E34C280C550800808073 /* TableStuffViewController.swift in Sources */,

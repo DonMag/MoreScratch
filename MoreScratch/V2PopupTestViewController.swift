@@ -2746,7 +2746,7 @@ class TextViewCapVC: UIViewController {
 			textView.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
 			textView.centerXAnchor.constraint(equalTo: g.centerXAnchor),
 			textView.widthAnchor.constraint(equalToConstant: 240.0),
-			textView.heightAnchor.constraint(equalToConstant: 160.0),
+			textView.heightAnchor.constraint(equalToConstant: 129.0),
 			
 			// stack view, 20-points from text view, same width, centered horizontally
 			stack.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 20.0),
@@ -2761,11 +2761,11 @@ class TextViewCapVC: UIViewController {
 			
 		])
 		
-		let string = "Test String"
+		let string = "Test"
 		
 		let attributes: [NSAttributedString.Key: Any] = [
 			.foregroundColor: UIColor.blue,
-			.font: UIFont.italicSystemFont(ofSize: 60.0),
+			.font: UIFont.italicSystemFont(ofSize: 104.0),
 		]
 		
 		let attributedString = NSMutableAttributedString(string: string, attributes: attributes)
@@ -2808,7 +2808,7 @@ class TextViewCapVC: UIViewController {
 		}
 		s += "Logical Size: \(img.size)\n\n"
 		s += "Scale: \(img.scale)\n\n"
-		s += "Actual Size: \(CGSize(width: img.size.width * img.scale, height: img.size.height * img.scale))\n\n"
+		s += "Pixel Size: \(CGSize(width: img.size.width * img.scale, height: img.size.height * img.scale))\n\n"
 		s += "File \"\(fName)\"\n\nsaved to Documents folder\n"
 		resultLabel.text = s
 		
@@ -2816,6 +2816,101 @@ class TextViewCapVC: UIViewController {
 		//	so we can copy/paste into Finder to get to the files
 		print(documents.path)
 	}
+
+}
+
+
+class ColorCycleView: UIView {
+	
+	var colors: [UIColor] = [
+		.purple, .blue, .green, .yellow, .orange
+	]
+	
+	let v = UILabel()
+	var st: Date!
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	func commonInit() {
+		addSubview(v)
+		v.backgroundColor = .lightGray
+		v.translatesAutoresizingMaskIntoConstraints = false
+		NSLayoutConstraint.activate([
+			v.topAnchor.constraint(equalTo: topAnchor),
+			v.leadingAnchor.constraint(equalTo: leadingAnchor),
+		])
+	}
+	
+	override func didMoveToSuperview() {
+		startAnim()
+	}
+	func xstartAnim() {
+		// total duration is number of colors (so, 1-second per color change)
+		//	if we want 2-seconds per color change, for example, use TimeInterval(colors.count * 2)
+		let totalDuration: TimeInterval = TimeInterval(colors.count)
+		
+		// relative duration is a percentage of the whole
+		//	so with 5 colors, for example, it will be 0.2
+		let relDuration: CGFloat = 1.0 / CGFloat(colors.count)
+		
+		// we want each change to start in sequence, so
+		//	we'll increment this in our loop below
+		//	for example, with 5 colors, the relative start times will be:
+		//		0.0, 0.2, 0.4, 0.6, 0.8
+		var relStartTime: TimeInterval = 0.0
+		
+//		UIView.animateKeyframes(withDuration: totalDuration, delay: 0.0, options: [.repeat, .autoreverse, .calculationModeCubicPaced], animations: {
+		UIView.animateKeyframes(withDuration: totalDuration, delay: 0.0, options: [.repeat, .autoreverse], animations: {
+			self.colors.forEach { c in
+				UIView.addKeyframe(withRelativeStartTime: relStartTime, relativeDuration: relDuration, animations: {
+					self.backgroundColor = c
+				})
+				relStartTime += relDuration
+			}
+		})
+	}
+
+	func startAnim() {
+		st = Date()
+		Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: { _ in
+			let e = Date().timeIntervalSince(self.st)
+			let s = String(format: "%0.2f", e)
+			self.v.text = s
+		})
+		
+		// total duration is number of colors (so, 1-second per color change)
+		//	if we want 2-seconds per color change, for example, use TimeInterval(colors.count * 2)
+		let totalDuration: TimeInterval = 10.0 // TimeInterval(colors.count)
+		
+		// relative duration is a percentage of the whole
+		//	so with 5 colors, for example, it will be 0.2
+		let relDuration: CGFloat = 1.0 / CGFloat(colors.count)
+		
+		// we want each change to start in sequence, so
+		//	we'll increment this in our loop below
+		//	for example, with 5 colors, the relative start times will be:
+		//		0.0, 0.2, 0.4, 0.6, 0.8
+		var relStartTime: TimeInterval = 0.0
+		
+		UIView.animateKeyframes(withDuration: totalDuration, delay: 0.0, options: [.repeat, .autoreverse, .calculationModeCubicPaced], animations: {
+		//UIView.animateKeyframes(withDuration: totalDuration, delay: 0.0, options: [.repeat, .autoreverse], animations: {
+			self.colors.forEach { c in
+				UIView.addKeyframe(withRelativeStartTime: relStartTime, relativeDuration: relDuration, animations: {
+					self.backgroundColor = c
+				})
+				relStartTime += relDuration
+			}
+		}, completion: { b in
+			print("complete:", b)
+		})
+	}
+	
+
 }
 
 class ISLabel: UILabel {
