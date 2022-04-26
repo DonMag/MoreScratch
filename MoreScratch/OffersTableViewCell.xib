@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="Eqh-iS-bTG" customClass="OffersTableViewCell" customModule="MoreScratch" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Eqh-iS-bTG" id="j4M-Lb-hxL">
+                <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DS4-bL-WhD">
+                        <rect key="frame" x="20" y="15" width="374" height="22"/>
+                        <color key="backgroundColor" red="0.99979442360000004" green="0.98861950639999996" blue="0.54953438040000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="DS4-bL-WhD" firstAttribute="top" secondItem="j4M-Lb-hxL" secondAttribute="topMargin" constant="4" id="UJd-zi-L9y"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="DS4-bL-WhD" secondAttribute="trailing" id="eD9-Go-VlI"/>
+                    <constraint firstItem="DS4-bL-WhD" firstAttribute="bottom" secondItem="j4M-Lb-hxL" secondAttribute="bottomMargin" constant="4" id="lZu-ZO-fxu"/>
+                    <constraint firstItem="DS4-bL-WhD" firstAttribute="leading" secondItem="j4M-Lb-hxL" secondAttribute="leadingMargin" id="nJp-qX-udE"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="offerTitle" destination="DS4-bL-WhD" id="bDx-dc-MOd"/>
+            </connections>
+            <point key="canvasLocation" x="165" y="120"/>
+        </tableViewCell>
+    </objects>
+</document>

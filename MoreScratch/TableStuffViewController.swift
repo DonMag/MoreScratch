@@ -17,16 +17,92 @@ class TableStuffViewController: UIViewController {
     
 }
 
+class PagingVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+
+	let pageControl = UIPageControl()
+	
+	var collectionView: UICollectionView!
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+
+		view.backgroundColor = .systemBlue
+		
+		let fl = UICollectionViewFlowLayout()
+		fl.scrollDirection = .horizontal
+		collectionView = UICollectionView(frame: .zero, collectionViewLayout: fl)
+		
+		collectionView.translatesAutoresizingMaskIntoConstraints = false
+		pageControl.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(collectionView)
+		view.addSubview(pageControl)
+		
+		let g = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			
+			collectionView.topAnchor.constraint(equalTo: g.topAnchor, constant: 40.0),
+			collectionView.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 40.0),
+			collectionView.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -40.0),
+			collectionView.heightAnchor.constraint(equalToConstant: 300.0),
+			
+			pageControl.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 4.0),
+			pageControl.leadingAnchor.constraint(equalTo: collectionView.leadingAnchor),
+			pageControl.trailingAnchor.constraint(equalTo: collectionView.trailingAnchor),
+			
+		])
+		
+		collectionView.dataSource = self
+		collectionView.delegate = self
+		
+		collectionView.register(BasicColViewCell.self, forCellWithReuseIdentifier: "c")
+		
+		collectionView.isPagingEnabled = true
+		pageControl.numberOfPages = 2
+	}
+
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+		if let fl = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+			fl.minimumInteritemSpacing = 0
+			fl.minimumLineSpacing = 0
+			fl.itemSize = CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
+			print(fl.itemSize)
+		}
+	}
+	
+	func numberOfSections(in collectionView: UICollectionView) -> Int {
+		return 1
+	}
+	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+		return 2
+	}
+	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+		let c = collectionView.dequeueReusableCell(withReuseIdentifier: "c", for: indexPath) as! BasicColViewCell
+		c.label.text = "\(indexPath)"
+		return c
+	}
+	
+	func scrollViewDidScroll(_ scrollView: UIScrollView) {
+		let fw = scrollView.frame.width
+		let pct = scrollView.contentOffset.x / fw
+		pageControl.currentPage = pct < 0.5 ? 0 : 1
+	}
+}
+
+
 class BasicColViewCell: UICollectionViewCell {
 	let label = UILabel()
 	override init(frame: CGRect) {
 		super.init(frame: frame)
+		commonInit()
 	}
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
+		commonInit()
 	}
 	private func commonInit() {
 		label.backgroundColor = .yellow
+		label.textAlignment = .center
 		label.translatesAutoresizingMaskIntoConstraints = false
 		contentView.addSubview(label)
 		let g = contentView.layoutMarginsGuide

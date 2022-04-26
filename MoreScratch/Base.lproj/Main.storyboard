@@ -447,10 +447,10 @@ The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for t
             </objects>
             <point key="canvasLocation" x="-915" y="2840"/>
         </scene>
-        <!--Slide ViewVC-->
+        <!--PagingVC-->
         <scene sceneID="Th1-zO-nvF">
             <objects>
-                <viewController id="pfW-vU-qM9" customClass="SlideViewVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="pfW-vU-qM9" customClass="PagingVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="OeL-X5-90k">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -597,6 +597,37 @@ The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for t
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7hp-2C-346" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-196.875" y="3737.323943661972"/>
+        </scene>
+        <!--Dashboard View Controller-->
+        <scene sceneID="Qox-AR-4iB">
+            <objects>
+                <viewController id="19j-As-hMy" customClass="DashboardViewController" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="dJG-dk-O6D">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Kkh-9T-JV3">
+                                <rect key="frame" x="40" y="80" width="240" height="408"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Sig-1w-10H"/>
+                        <color key="backgroundColor" red="0.92143100499999997" green="0.92145264149999995" blue="0.92144101860000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="Sig-1w-10H" firstAttribute="bottom" secondItem="Kkh-9T-JV3" secondAttribute="bottom" constant="80" id="ApS-gq-Mo6"/>
+                            <constraint firstItem="Sig-1w-10H" firstAttribute="trailing" secondItem="Kkh-9T-JV3" secondAttribute="trailing" constant="40" id="H4H-fs-ItD"/>
+                            <constraint firstItem="Kkh-9T-JV3" firstAttribute="top" secondItem="Sig-1w-10H" secondAttribute="top" constant="80" id="LVb-ER-Z5z"/>
+                            <constraint firstItem="Kkh-9T-JV3" firstAttribute="leading" secondItem="Sig-1w-10H" secondAttribute="leading" constant="40" id="c7d-YM-wYc"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="Hu4-Qz-GDd"/>
+                    <connections>
+                        <outlet property="tableView" destination="Kkh-9T-JV3" id="Wop-vC-i4G"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4uc-8U-MZZ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="801" y="4427"/>
         </scene>
     </scenes>
     <resources>
