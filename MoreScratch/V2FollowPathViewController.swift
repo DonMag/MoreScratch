@@ -824,16 +824,58 @@ class CenterInScrollVC: UIViewController, UIScrollViewDelegate {
 		}
 		
 		scrollView.minimumZoomScale = 0.5
-		scrollView.maximumZoomScale = 3.0
+		scrollView.maximumZoomScale = 5.0
 		scrollView.delegate = self
 		
+		let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.onLongPress(gesture:)))
+		//self.hostingController.view.addGestureRecognizer(longPressGestureRecognizer)
+		//scrollView.addGestureRecognizer(longPressGestureRecognizer)
+		mapView.addGestureRecognizer(longPressGestureRecognizer)
+	}
+	
+	@objc func onLongPress(gesture: UILongPressGestureRecognizer) {
+		switch gesture.state {
+		case .began:
+			guard let view = gesture.view else { break }
+			let location = gesture.location(in: view)
+			let pinPointWidth = 32.0
+			let pinPointHeight = 42.0
+			let x = location.x - (pinPointWidth / 2)
+			let y = location.y - pinPointHeight
+			let finalLocation = CGPoint(x: x / scrollView.zoomScale, y: y)
+//			let cfg = UIImage.SymbolConfiguration(pointSize: 20.0)
+//			if let img = UIImage(systemName: "mappin.and.ellipse", withConfiguration: cfg) {
+			if let img = UIImage(named: "mapMarker1") {
+				let mv = UIImageView(image: img)
+				mv.frame = CGRect(x: 0, y: 0, width: img.size.width, height: img.size.height * 2.0)
+				mv.contentMode = .top
+				mv.tintColor = .red
+				mv.center = location
+				//mv.frame.origin = CGPoint(x: location.x - img.size.width * 0.5, y: location.y - img.size.height * 0.5)
+				mv.backgroundColor = .systemYellow.withAlphaComponent(0.5)
+				mapView.addSubview(mv)
+			}
+			print(finalLocation, "v:", view.frame.size)
+			//self.onLongPress(finalLocation)
+		default:
+			break
+		}
 	}
 
+	func scrollViewDidZoom(_ scrollView: UIScrollView) {
+		let markers = mapView.subviews.filter({$0 is UIImageView})
+		markers.forEach { v in
+			let s = 1.0 / scrollView.zoomScale
+			let t: CGAffineTransform = .identity
+			v.transform = t.scaledBy(x: s, y: s)
+			//v.frame.size = CGSize(width: 32.0 / scrollView.zoomScale, height: 42.0 / scrollView.zoomScale)
+		}
+	}
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		
 		// let's start with the scroll view zoomed out
-		scrollView.zoomScale = scrollView.minimumZoomScale
+		scrollView.zoomScale = 1.0 //scrollView.minimumZoomScale
 		
 		// highlight and center (if needed) the 1st marker
 		markerIndex = 0
@@ -842,6 +884,7 @@ class CenterInScrollVC: UIViewController, UIScrollViewDelegate {
 	}
 
 	@objc func btnATap(_ sender: Any?) {
+		scrollView.zoomScale = scrollView.zoomScale == 1.0 ? 2.0 : 1.0
 		// to easily test "center if not visible" without changing the "current marker"
 		let marker = mapMarkers[markerIndex % mapMarkers.count]
 		highlightMarkerAndCenterIfNeeded(marker, animated: true)
@@ -1365,4 +1408,109 @@ class NavTestVC: UIViewController {
 		super.viewDidLoad()
 		navigationController?.addCustomTransitioning()
 	}
+}
+
+class SlideViewVC: UIViewController {
+
+	let label = UILabel()
+	let labelHolderView = UIView()
+	
+	var labelTop: NSLayoutConstraint!
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		self.title = "Nav Bar"
+
+		// configure the label
+		label.textAlignment = .center
+		label.text = "I'm going to slide up."
+		label.backgroundColor = .systemYellow
+		
+		// add it to the holder view
+		labelHolderView.addSubview(label)
+		
+		// prevents label from showing outside the bounds
+		labelHolderView.clipsToBounds = true
+
+		label.translatesAutoresizingMaskIntoConstraints = false
+		labelHolderView.translatesAutoresizingMaskIntoConstraints = false
+
+		// add holder view to self.view
+		view.addSubview(labelHolderView)
+
+		// constant height for the label
+		let labelHeight: CGFloat = 160.0
+		
+		// setup label top constraint
+		labelTop = label.topAnchor.constraint(equalTo: labelHolderView.topAnchor)
+		
+		let g = view.safeAreaLayoutGuide
+		
+		NSLayoutConstraint.activate([
+
+			// activate label top constraint
+			labelTop,
+			
+			// constrain label Leading/Trailing to holder
+			//	we'll inset it by 20-points so we can see the holder view
+			label.leadingAnchor.constraint(equalTo: labelHolderView.leadingAnchor, constant: 20.0),
+			label.trailingAnchor.constraint(equalTo: labelHolderView.trailingAnchor, constant: -20.0),
+			
+			// constant height
+			label.heightAnchor.constraint(equalToConstant: labelHeight),
+			
+			// label gets NO Bottom constraint
+			
+			// constrain holder to safe area
+			labelHolderView.topAnchor.constraint(equalTo: g.topAnchor),
+			labelHolderView.leadingAnchor.constraint(equalTo: g.leadingAnchor),
+			labelHolderView.trailingAnchor.constraint(equalTo: g.trailingAnchor),
+
+			// constant height (same as label height)
+			labelHolderView.heightAnchor.constraint(equalTo: label.heightAnchor),
+			
+		])
+		
+		// let's add a button to animate the label
+		//	and one to show/hide the holder view
+		let btn1 = UIButton(type: .system)
+		btn1.setTitle("Animate It", for: [])
+		btn1.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(btn1)
+		
+		let btn2 = UIButton(type: .system)
+		btn2.setTitle("Toggle Holder View Color", for: [])
+		btn2.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(btn2)
+
+		NSLayoutConstraint.activate([
+			// put the first button below the holder view
+			btn1.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+			btn1.topAnchor.constraint(equalTo: labelHolderView.bottomAnchor, constant: 20.0),
+			// second button below it
+			btn2.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+			btn2.topAnchor.constraint(equalTo: btn1.bottomAnchor, constant: 20.0),
+
+		])
+		
+
+		// give the buttons an action
+		btn1.addTarget(self, action: #selector(animLabel(_:)), for: .touchUpInside)
+		btn2.addTarget(self, action: #selector(toggleHolderColor(_:)), for: .touchUpInside)
+
+	}
+	
+	@objc func animLabel(_ sender: Any?) {
+		// animate the label up if it's down, down if it's up
+		labelTop.constant = labelTop.constant == 0 ? -label.frame.height : 0
+		UIView.animate(withDuration: 0.5, animations: {
+			self.view.layoutIfNeeded()
+		})
+	}
+	
+	@objc func toggleHolderColor(_ sender: Any?) {
+		labelHolderView.backgroundColor = labelHolderView.backgroundColor == .red ? .clear : .red
+	}
+	
 }

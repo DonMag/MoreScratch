@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="pfW-vU-qM9">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="hru-ZJ-qez">
     <device id="retina4_0" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
@@ -251,7 +251,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DkF-mA-1Wk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="231" y="3194"/>
+            <point key="canvasLocation" x="2225.625" y="3193.3098591549297"/>
         </scene>
         <!--Check OutletsVC-->
         <scene sceneID="0ao-U7-gbe">
@@ -294,7 +294,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tfS-R2-VHy" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="981" y="3100"/>
+            <point key="canvasLocation" x="2975.625" y="3099.2957746478874"/>
         </scene>
         <!--Story Board ExampleVC-->
         <scene sceneID="JhD-zN-Da0">
@@ -447,20 +447,21 @@ The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for t
             </objects>
             <point key="canvasLocation" x="-915" y="2840"/>
         </scene>
-        <!--Sub PageVC-->
+        <!--Slide ViewVC-->
         <scene sceneID="Th1-zO-nvF">
             <objects>
-                <viewController id="pfW-vU-qM9" customClass="SubPageVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="pfW-vU-qM9" customClass="SlideViewVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="OeL-X5-90k">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="gha-zZ-kja"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" red="0.92143100499999997" green="0.92145264149999995" blue="0.92144101860000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
+                    <navigationItem key="navigationItem" id="Dqr-Tu-Faf"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YOE-ji-v45" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1193" y="3738"/>
+            <point key="canvasLocation" x="800.625" y="3737.323943661972"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Kjx-nQ-2UI">
@@ -503,7 +504,7 @@ The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for t
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="v10-ev-oZA" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1631" y="3100"/>
+            <point key="canvasLocation" x="3624.375" y="3099.2957746478874"/>
         </scene>
         <!--SFVC-->
         <scene sceneID="3G9-Hs-LQS">
@@ -577,6 +578,25 @@ The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for t
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6I5-pe-HnM" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1539" y="2839"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="pwA-JW-8IX">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="hru-ZJ-qez" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="ccl-zL-sJK">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" red="0.2323301435" green="0.80301553010000004" blue="0.38312712310000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="pfW-vU-qM9" kind="relationship" relationship="rootViewController" id="vQJ-Wi-tXS"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7hp-2C-346" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-196.875" y="3737.323943661972"/>
         </scene>
     </scenes>
     <resources>
