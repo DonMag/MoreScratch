@@ -43,11 +43,30 @@ class TableColTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "someTableCell", for: indexPath) as! SomeTableCell
 		cell.rowTitleLabel.text = "Row \(indexPath.row)"
 		cell.thisData = myData[indexPath.row]
+		
+		cell.didSelectClosure = { [weak self] c in
+			guard let self = self,
+				  let idx = tableView.indexPath(for: c)
+			else { return }
+			tableView.selectRow(at: idx, animated: true, scrollPosition: .none)
+			self.myTableView(tableView, didSelectRowAt: idx)
+		}
+		
         return cell
     }
+	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		print("tableView didSelectRowAt:", indexPath)
+		myTableView(tableView, didSelectRowAt: indexPath)
+	}
+	func myTableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		print("My didSelectRowAt:", indexPath)
+	}
 }
 
 class SomeTableCell: UITableViewCell {
+	
+	public var didSelectClosure: ((UITableViewCell) ->())?
+	
 	@IBOutlet var rowTitleLabel: UILabel!
 	@IBOutlet var collectionView: UICollectionView!
 	var thisData: SomeDataStruct = SomeDataStruct() {
@@ -68,6 +87,11 @@ extension SomeTableCell: UICollectionViewDataSource, UICollectionViewDelegate {
 		cell.label.text = "Cell \(indexPath.item)"
 		cell.contentView.backgroundColor = thisData.color
 		return cell
+	}
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		print("collectionView didSelecteItemAt:", indexPath)
+		print("Calling closure...")
+		didSelectClosure?(self)
 	}
 }
 class SomeCollectionCell: UICollectionViewCell {

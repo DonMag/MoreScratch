@@ -2624,6 +2624,56 @@ class RenderView: UIView {
 	}
 }
 
+/*
+ func imageWithTransparentRoundedRect(size: CGSize, transparentRect: CGRect, cornerRadius: CGFloat) -> UIImage? {
+ let renderer = UIGraphicsImageRenderer(size: size)
+ let image = renderer.image { (context) in
+ let frame = CGRect(origin: .zero, size: size)
+ UIColor.white.setFill()
+ context.fill(frame)
+ let roundedRect = UIBezierPath(roundedRect: transparentRect, cornerRadius: cornerRadius)
+ context.cgContext.setFillColor(UIColor.clear.cgColor)
+ context.cgContext.setBlendMode(.clear)
+ 
+ roundedRect.fill()
+ }
+ return image
+ }
+ */
+extension UIImage {
+	func clearRect(_ r: CGRect) -> UIImage {
+		let renderer = UIGraphicsImageRenderer(size: size)
+		let image = renderer.image { (context) in
+			// draw the full image
+			draw(at: .zero)
+			let pth = UIBezierPath(rect: r)
+			context.cgContext.setFillColor(UIColor.clear.cgColor)
+			context.cgContext.setBlendMode(.clear)
+			// "fill" the rect with clear
+			pth.fill()
+		}
+		return image
+	}
+}
+class ClearRectVC: UIViewController {
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		guard let img = UIImage(named: "image1000x2000") else {
+			fatalError("Could not load image!")
+		}
+		
+		let newImg = img.clearRect(CGRect(x: 0, y: 1500, width: 1000, height: 500))
+		
+		
+////			var clipRect = CGRect(x: 0.0, y: 0.0, width: img.size.width, height: img.size.height)
+////			clipRect.size.height -= 500.0
+////			clipRect.origin.y = 500.0
+////			let nImg = img.clearRect(clipRect)
+//			print()
+//		}
+	}
+}
 class RenderTestVC: UIViewController {
 	
 	let myView = RenderView()
@@ -3722,4 +3772,123 @@ class ProfileViewController: UIViewController {
 		self.fullNameLabel.text = self.user.firstName
 		
 	}
+}
+
+
+@IBDesignable
+class UICustomButton: UIButton {
+	
+	// MARK: - Initialization
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		setupView()
+	}
+	
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+	}
+	
+	// MARK: - UI Setup
+	override func prepareForInterfaceBuilder() {
+		setupView()
+	}
+	
+	func setupView() {
+		self.backgroundColor = color
+		self.layer.cornerRadius = 5
+		self.layer.shadowColor = shadowColor.cgColor
+		self.layer.shadowRadius = shadowRadius
+		self.layer.shadowOpacity = shadowOpacity
+		self.layer.borderWidth = 3
+		self.layer.borderColor = UIColor.systemTeal.cgColor
+	}
+	
+	func selectedButton() {
+		self.backgroundColor = UIColor.systemTeal
+		self.layer.cornerRadius = 5
+		self.layer.borderWidth = 3
+		self.layer.borderColor = UIColor.systemTeal.cgColor
+		self.tintColor = UIColor.systemTeal
+		self.setTitleColor(UIColor.systemTeal, for: .normal)
+	}
+	
+	func deselectedButton() {
+		self.backgroundColor = UIColor.white
+		self.layer.cornerRadius = 5
+		self.layer.borderWidth = 3
+		self.layer.borderColor = UIColor.systemTeal.cgColor
+		self.setTitleColor(UIColor.systemYellow, for: .normal)
+	}
+	
+	// MARK: - Properties
+	@IBInspectable var color: UIColor = .white {
+		didSet {
+			self.backgroundColor = color
+		}
+	}
+	
+	@IBInspectable var cornerRadius: CGFloat = 5 {
+		didSet {
+			self.layer.cornerRadius = cornerRadius
+		}
+	}
+	
+	@IBInspectable var borderWidth: CGFloat = 3 {
+		didSet {
+			self.layer.borderWidth = borderWidth
+		}
+	}
+	
+	private var _borderColor: UIColor = .systemTeal
+	@IBInspectable var borderColor: UIColor {
+//		didSet {
+//			self.layer.borderColor = borderColor.cgColor
+//		}
+		get {
+			return self._borderColor
+		}
+		
+		set {
+			self._borderColor = newValue
+		}
+	}
+	
+	private var _edgeColor: UIColor = .systemTeal
+	@IBInspectable var edgeColor: UIColor {
+		//		didSet {
+		//			self.layer.borderColor = borderColor.cgColor
+		//		}
+		get {
+			return self._edgeColor
+		}
+		
+		set {
+			self._edgeColor = newValue
+		}
+	}
+	
+	@IBInspectable var shadowColor: UIColor = UIColor.black {
+		didSet {
+			self.layer.shadowColor = shadowColor.cgColor
+		}
+	}
+	
+	@IBInspectable var shadowOffset: CGSize = CGSize(width: 0, height: 0) {
+		didSet {
+			self.layer.shadowOffset = shadowOffset
+		}
+	}
+	
+	@IBInspectable var shadowOpacity: Float = 0 {
+		didSet {
+			self.layer.shadowOpacity = shadowOpacity
+		}
+	}
+	
+	@IBInspectable var shadowRadius: CGFloat = 0 {
+		didSet {
+			self.layer.shadowRadius = shadowRadius
+		}
+	}
+	
 }

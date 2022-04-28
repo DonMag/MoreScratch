@@ -447,10 +447,10 @@ The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for t
             </objects>
             <point key="canvasLocation" x="-915" y="2840"/>
         </scene>
-        <!--PagingVC-->
+        <!--Sub PageVC-->
         <scene sceneID="Th1-zO-nvF">
             <objects>
-                <viewController id="pfW-vU-qM9" customClass="PagingVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="pfW-vU-qM9" customClass="SubPageVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="OeL-X5-90k">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -591,12 +591,22 @@ The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for t
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="pfW-vU-qM9" kind="relationship" relationship="rootViewController" id="vQJ-Wi-tXS"/>
+                        <segue destination="pfW-vU-qM9" kind="relationship" relationship="rootViewController" id="QCX-Za-L81"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7hp-2C-346" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-196.875" y="3737.323943661972"/>
+        </scene>
+        <!--TableCol-->
+        <scene sceneID="OBy-Tz-8ul">
+            <objects>
+                <viewControllerPlaceholder storyboardName="TableCol" id="Dh5-vu-0AL" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="Kie-jV-pHY"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="pxf-Wb-WeZ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-236" y="4099"/>
         </scene>
         <!--Dashboard View Controller-->
         <scene sceneID="Qox-AR-4iB">

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class GradientMaskingViewController: UIViewController {
+class pGradientMaskingViewController: UIViewController {
 
 	let gradView = MaskedGradView()
 	
@@ -33,7 +33,7 @@ class GradientMaskingViewController: UIViewController {
     
 }
 
-class MaskedGradView: UIView {
+class pMaskedGradView: UIView {
 	
 	enum Direction {
 		case horizontal, vertical, diagnal
@@ -133,7 +133,7 @@ class MaskedGradView: UIView {
 }
 
 
-class xMaskedGradView: UIView {
+class pxMaskedGradView: UIView {
 
 	enum Direction {
 		case horizontal, vertical, diagnal
@@ -222,7 +222,7 @@ class xMaskedGradView: UIView {
 		CATransaction.commit()	}
 }
 
-class MyGradientView: UIView {
+class pMyGradientView: UIView {
 	
 	var colorArray: [UIColor] = [] {
 		didSet {

@@ -254,6 +254,8 @@ class SubPageVC: UIViewController {
 		super.viewDidLayoutSubviews()
 		bkgLayer.frame = view.bounds
 	}
+	
+	
 }
 
 class NumberPageVC: UIViewController {
@@ -346,16 +348,31 @@ class NumberPageViewController: UIPageViewController, UIPageViewControllerDelega
 		return nil
 	}
 
+	var nextPage: Int = 0
 	func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
-		print(pendingViewControllers.count)
 		if let fvc = pendingViewControllers.first as? NumberPageVC {
 			print(fvc.myNum, theSV.contentOffset)
 			cX = theSV.contentOffset.x
+			nextPage = fvc.myNum
 		} else {
 			print("not a npVC?")
 		}
 	}
 	
+	public func presentationCount(for pageViewController: UIPageViewController) -> Int {
+		return controllers.count
+	}
+	
+	
+	public func presentationIndex(for pageViewController: UIPageViewController) -> Int {
+		guard let firstViewController = viewControllers?.first,
+			  let firstViewControllerIndex = controllers.firstIndex(of: firstViewController) else {
+				  return 0
+			  }
+		
+		return firstViewControllerIndex
+	}
+
 }
 
 extension NumberPageViewController: UIScrollViewDelegate {
