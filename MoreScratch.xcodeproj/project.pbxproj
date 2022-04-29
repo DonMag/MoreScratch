@@ -26,6 +26,7 @@
 		FCA19B28281967B60010BBD1 /* TableCol.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FCA19B25281967B60010BBD1 /* TableCol.storyboard */; };
 		FCA19B29281967B60010BBD1 /* TableColTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA19B26281967B60010BBD1 /* TableColTableViewController.swift */; };
 		FCA19B2A281967B60010BBD1 /* GradientMaskingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA19B27281967B60010BBD1 /* GradientMaskingViewController.swift */; };
+		FCA19B35281C07650010BBD1 /* SwiftHEXColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA19B34281C07650010BBD1 /* SwiftHEXColors.swift */; };
 		FCD4E31E2807609200808073 /* V2FollowPathViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCD4E31D2807609200808073 /* V2FollowPathViewController.swift */; };
 		FCD4E32028085EB200808073 /* NavTransViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCD4E31F28085EB200808073 /* NavTransViewController.swift */; };
 		FCD4E3222808709000808073 /* 20x45-Model.pdf in Resources */ = {isa = PBXBuildFile; fileRef = FCD4E3212808709000808073 /* 20x45-Model.pdf */; };
@@ -57,6 +58,7 @@
 		FCA19B25281967B60010BBD1 /* TableCol.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = TableCol.storyboard; sourceTree = "<group>"; };
 		FCA19B26281967B60010BBD1 /* TableColTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableColTableViewController.swift; sourceTree = "<group>"; };
 		FCA19B27281967B60010BBD1 /* GradientMaskingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientMaskingViewController.swift; sourceTree = "<group>"; };
+		FCA19B34281C07650010BBD1 /* SwiftHEXColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftHEXColors.swift; sourceTree = "<group>"; };
 		FCD4E31D2807609200808073 /* V2FollowPathViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = V2FollowPathViewController.swift; sourceTree = "<group>"; };
 		FCD4E31F28085EB200808073 /* NavTransViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavTransViewController.swift; sourceTree = "<group>"; };
 		FCD4E3212808709000808073 /* 20x45-Model.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "20x45-Model.pdf"; sourceTree = "<group>"; };
@@ -118,6 +120,7 @@
 				FCA19B27281967B60010BBD1 /* GradientMaskingViewController.swift */,
 				FCA19B25281967B60010BBD1 /* TableCol.storyboard */,
 				FCA19B26281967B60010BBD1 /* TableColTableViewController.swift */,
+				FCA19B34281C07650010BBD1 /* SwiftHEXColors.swift */,
 				FCD4E3212808709000808073 /* 20x45-Model.pdf */,
 				FCD4E3232808800E00808073 /* us-states-map.pdf */,
 				FC39559827E260D50060734C /* Assets.xcassets */,
@@ -213,6 +216,7 @@
 				FC39559027E260D30060734C /* AppDelegate.swift in Sources */,
 				7C947FD22806F1070051ABEB /* MapPreviewViewController.swift in Sources */,
 				FC39559227E260D30060734C /* SceneDelegate.swift in Sources */,
+				FCA19B35281C07650010BBD1 /* SwiftHEXColors.swift in Sources */,
 				FCA19B29281967B60010BBD1 /* TableColTableViewController.swift in Sources */,
 				7C947FCE2805F4600051ABEB /* StretchyHeaderViewController.swift in Sources */,
 				FCD4E35628119D9500808073 /* TabBarWorkViewController.swift in Sources */,

@@ -450,14 +450,41 @@ The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for t
         <!--Sub PageVC-->
         <scene sceneID="Th1-zO-nvF">
             <objects>
-                <viewController id="pfW-vU-qM9" customClass="SubPageVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="pfW-vU-qM9" customClass="ASubPageVC" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="OeL-X5-90k">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JB7-yI-a0v" customClass="CustomUIViewClass" customModule="MoreScratch" customModuleProvider="target">
+                                <rect key="frame" x="40" y="144" width="240" height="120"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="120" id="GDp-X1-Yae"/>
+                                </constraints>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PwW-pW-71k">
+                                <rect key="frame" x="100" y="494" width="120" height="34"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="120" id="NFz-BH-bck"/>
+                                </constraints>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" title="Button"/>
+                            </button>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="gha-zZ-kja"/>
                         <color key="backgroundColor" red="0.92143100499999997" green="0.92145264149999995" blue="0.92144101860000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="JB7-yI-a0v" firstAttribute="top" secondItem="gha-zZ-kja" secondAttribute="top" constant="100" id="8bZ-JG-BsQ"/>
+                            <constraint firstItem="PwW-pW-71k" firstAttribute="centerX" secondItem="OeL-X5-90k" secondAttribute="centerX" id="Fdd-jB-gXd"/>
+                            <constraint firstItem="JB7-yI-a0v" firstAttribute="leading" secondItem="gha-zZ-kja" secondAttribute="leading" constant="40" id="Hvf-Fg-tPf"/>
+                            <constraint firstItem="gha-zZ-kja" firstAttribute="trailing" secondItem="JB7-yI-a0v" secondAttribute="trailing" constant="40" id="KvB-1s-ySS"/>
+                            <constraint firstItem="gha-zZ-kja" firstAttribute="bottom" secondItem="PwW-pW-71k" secondAttribute="bottom" constant="40" id="qHK-Dq-qtJ"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="Dqr-Tu-Faf"/>
+                    <connections>
+                        <outlet property="button" destination="PwW-pW-71k" id="CvG-s7-b0J"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YOE-ji-v45" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

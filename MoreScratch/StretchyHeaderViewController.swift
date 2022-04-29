@@ -475,3 +475,144 @@ class DashboardViewController: UIViewController, UITableViewDelegate, UITableVie
 	}
 }
 
+class CustomUIViewClass: UIView {
+	
+	@objc dynamic var subviewColor: UIColor? {
+		get { return self.backgroundColor }
+		set { self.backgroundColor = newValue }
+	}
+	
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		setup()
+	}
+	
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		setup()
+	}
+	
+	
+	@objc dynamic func setup(){
+		self.backgroundColor = .yellow
+		self.frame.size.height = 250
+		self.layer.borderWidth = 5
+		self.backgroundColor = subviewColor
+		
+	}
+
+	@objc dynamic func setBorderGradientColortoView1(firstColor: Int, secondColor: Int)  {
+		
+		let c1 = UIColor(red: CGFloat((firstColor >> 16) & 0xff) / 255.0, green: CGFloat((firstColor >> 8) & 0xff) / 255.0, blue: CGFloat(firstColor & 0xff) / 255.0, alpha: 1.0)
+		let c2 = UIColor(red: CGFloat((secondColor >> 16) & 0xff) / 255.0, green: CGFloat((secondColor >> 8) & 0xff) / 255.0, blue: CGFloat(secondColor & 0xff) / 255.0, alpha: 1.0)
+
+		let colorTop = c1.cgColor
+		let colorBottom = c2.cgColor
+		
+		let gradientLayer = CAGradientLayer()
+		gradientLayer.colors = [colorTop, colorBottom]
+		gradientLayer.locations = [0.0, 1.0]
+		gradientLayer.frame = self.bounds
+		gradientLayer.cornerRadius = self.layer.cornerRadius
+		self.layer.sublayers?.filter{ $0 is CAGradientLayer }.forEach{ $0.removeFromSuperlayer() }
+		
+		self.layer.insertSublayer(gradientLayer, at:0)
+		
+	}
+
+//	@objc dynamic func setBorderGradientColortoView1(firstColor : String , secondColor : String)  {
+//		let colorTop =  UIColor(hexString : firstColor )!.cgColor
+//		let colorBottom = UIColor(hexString : secondColor)!.cgColor
+//		let gradientLayer = CAGradientLayer()
+//		gradientLayer.colors = [colorTop, colorBottom]
+//		gradientLayer.locations = [0.0, 1.0]
+//		gradientLayer.frame = self.bounds
+//		gradientLayer.cornerRadius = self.layer.cornerRadius
+//		self.layer.sublayers?.filter{ $0 is CAGradientLayer }.forEach{ $0.removeFromSuperlayer() }
+//
+//		self.layer.insertSublayer(gradientLayer, at:0)
+//	}
+}
+
+class ASubPageVC: UIViewController {
+	
+	@IBOutlet var button: UIButton!
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+
+		guard let c1 = UIColor(hexString: "#FF2222", alpha: 1.0),
+			  let c2 = UIColor(hexString: "#7A1111", alpha: 1.0)
+		else {
+			view.backgroundColor = .green
+			return
+		}
+
+		CustomUIViewClass.appearance().setBorderGradientColortoView1(firstColor: 0xff2222, secondColor: 0x7a1111)
+		
+		button.setImage(UIImage(systemName: "arrow.up.and.down.square"), for: .normal)
+		button.setImage(UIImage(systemName: "arrow.up.bin"), for: .selected)
+		button.frame = CGRect(x: 0.0, y: 0.0, width: 100.0, height: 50.0)
+		
+	}
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+
+		print(button.currentImage) // Optional(<UIImage:0x6000025a4090...
+		print(button.imageView?.image) // Optional(<UIImage:0x6000025a4090...
+		
+
+	}
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+
+		print(button.currentImage) // Optional(<UIImage:0x6000025a4090...
+		print(button.imageView?.image) // Optional(<UIImage:0x6000025a4090...
+		
+		button.isSelected = true
+//		if let v = button.imageView {
+//			v.image = nil
+//		}
+//		if let img = UIImage(systemName: "arrow.up.bin") {
+//			button.imageView?.image = img
+//		}
+		
+	}
+	
+//	func IntFromHex(_ s: String) -> Int {
+//
+//		var hex = s
+//
+//		// Check for hash and remove the hash
+//		if hex.hasPrefix("#") {
+//			hex = String(hex[hex.index(after: hex.startIndex)...])
+//		}
+//
+//		guard let hexVal = Int64(hex, radix: 16) else {
+//			return 0
+//		}
+//
+//		let r =
+//		self.init(red:   CGFloat( (hex6 & 0xFF0000) >> 16 ) / 255.0,
+//				  green: CGFloat( (hex6 & 0x00FF00) >> 8 ) / 255.0,
+//				  blue:  CGFloat( (hex6 & 0x0000FF) >> 0 ) / 255.0, alpha: CGFloat(alpha))
+//
+//		switch hex.count {
+//		case 3:
+//			self.init(hex3: hexVal, alpha: alpha ?? 1.0)
+//		case 4:
+//			self.init(hex4: hexVal, alpha: alpha)
+//		case 6:
+//			self.init(hex6: hexVal, alpha: alpha ?? 1.0)
+//		case 8:
+//			self.init(hex8: hexVal, alpha: alpha)
+//		default:
+//			// Note:
+//			// The swift 1.1 compiler is currently unable to destroy partially initialized classes in all cases,
+//			// so it disallows formation of a situation where it would have to.  We consider this a bug to be fixed
+//			// in future releases, not a feature. -- Apple Forum
+//			self.init()
+//			return nil
+//		}
+//
+//	}
+}
