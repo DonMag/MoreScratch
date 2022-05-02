@@ -616,3 +616,247 @@ class ASubPageVC: UIViewController {
 //
 //	}
 }
+
+
+enum AuthorType {
+	case single, multiple
+}
+
+struct Book: Hashable {
+	var title = ""
+	var author = ""
+	var pages = 0
+	var year = 0
+	var genre = ""
+	var authType = AuthorType.single
+	
+	static var sections: [String] {
+		return ["Fiction", "Non-Fiction"]
+	}
+	
+	static var books: [String: [Book]] {
+		return [
+			"Fiction": [
+				Book(title: "Peace Talks", author:"Jim Butcher", pages: 340, year: 2020),
+				Book(title: "Battle Ground", author:"Jim Butcher", pages: 300, year: 2020),
+				Book(title: "Neuromancer", author:"William Gibson", pages: 271, year: 1984),
+				Book(title: "Snow Crash", author:"Neal Stephenson", pages: 480, year: 1992)
+			],
+			"Non-Fiction": [
+				Book(title: "UIKit Apprentice", author:"Fahim Farook & Matthijs Hollemans", pages: 1128, year: 2020, authType: AuthorType.multiple),
+				Book(title: "Swift Apprentice", author:"The Ray Wenderlich Tutorial Team", pages: 500, year: 2020, authType: AuthorType.multiple)
+			]
+		]
+	}
+	
+	static func booksFor(section: Int) -> [Book] {
+		let sec = Book.sections[section]
+		if let arr = Book.books[sec] {
+			return arr
+		}
+		return []
+	}
+}
+
+class SimpleTableView: UIViewController, UITableViewDelegate, UITableViewDataSource {
+	private var tableView: UITableView!
+	private let reuseIdentifier = "BookCell"
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		// View title
+		title = "Books - Table"
+		// Add table view
+		tableView = UITableView(frame: view.bounds, style: .insetGrouped)
+		tableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+		view.addSubview(tableView)
+		tableView.delegate = self
+		tableView.dataSource = self
+		// Register cell
+		tableView.register(UITableViewCell.self, forCellReuseIdentifier: reuseIdentifier)
+	}
+	
+	// MARK: - Table View Data Source / Delegate
+	func numberOfSections(in tableView: UITableView) -> Int {
+		return Book.sections.count
+	}
+	
+	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		return Book.booksFor(section: section).count
+	}
+	
+	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let cell = tableView.dequeueReusableCell(withIdentifier: self.reuseIdentifier, for: indexPath)
+		var content = cell.defaultContentConfiguration()
+		let section = Book.sections[indexPath.section]
+		if let arr = Book.books[section] {
+			let book = arr[indexPath.row]
+			//content.image = book.authType == .single ? UIImage(systemName: "person.fill") : UIImage(systemName: "person.2.fill")
+			if let img = UIImage(named: "myTestIMG") {
+				content.image = img
+			}
+			content.text = book.title
+			content.secondaryText = book.author
+		}
+		cell.contentConfiguration = content
+		return cell
+	}
+}
+
+class MySimpleTableView: UIViewController, UITableViewDelegate, UITableViewDataSource {
+	private var tableView: UITableView!
+	private let reuseIdentifier = "myCell"
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		if let img = UIImage(named: "swiftRed") {
+			let szImg2 = img.resized(to: CGSize(width: 28, height: 28), withScale: 2)
+			let szImg3 = img.resized(to: CGSize(width: 28, height: 28), withScale: 3)
+			print()
+		}
+		
+		
+		// Add table view
+		tableView = UITableView(frame: view.bounds, style: .plain)
+		tableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+		view.addSubview(tableView)
+		tableView.delegate = self
+		tableView.dataSource = self
+		// Register cell
+		tableView.register(UITableViewCell.self, forCellReuseIdentifier: reuseIdentifier)
+	}
+	
+	// MARK: - Table View Data Source / Delegate
+	func numberOfSections(in tableView: UITableView) -> Int {
+		return 1
+	}
+	
+	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		return 4
+	}
+	
+	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let cell = tableView.dequeueReusableCell(withIdentifier: self.reuseIdentifier, for: indexPath)
+		var content = cell.defaultContentConfiguration()
+		content.text = "Cell \(indexPath)"
+		if indexPath.row % 2 == 1 {
+			content.secondaryText = "Secondary"
+		}
+//		content.image = UIImage(systemName: "person")
+
+		//content.image = UIImage(named: "myTestIMG")
+		//content.image = UIImage(named: "80x80")
+		//content.image = UIImage(named: "swiftRed")
+		let v = UIListContentConfiguration.ImageProperties.standardDimension
+		content.imageProperties.reservedLayoutSize = CGSize(width: v, height: v)
+		
+		if let img = UIImage(named: "swiftRed") {
+			let szImg = img.resized(to: CGSize(width: 28, height: 28), withScale: UIScreen.main.scale)
+			content.image = szImg
+		}
+
+		//		if let img = UIImage(named: "myTestIMG") {
+//			content.image = img
+//		}
+		cell.contentConfiguration = content
+		return cell
+	}
+}
+
+extension UIImage {
+	func xclearRect(_ r: CGRect) -> UIImage {
+		let renderer = UIGraphicsImageRenderer(size: size)
+		let image = renderer.image { (context) in
+			// draw the full image
+			draw(at: .zero)
+			let pth = UIBezierPath(rect: r)
+			context.cgContext.setFillColor(UIColor.clear.cgColor)
+			context.cgContext.setBlendMode(.clear)
+			// "fill" the rect with clear
+			pth.fill()
+		}
+		return image
+	}
+	func resized(to sz: CGSize, withScale: CGFloat) -> UIImage {
+		
+		let format = UIGraphicsImageRendererFormat()
+		format.scale = withScale
+		
+		let renderer = UIGraphicsImageRenderer(size: sz, format: format)
+
+		let image = renderer.image { (context) in
+			draw(in: CGRect(origin: .zero, size: sz))
+		}
+		return image
+	}
+}
+
+extension UIView {
+	func xscale(by scale: CGFloat) {
+		self.contentScaleFactor = scale
+		for subview in self.subviews {
+			subview.scale(by: scale)
+		}
+	}
+	
+	func xgetImage(scale: CGFloat? = nil) -> UIImage {
+		let newScale = scale ?? UIScreen.main.scale
+		self.scale(by: newScale)
+		
+		let format = UIGraphicsImageRendererFormat()
+		format.scale = newScale
+		
+		let renderer = UIGraphicsImageRenderer(size: self.bounds.size, format: format)
+		
+		let image = renderer.image { rendererContext in
+			self.layer.render(in: rendererContext.cgContext)
+		}
+		
+		return image
+	}
+}
+
+class SuperViewA: UIView {
+	
+}
+class SubViewA: SuperViewA {
+	
+	var sv: SuperViewA!
+	
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		if let v = sv {
+			v.frame = bounds.insetBy(dx: 20, dy: 20)
+		}
+	}
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+
+		if let v = Bundle.main.loadNibNamed(String(describing: SuperViewA.self), owner: nil)?.first as? SuperViewA {
+			v.frame = CGRect(x: 20, y: 20, width: 120, height: 80)
+			addSubview(v)
+			sv = v
+		}
+	}
+	
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+	
+}
+class LoadNibVC: UIViewController {
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+
+		let v = SubViewA()
+		
+		//if let v = Bundle.main.loadNibNamed(String(describing: SuperViewA.self), owner: nibName)?.first as? SuperViewA {
+			v.frame = CGRect(x: 100, y: 200, width: 200, height: 100)
+			v.backgroundColor = .green
+			view.addSubview(v)
+		//}
+		
+	}
+}

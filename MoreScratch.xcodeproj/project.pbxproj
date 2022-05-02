@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		7C26488C28186F310064E642 /* OffersTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7C26488B28186F310064E642 /* OffersTableViewCell.xib */; };
+		7C58CC0F282023F300025C44 /* SuperViewA.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7C58CC0E282023F300025C44 /* SuperViewA.xib */; };
 		7C947FCC27FE2C8B0051ABEB /* SampleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C947FCB27FE2C8B0051ABEB /* SampleData.swift */; };
 		7C947FCE2805F4600051ABEB /* StretchyHeaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C947FCD2805F4600051ABEB /* StretchyHeaderViewController.swift */; };
 		7C947FD02805FB930051ABEB /* Temp.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7C947FCF2805FB930051ABEB /* Temp.storyboard */; };
@@ -38,6 +39,7 @@
 
 /* Begin PBXFileReference section */
 		7C26488B28186F310064E642 /* OffersTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OffersTableViewCell.xib; sourceTree = "<group>"; };
+		7C58CC0E282023F300025C44 /* SuperViewA.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SuperViewA.xib; sourceTree = "<group>"; };
 		7C947FCB27FE2C8B0051ABEB /* SampleData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SampleData.swift; sourceTree = "<group>"; };
 		7C947FCD2805F4600051ABEB /* StretchyHeaderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StretchyHeaderViewController.swift; sourceTree = "<group>"; };
 		7C947FCF2805FB930051ABEB /* Temp.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Temp.storyboard; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 				FCA19B25281967B60010BBD1 /* TableCol.storyboard */,
 				FCA19B26281967B60010BBD1 /* TableColTableViewController.swift */,
 				FCA19B34281C07650010BBD1 /* SwiftHEXColors.swift */,
+				7C58CC0E282023F300025C44 /* SuperViewA.xib */,
 				FCD4E3212808709000808073 /* 20x45-Model.pdf */,
 				FCD4E3232808800E00808073 /* us-states-map.pdf */,
 				FC39559827E260D50060734C /* Assets.xcassets */,
@@ -190,6 +193,7 @@
 			files = (
 				FCD4E3222808709000808073 /* 20x45-Model.pdf in Resources */,
 				FC39559C27E260D50060734C /* LaunchScreen.storyboard in Resources */,
+				7C58CC0F282023F300025C44 /* SuperViewA.xib in Resources */,
 				FCD4E35828119E3500808073 /* Tabs.storyboard in Resources */,
 				FC8E10D727F63C7F00EEBC75 /* Sizing.storyboard in Resources */,
 				FCA19B28281967B60010BBD1 /* TableCol.storyboard in Resources */,
