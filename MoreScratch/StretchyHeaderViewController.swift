@@ -711,8 +711,9 @@ class MySimpleTableView: UIViewController, UITableViewDelegate, UITableViewDataS
 		super.viewDidLoad()
 		
 		if let img = UIImage(named: "swiftRed") {
-			let szImg2 = img.resized(to: CGSize(width: 28, height: 28), withScale: 2)
-			let szImg3 = img.resized(to: CGSize(width: 28, height: 28), withScale: 3)
+			let szImg2 = img.resized(toSize: CGSize(width: 28, height: 28), atScale: 2)
+			let szImg3 = img.resized(toSize: CGSize(width: 28, height: 28), atScale: 3)
+			let szImgD = img.resized(toSize: CGSize(width: 28, height: 28))
 			print()
 		}
 		
@@ -752,7 +753,7 @@ class MySimpleTableView: UIViewController, UITableViewDelegate, UITableViewDataS
 		content.imageProperties.reservedLayoutSize = CGSize(width: v, height: v)
 		
 		if let img = UIImage(named: "swiftRed") {
-			let szImg = img.resized(to: CGSize(width: 28, height: 28), withScale: UIScreen.main.scale)
+			let szImg = img.resized(toSize: CGSize(width: 28, height: 28), atScale: UIScreen.main.scale)
 			content.image = szImg
 		}
 
@@ -765,26 +766,11 @@ class MySimpleTableView: UIViewController, UITableViewDelegate, UITableViewDataS
 }
 
 extension UIImage {
-	func xclearRect(_ r: CGRect) -> UIImage {
-		let renderer = UIGraphicsImageRenderer(size: size)
-		let image = renderer.image { (context) in
-			// draw the full image
-			draw(at: .zero)
-			let pth = UIBezierPath(rect: r)
-			context.cgContext.setFillColor(UIColor.clear.cgColor)
-			context.cgContext.setBlendMode(.clear)
-			// "fill" the rect with clear
-			pth.fill()
-		}
-		return image
-	}
-	func resized(to sz: CGSize, withScale: CGFloat) -> UIImage {
-		
+	func resized(toSize sz: CGSize, atScale: CGFloat? = nil) -> UIImage {
+		let newScale = atScale ?? UIScreen.main.scale
 		let format = UIGraphicsImageRendererFormat()
-		format.scale = withScale
-		
+		format.scale = newScale
 		let renderer = UIGraphicsImageRenderer(size: sz, format: format)
-
 		let image = renderer.image { (context) in
 			draw(in: CGRect(origin: .zero, size: sz))
 		}
