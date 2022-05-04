@@ -854,6 +854,9 @@ class CenterInScrollVC: UIViewController, UIScrollViewDelegate {
 				//mv.frame.origin = CGPoint(x: location.x - img.size.width * 0.5, y: location.y - img.size.height * 0.5)
 				mv.backgroundColor = .systemYellow.withAlphaComponent(0.5)
 				mapView.addSubview(mv)
+				let s = 1.0 / scrollView.zoomScale
+				let t: CGAffineTransform = .identity
+				mv.transform = t.scaledBy(x: s, y: s)
 			}
 			print(finalLocation, "v:", view.frame.size)
 			//self.onLongPress(finalLocation)
