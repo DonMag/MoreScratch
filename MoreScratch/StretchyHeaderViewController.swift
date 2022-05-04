@@ -1213,3 +1213,70 @@ extension zSlidingHeaderViewController: UIScrollViewDelegate {
 	}
 	
 }
+
+class ButtonFontVC: UIViewController {
+	
+	let b1 = UIButton()
+	let b2 = UIButton()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		[b1, b2].forEach { b in
+			//b.setTitle("Testing", for: [])
+			b.setTitleColor(.white, for: .normal)
+			b.setTitleColor(.lightGray, for: .highlighted)
+			b.backgroundColor = .systemBlue
+			b.translatesAutoresizingMaskIntoConstraints = false
+			view.addSubview(b)
+		}
+		
+		let g = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			b1.topAnchor.constraint(equalTo: g.topAnchor, constant: 80.0),
+			b2.topAnchor.constraint(equalTo: b1.bottomAnchor, constant: 20.0),
+			b1.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+			b2.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+		])
+		
+		var cfg = UIButton.Configuration.plain()
+		cfg.title = "Testing"
+		cfg.baseForegroundColor = .white
+		b1.configuration = cfg
+	}
+	
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		print(#function)
+		let font: UIFont = .systemFont(ofSize: 72.0, weight: .light)
+//		b1.titleLabel?.font = font
+		var s = NSAttributedString(string: "Testing", attributes: [
+			NSAttributedString.Key.font : font,
+			NSAttributedString.Key.foregroundColor : UIColor.yellow,
+		])
+		b2.setAttributedTitle(s, for: .normal)
+		s = NSAttributedString(string: "Testing", attributes: [
+			NSAttributedString.Key.font : font,
+			NSAttributedString.Key.foregroundColor : UIColor.cyan,
+		])
+		b2.setAttributedTitle(s, for: .highlighted)
+
+
+		var ss: AttributedString!
+		
+		do {
+			ss = try AttributedString(s, including: \.uiKit)
+		} catch {
+			
+		}
+		
+		var cfg = b1.configuration
+		if cfg == nil {
+			print("nil")
+			cfg = UIButton.Configuration.plain()
+		}
+		cfg?.attributedTitle = ss
+		
+		b1.configuration = cfg
+	}
+	
+}
