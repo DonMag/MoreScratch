@@ -1280,3 +1280,66 @@ class ButtonFontVC: UIViewController {
 	}
 	
 }
+
+class MyBaseVC: UIViewController {
+	
+	let imgViewA = UIImageView()
+	let imgViewB = UIImageView()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		[imgViewA, imgViewB].forEach { v in
+			// use AspectFill
+			v.contentMode = .scaleAspectFill
+			// background color so we can see the framing
+			v.backgroundColor = .systemYellow
+			v.translatesAutoresizingMaskIntoConstraints = false
+			view.addSubview(v)
+		}
+		let g = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			
+			imgViewA.topAnchor.constraint(equalTo: g.topAnchor, constant: 40.0),
+			imgViewA.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+			imgViewA.widthAnchor.constraint(equalToConstant: 160.0),
+			imgViewA.heightAnchor.constraint(equalTo: imgViewA.widthAnchor),
+			
+			imgViewB.topAnchor.constraint(equalTo: imgViewA.bottomAnchor, constant: 20.0),
+			imgViewB.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+			imgViewB.widthAnchor.constraint(equalToConstant: 160.0),
+			imgViewB.heightAnchor.constraint(equalTo: imgViewB.widthAnchor),
+			
+		])
+		
+	}
+	
+}
+
+class Example5VC: MyBaseVC {
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+//		let nm = "person.crop.circle.fill"
+		let nm = "mic.circle.fill"
+
+		// create UIImage from SF Symbol at "160-pts" size
+		let cfg = UIImage.SymbolConfiguration(pointSize: 160.0)
+		guard let imgA = UIImage(systemName: nm, withConfiguration: cfg)?.withTintColor(.red, renderingMode: .alwaysOriginal) else {
+			fatalError("Could not load SF Symbol: \(nm)!")
+		}
+		
+		// get a cgRef from imgA
+		guard let cgRef = imgA.cgImage else {
+			fatalError("Could not get cgImage!")
+		}
+		// create imgB from the cgRef
+		let imgB = UIImage(cgImage: cgRef, scale: imgA.scale, orientation: imgA.imageOrientation)
+			.withTintColor(.red, renderingMode: .alwaysOriginal)
+		
+		print("imgA:", imgA.size, "imgB:", imgB.size)
+		
+		imgViewA.image = imgA
+		imgViewB.image = imgB
+	}
+}
