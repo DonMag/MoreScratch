@@ -1343,3 +1343,40 @@ class Example5VC: MyBaseVC {
 		imgViewB.image = imgB
 	}
 }
+
+class TextCell: UIView {
+	
+	let label = UILabel()
+	
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		configure()
+	}
+	required init?(coder: NSCoder) {
+		fatalError("not implemnted")
+	}
+	
+}
+
+extension TextCell {
+	func configure() {
+		label.translatesAutoresizingMaskIntoConstraints = false
+		label.adjustsFontForContentSizeCategory = true
+		addSubview(label)
+		label.font = UIFont.preferredFont(forTextStyle: .caption1)
+		let inset = CGFloat(10)
+		let g = self.layoutMarginsGuide
+		NSLayoutConstraint.activate([
+			label.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: inset),
+			label.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -inset),
+			label.topAnchor.constraint(equalTo: g.topAnchor, constant: inset),
+			label.bottomAnchor.constraint(equalTo: g.bottomAnchor, constant: -inset)
+		])
+	}
+}
+
+class StackColumnsVC: UIViewController {
+	
+	let numItems: Int = 7
+	
+}
