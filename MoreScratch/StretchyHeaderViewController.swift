@@ -1380,3 +1380,88 @@ class StackColumnsVC: UIViewController {
 	let numItems: Int = 7
 	
 }
+
+class CircleView: UIView {
+	
+	var color: UIColor = .yellow
+	
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		backgroundColor = .clear
+	}
+	
+	required init(coder aDecoder : NSCoder) {
+		fatalError("init(coder : ) has not been implemented")
+	}
+	
+	override func draw(_ rect: CGRect) {
+		if let context = UIGraphicsGetCurrentContext(){
+			context.setLineWidth(2)
+			color.setStroke()
+			context.addEllipse(in: bounds.insetBy(dx: 2, dy: 2))
+			context.strokePath()
+		}
+	}
+		
+}
+
+class CircleViewController: UIViewController {
+
+	// array of Circle Views to track
+	var circleViews: [CircleView] = []
+	
+	// this will be set if touchesBegan is inside an existing circle
+	var selectedCircleView: CircleView!
+	
+	let colors: [UIColor] = [
+		.yellow, .green, .red, .cyan, .orange
+	]
+	
+	let circleSize: CGSize = CGSize(width: 100.0, height: 100.0)
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		view.backgroundColor = UIColor.lightGray
+	}
+	
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		if let touch = touches.first {
+			let loc = touch.location(in: view)
+			selectedCircleView = nil
+			
+			if let draggedCircle = circleViews.filter({ UIBezierPath(ovalIn: $0.frame).contains(loc) }).first {
+				selectedCircleView = draggedCircle
+			}
+			
+		}
+	}
+	
+	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+		if let touch = touches.first {
+			if selectedCircleView == nil {
+				// we did not have a touched circle, so create a new one
+				let newCV: CircleView = CircleView(frame: CGRect(origin: .zero, size: circleSize))
+				newCV.center = touch.location(in: view)
+				// cycle through our colors array so we can tell the circles from each other
+				newCV.color = colors[circleViews.count % colors.count]
+				// add it to the view
+				view.addSubview(newCV)
+				// add it to the tracking array
+				circleViews.append(newCV)
+			}
+		}
+	}
+	
+	override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+		guard let touch = touches.first else {
+			return
+		}
+		// if we have a selected circle view
+		if let curCV = selectedCircleView {
+			// move it
+			curCV.center = touch.location(in: view)
+		}
+	}
+	
+}
+
