@@ -662,6 +662,8 @@ class SimpleTableView: UIViewController, UITableViewDelegate, UITableViewDataSou
 	private var tableView: UITableView!
 	private let reuseIdentifier = "BookCell"
 	
+	var exp: [Bool] = []
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		// View title
@@ -674,7 +676,19 @@ class SimpleTableView: UIViewController, UITableViewDelegate, UITableViewDataSou
 		tableView.dataSource = self
 		// Register cell
 		tableView.register(UITableViewCell.self, forCellReuseIdentifier: reuseIdentifier)
+		
+		if #available(iOS 15.0, *) {
+			tableView.sectionHeaderTopPadding = 0
+			tableView.sectionFooterHeight = 0
+			tableView.sectionHeaderHeight = 12
+		}
+
+		exp = Array(repeating: true, count: Book.sections.count)
 	}
+	
+//	func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+//		return "Section: \(section)"
+//	}
 	
 	// MARK: - Table View Data Source / Delegate
 	func numberOfSections(in tableView: UITableView) -> Int {
@@ -682,7 +696,10 @@ class SimpleTableView: UIViewController, UITableViewDelegate, UITableViewDataSou
 	}
 	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return Book.booksFor(section: section).count
+		if exp[section] {
+			return Book.booksFor(section: section).count
+		}
+		return 1
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -700,6 +717,14 @@ class SimpleTableView: UIViewController, UITableViewDelegate, UITableViewDataSou
 		}
 		cell.contentConfiguration = content
 		return cell
+	}
+	
+	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		print(#function)
+		if indexPath.row == 0 {
+			exp[indexPath.section].toggle()
+			tableView.reloadSections([indexPath.section], with: .automatic)
+		}
 	}
 }
 
@@ -1465,3 +1490,328 @@ class CircleViewController: UIViewController {
 	
 }
 
+class ServiceAnnotationView: UIView {
+	@IBOutlet var stackView: UIStackView!
+	
+	let imgNames: [String] = [
+		"pay",
+		"charging",
+		"fuel",
+		"parking",
+		"charging",
+	]
+	
+	var numItems: Int = 1 {
+		didSet {
+			for i in 0..<numItems {
+				let imgView = UIImageView()
+				imgView.backgroundColor = .yellow
+				if let img = UIImage(systemName: "\(i).circle.fill") {
+					imgView.image = img
+				}
+				stackView.addArrangedSubview(imgView)
+				imgView.heightAnchor.constraint(equalToConstant: 24.0).isActive = true
+				imgView.widthAnchor.constraint(equalTo: imgView.heightAnchor).isActive = true
+			}
+		}
+	}
+}
+
+import MapKit
+
+extension UIView {
+	class func fromNib<T: UIView>() -> T {
+		return Bundle(for: T.self).loadNibNamed(String(describing: T.self), owner: nil, options: nil)![0] as! T
+	}
+}
+extension UIView {
+	
+	// Using a function since `var image` might conflict with an existing variable
+	// (like on `UIImageView`)
+	func asImage() -> UIImage {
+		let renderer = UIGraphicsImageRenderer(bounds: bounds)
+		return renderer.image { rendererContext in
+			layer.render(in: rendererContext.cgContext)
+		}
+	}
+}
+class SizeXIBViewController: UIViewController, MKMapViewDelegate {
+	
+	@IBOutlet var mapView: MKMapView!
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		let london = Capital(title: "London", coordinate: CLLocationCoordinate2D(latitude: 51.507222, longitude: -0.1275), info: "Home to the 2012 Summer Olympics.")
+		let oslo = Capital(title: "Oslo", coordinate: CLLocationCoordinate2D(latitude: 59.95, longitude: 10.75), info: "Founded over a thousand years ago.")
+		let paris = Capital(title: "Paris", coordinate: CLLocationCoordinate2D(latitude: 48.8567, longitude: 2.3508), info: "Often called the City of Light.")
+		let rome = Capital(title: "Rome", coordinate: CLLocationCoordinate2D(latitude: 41.9, longitude: 12.5), info: "Has a whole country inside it.")
+		let washington = Capital(title: "Washington DC", coordinate: CLLocationCoordinate2D(latitude: 38.895111, longitude: -77.036667), info: "Named after George himself.")
+	
+		mapView.delegate = self
+		
+		mapView.addAnnotations([london, oslo, paris, rome, washington])
+		
+		// Set initial location in Honolulu
+		let initialLocation = CLLocation(latitude: 21.282778, longitude: -157.829444)
+		
+		mapView.centerToLocation(initialLocation)
+		
+		// Show artwork on map
+		let artwork = Artwork(
+			title: "King David Kalakaua",
+			locationName: "Waikiki Gateway Park",
+			discipline: "Sculpture",
+			coordinate: CLLocationCoordinate2D(latitude: 21.283921, longitude: -157.831661))
+		mapView.addAnnotation(artwork)
+		
+	}
+
+	var itemCount: Int = 1
+	
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		
+//		let serviceAnnotationView: ServiceAnnotationView = ServiceAnnotationView.fromNib()
+//
+//		serviceAnnotationView.numItems = itemCount
+//
+//		serviceAnnotationView.translatesAutoresizingMaskIntoConstraints = false
+//
+//		serviceAnnotationView.setNeedsLayout()
+//		serviceAnnotationView.layoutIfNeeded()
+//
+//		let img = serviceAnnotationView.asImage()
+//
+//		print(itemCount, img.size)
+		
+//		let view = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+//		view.image = serviceAnnotationView.asImage()
+		
+		itemCount += 1
+		
+	}
+	
+	func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+		// 1
+//		guard annotation is Capital else { return nil }
+//		let identifier = "Capital"
+
+		guard annotation is Artwork else { return nil }
+		let identifier = "Artwork"
+
+		// 3
+		var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+		
+		let serviceAnnotationView: ServiceAnnotationView = ServiceAnnotationView.fromNib()
+		
+		serviceAnnotationView.numItems = 3
+		
+		serviceAnnotationView.translatesAutoresizingMaskIntoConstraints = false
+		
+		serviceAnnotationView.setNeedsLayout()
+		serviceAnnotationView.layoutIfNeeded()
+		
+		let img = serviceAnnotationView.asImage()
+
+		
+//		if annotationView == nil {
+//			//4
+//			annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+//			annotationView?.canShowCallout = true
+//
+//			// 5
+//			let btn = UIButton(type: .detailDisclosure)
+//			annotationView?.rightCalloutAccessoryView = btn
+//		} else {
+//			// 6
+//			annotationView?.annotation = annotation
+//		}
+
+		if annotationView == nil {
+			annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+		} else {
+			annotationView?.annotation = annotation
+		}
+
+		annotationView?.image = img
+		
+		
+		return annotationView
+	}
+	
+}
+
+class Capital: NSObject, MKAnnotation {
+	var title: String?
+	var coordinate: CLLocationCoordinate2D
+	var info: String
+	
+	init(title: String, coordinate: CLLocationCoordinate2D, info: String) {
+		self.title = title
+		self.coordinate = coordinate
+		self.info = info
+	}
+}
+
+private extension MKMapView {
+	func centerToLocation(
+		_ location: CLLocation,
+		regionRadius: CLLocationDistance = 1000
+	) {
+		let coordinateRegion = MKCoordinateRegion(
+			center: location.coordinate,
+			latitudinalMeters: regionRadius,
+			longitudinalMeters: regionRadius)
+		setRegion(coordinateRegion, animated: true)
+	}
+}
+
+import MapKit
+
+class Artwork: NSObject, MKAnnotation {
+	let title: String?
+	let locationName: String?
+	let discipline: String?
+	let coordinate: CLLocationCoordinate2D
+	
+	init(
+		title: String?,
+		locationName: String?,
+		discipline: String?,
+		coordinate: CLLocationCoordinate2D
+	) {
+		self.title = title
+		self.locationName = locationName
+		self.discipline = discipline
+		self.coordinate = coordinate
+		
+		super.init()
+	}
+	
+	var subtitle: String? {
+		return locationName
+	}
+}
+
+class SimpleViewController: UIViewController {
+	
+	let testLabel = UILabel()
+	
+	// custom DotsView
+	let testDotsView = DotsView()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		view.backgroundColor = .systemBackground
+		
+		testLabel.font = .systemFont(ofSize: 24.0)
+		
+		testLabel.text = "Retrieving boxes"
+		
+		// so we can see the label frame
+		testLabel.backgroundColor = .cyan
+		
+		testLabel.translatesAutoresizingMaskIntoConstraints = false
+		testDotsView.translatesAutoresizingMaskIntoConstraints = false
+		
+		view.addSubview(testLabel)
+		view.addSubview(testDotsView)
+		
+		// always respect safe area
+		let g = view.safeAreaLayoutGuide
+		
+		NSLayoutConstraint.activate([
+			
+			// let's constrain the label
+			//  40-pts from Leading
+			//  40-pts from Bottom
+			testLabel.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 40.0),
+			testLabel.bottomAnchor.constraint(equalTo: g.bottomAnchor, constant: -40.0),
+			
+			// constrain dots view to
+			//  Top of label
+			//  Trailing of label
+			testDotsView.topAnchor.constraint(equalTo: testLabel.topAnchor),
+			testDotsView.leadingAnchor.constraint(equalTo: testLabel.trailingAnchor, constant: 0.0),
+			// dots image view Width and Height can be 0 (we can draw the layer outside the bounds)
+			testDotsView.heightAnchor.constraint(equalToConstant: 0.0),
+			testDotsView.widthAnchor.constraint(equalToConstant: 0.0),
+			
+		])
+		
+		// get the label font's baseline y-value
+		testDotsView.baseline = testLabel.font.ascender
+		
+		// use defaults or set values here
+		//testDotsView.dotXOffset = 4.0
+		//testDotsView.dotSize = 4.0
+		//testDotsView.dotSpacing = 8.0
+		
+		testDotsView.beginAnimating()
+
+		// we want to
+		//	Stop the Dots animation when the app goes into the Background, and
+		//	Start the Dots animation when the app Enters the Foreground
+		NotificationCenter.default.addObserver(self, selector: #selector(myEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(myEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+	}
+	
+	@objc func myEnterBackground() {
+		testDotsView.stopAnimating()
+	}
+	@objc func myEnterForeground() {
+		testDotsView.beginAnimating()
+	}
+	
+}
+
+class DotsView: UIView {
+	
+	// baseline = to put the bottom of the dots at the baseline of the text in the label
+	// dotXOffset = gap between end of label and first dot
+	// dotSize = dot width and height
+	// dotSpacing = gap between dots
+
+	public var baseline: CGFloat = 0
+	public var dotXOffset: CGFloat = 4.0
+	public var dotSize: CGFloat = 4.0
+	public var dotSpacing: CGFloat = 8.0
+
+	private let lay = CAReplicatorLayer()
+	private let bar = CALayer()
+
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	func commonInit() {
+		lay.addSublayer(bar)
+		layer.addSublayer(lay)
+	}
+	public func beginAnimating() {
+		bar.frame = CGRect(x: dotXOffset, y: baseline - dotSize, width: dotSize, height: dotSize)
+		// we want round dots
+		bar.cornerRadius = bar.frame.width / 2.0
+		bar.backgroundColor = UIColor.black.cgColor
+		//How many instances / objs we want to see
+		lay.instanceCount = 3
+		//1st arg is the spacing between the instances
+		lay.instanceTransform = CATransform3DMakeTranslation(dotSpacing, 0, 0)
+		let anim = CABasicAnimation(keyPath: #keyPath(CALayer.opacity))
+		anim.fromValue = 1.0
+		anim.toValue = 0.2
+		anim.duration = 1
+		anim.repeatCount = .infinity
+		bar.add(anim, forKey: nil)
+		// so the dots animate in sequence
+		lay.instanceDelay = anim.duration / Double(lay.instanceCount)
+	}
+	public func stopAnimating() {
+		layer.removeAllAnimations()
+	}
+}

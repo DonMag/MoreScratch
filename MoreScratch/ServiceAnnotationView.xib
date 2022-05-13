@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina3_5" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="ServiceAnnotationView" customModule="MoreScratch" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="253" height="123"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zv0-Yy-Phq">
+                    <rect key="frame" x="0.0" y="0.0" width="253" height="123"/>
+                    <subviews>
+                        <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="3Fq-d7-RCh">
+                            <rect key="frame" x="5" y="5" width="243" height="113"/>
+                        </stackView>
+                    </subviews>
+                    <color key="backgroundColor" systemColor="systemRedColor"/>
+                    <constraints>
+                        <constraint firstItem="3Fq-d7-RCh" firstAttribute="leading" secondItem="zv0-Yy-Phq" secondAttribute="leading" constant="5" id="DVA-Ea-Zah"/>
+                        <constraint firstItem="3Fq-d7-RCh" firstAttribute="top" secondItem="zv0-Yy-Phq" secondAttribute="top" constant="5" id="JC6-Sr-yHa"/>
+                        <constraint firstAttribute="bottom" secondItem="3Fq-d7-RCh" secondAttribute="bottom" constant="5" id="UFh-Ob-Olb"/>
+                        <constraint firstAttribute="trailing" secondItem="3Fq-d7-RCh" secondAttribute="trailing" constant="5" id="XsZ-Av-4Lr"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="zv0-Yy-Phq" secondAttribute="bottom" id="F0U-g9-pUu"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="zv0-Yy-Phq" secondAttribute="trailing" id="dhQ-bl-4Z1"/>
+                <constraint firstItem="zv0-Yy-Phq" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="x3j-ue-elL"/>
+                <constraint firstItem="zv0-Yy-Phq" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="yXt-8I-lKQ"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="stackView" destination="3Fq-d7-RCh" id="Fip-xc-xZh"/>
+            </connections>
+            <point key="canvasLocation" x="85.3125" y="1.875"/>
+        </view>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemRedColor">
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>
