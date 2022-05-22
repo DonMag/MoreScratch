@@ -118,6 +118,100 @@ class WithCollectionViewTableCell: UITableViewCell {
 	var collectionView: UICollectionView!
 }
 
+class LabelCollectionViewCell: UICollectionViewCell {
+	let label = UILabel()
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	private func commonInit() {
+		label.textColor = .white
+		label.textAlignment = .center
+		label.translatesAutoresizingMaskIntoConstraints = false
+		contentView.addSubview(label)
+		let g = contentView.layoutMarginsGuide
+		NSLayoutConstraint.activate([
+			label.topAnchor.constraint(equalTo: g.topAnchor, constant: 4.0),
+			label.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 8.0),
+			label.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -8.0),
+			label.bottomAnchor.constraint(equalTo: g.bottomAnchor, constant: -4.0),
+		])
+		contentView.backgroundColor = .systemGreen
+		contentView.layer.cornerRadius = 12
+	}
+	override var isSelected: Bool {
+		didSet {
+			contentView.backgroundColor = isSelected ? .systemOrange : .systemGreen
+		}
+	}
+}
+
+class SelColViewVC: UIViewController {
+	
+	var albumsCollectionView: UICollectionView!
+	
+	let myData: [String] = [
+		"Favorites",
+		"Recents",
+		"Recently Added",
+		"Something Else",
+		"Five",
+		"Six",
+		"Seven",
+		"Eight",
+	]
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		let fl = UICollectionViewFlowLayout()
+		fl.scrollDirection = .horizontal
+		fl.estimatedItemSize = CGSize(width: 120, height: 50)
+		albumsCollectionView = UICollectionView(frame: .zero, collectionViewLayout: fl)
+		albumsCollectionView.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(albumsCollectionView)
+		let g = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			albumsCollectionView.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
+			albumsCollectionView.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+			albumsCollectionView.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20.0),
+			albumsCollectionView.heightAnchor.constraint(equalToConstant: 80.0),
+		])
+		
+		albumsCollectionView.contentInset = UIEdgeInsets(top: 0.0, left: 8.0, bottom: 0.0, right: 8.0)
+		albumsCollectionView.register(LabelCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+		albumsCollectionView.dataSource = self
+		albumsCollectionView.delegate = self
+		
+	}
+	
+}
+extension SelColViewVC: UICollectionViewDataSource, UICollectionViewDelegate {
+	func numberOfSections(in collectionView: UICollectionView) -> Int {
+		return 1
+	}
+	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+		return myData.count
+	}
+	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+		let c = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! LabelCollectionViewCell
+		c.label.text = myData[indexPath.item]
+		return c
+	}
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		if collectionView == albumsCollectionView {
+			print("Selected item:", indexPath.item)
+//			presenter?.didChooseAlbum(with: indexPath.item) {
+//				self.picturesCollectionView.reloadData()
+//			}
+		}
+	}
+}
+
 class CarView: UIView {
 	
 }
@@ -360,4 +454,156 @@ class PeopleCell: UIView {
 		
 		configureCell(firstName: "Bob", lastName: "Tester")
 	}
+}
+
+@IBDesignable
+class RoundedView: UIView {
+	@IBInspectable
+	public var cRad: CGFloat {
+		set (radius) {
+			self.layer.cornerRadius = radius
+			self.layer.masksToBounds = radius > 0
+			setNeedsLayout()
+		}
+		get {
+			return self.layer.cornerRadius
+		}
+	}
+}
+
+//@IBDesignable
+//extension UIView {
+//	@IBInspectable
+//	public var cRad: CGFloat {
+//		set (radius) {
+//			self.layer.cornerRadius = radius
+//			self.layer.masksToBounds = radius > 0
+//		}
+//		get {
+//			return self.layer.cornerRadius
+//		}
+//	}
+//}
+//
+
+class CardView: UIView {
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	func commonInit() {
+		layer.cornerRadius = 16
+		layer.masksToBounds = true
+		layer.borderWidth = 1
+		layer.borderColor = UIColor.black.cgColor
+	}
+}
+class AnimCardVC: UIViewController {
+	
+	let deckStackView: UIStackView = UIStackView()
+	let cardPositionView: UIView = UIView()
+	let deckPileView: CardView = CardView()
+	
+	let cardSize: CGSize = CGSize(width: 80, height: 120)
+	
+	// card colors to cycle through
+	let colors: [UIColor] = [
+		.systemRed, .systemGreen, .systemBlue,
+		.systemCyan, .systemOrange,
+	]
+	var colorIDX: Int = 0
+	
+	// card position constraints to animate
+	var animXAnchor: NSLayoutConstraint!
+	var animYAnchor: NSLayoutConstraint!
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		view.backgroundColor = .systemBackground
+		
+		deckStackView.translatesAutoresizingMaskIntoConstraints = false
+		deckPileView.translatesAutoresizingMaskIntoConstraints = false
+		cardPositionView.translatesAutoresizingMaskIntoConstraints = false
+		
+		deckStackView.addArrangedSubview(deckPileView)
+		view.addSubview(deckStackView)
+		view.addSubview(cardPositionView)
+		
+		// always respect safe area
+		let g = view.safeAreaLayoutGuide
+		
+		NSLayoutConstraint.activate([
+			
+			deckStackView.topAnchor.constraint(equalTo: g.topAnchor, constant: 40.0),
+			deckStackView.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+			// we'll let the stack view subviews determine its size
+
+			deckPileView.widthAnchor.constraint(equalToConstant: cardSize.width),
+			deckPileView.heightAnchor.constraint(equalToConstant: cardSize.height),
+
+			cardPositionView.topAnchor.constraint(equalTo: deckStackView.bottomAnchor, constant: 100.0),
+			cardPositionView.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+			cardPositionView.widthAnchor.constraint(equalToConstant: cardSize.width + 2.0),
+			cardPositionView.heightAnchor.constraint(equalToConstant: cardSize.height + 2.0),
+			
+		])
+		
+		// outline the card holder view
+		cardPositionView.backgroundColor = .systemYellow
+		cardPositionView.layer.borderColor = UIColor.blue.cgColor
+		cardPositionView.layer.borderWidth = 2
+		
+		// make the "deck card" gray to represent the deck
+		deckPileView.backgroundColor = .lightGray
+	}
+	
+	func animCard() {
+		
+		let card = CardView()
+		card.backgroundColor = colors[colorIDX % colors.count]
+		colorIDX += 1
+		
+		card.translatesAutoresizingMaskIntoConstraints = false
+		
+		card.widthAnchor.constraint(equalToConstant: cardSize.width).isActive = true
+		card.heightAnchor.constraint(equalToConstant: cardSize.height).isActive = true
+		
+		view.addSubview(card)
+
+		// center the new card on the deckCard
+		animXAnchor = card.centerXAnchor.constraint(equalTo: deckPileView.centerXAnchor)
+		animYAnchor = card.centerYAnchor.constraint(equalTo: deckPileView.centerYAnchor)
+		
+		// activate those constraints
+		animXAnchor.isActive = true
+		animYAnchor.isActive = true
+		
+		// run the animation *after* the card has been placed at its starting position
+		DispatchQueue.main.async {
+			// de-activate the current constraints
+			self.animXAnchor.isActive = false
+			self.animYAnchor.isActive = false
+			// center the new card on the cardPositionView
+			self.animXAnchor = card.centerXAnchor.constraint(equalTo: self.cardPositionView.centerXAnchor)
+			self.animYAnchor = card.centerYAnchor.constraint(equalTo: self.cardPositionView.centerYAnchor)
+			// re-activate those constraints
+			self.animXAnchor.isActive = true
+			self.animYAnchor.isActive = true
+			// 1/2 second animation
+			UIView.animate(withDuration: 0.5, animations: {
+				self.view.layoutIfNeeded()
+			})
+		}
+
+	}
+	
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		animCard()
+	}
+	
 }
