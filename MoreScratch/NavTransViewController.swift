@@ -433,3 +433,148 @@ class Page2VC: PageBaseVC {
 	
 }
 
+class AnimTestVC: UIViewController {
+	
+	let cView = MyCustomView()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		if #available(iOS 13.0, *) {
+			view.backgroundColor = .systemBackground
+		} else {
+			// Fallback on earlier versions
+		}
+		
+		cView.backgroundColor = .systemBlue
+		cView.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(cView)
+		
+		NSLayoutConstraint.activate([
+			cView.widthAnchor.constraint(equalToConstant: 100.0),
+			cView.heightAnchor.constraint(equalTo: cView.widthAnchor),
+			cView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+			cView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+		])
+		
+		cView.alpha = 0.0
+	}
+	
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		cView.showPointOfInterestA(at: cView.center, hideViewAfterAnimation: true)
+	}
+}
+class MyCustomView: UIView {
+	
+	func showPointOfInterestA(at point: CGPoint, hideViewAfterAnimation: Bool) {
+		
+		let durations: [Double] = [
+			0.20, 0.3, 0.1, 1.5, 0.5
+		]
+		
+		let totalDuration = durations.reduce(0, +)
+		
+		var relStart: Double = 0.0
+		var relDur: Double = 0.0
+		var i: Int = 0
+		
+		self.center = point
+		
+		UIView.animateKeyframes(withDuration: totalDuration, delay: 0, options: .calculationModeCubic, animations: {
+			
+			relStart = 0.0
+			relDur = durations[i] / totalDuration
+			i += 1
+			UIView.addKeyframe(withRelativeStartTime: relStart, relativeDuration: relDur) {
+				self.alpha = 1.0
+				self.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+			}
+			
+			relStart += relDur
+			relDur = durations[i] / totalDuration
+			i += 1
+			UIView.addKeyframe(withRelativeStartTime: relStart, relativeDuration: relDur) {
+				self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+			}
+			
+			relStart += relDur
+			relDur = durations[i] / totalDuration
+			i += 1
+			UIView.addKeyframe(withRelativeStartTime: relStart, relativeDuration: relDur) {
+				self.transform = .identity
+			}
+			
+			relStart += relDur
+			relDur = durations[i] / totalDuration
+			i += 1
+			UIView.addKeyframe(withRelativeStartTime: relStart, relativeDuration: relDur) {
+				self.alpha = 0.5
+			}
+			
+			relStart += relDur
+			relDur = durations[i] / totalDuration
+			i += 1
+			UIView.addKeyframe(withRelativeStartTime: relStart, relativeDuration: relDur) {
+				self.alpha = hideViewAfterAnimation ? 0.0 : 0.5
+			}
+		})
+		
+		//		CATransaction.begin()
+		//
+		//		let animA = CABasicAnimation(keyPath: "transform.scale")
+		//		animA.fromValue = 1.0
+		//		animA.toValue = 1.5
+		//
+		//
+		//		let group = CAAnimationGroup()
+		//		group.duration = 0.75
+		//		group.timingFunction = CAMediaTimingFunction(name: .linear)
+		//		group.beginTime = CACurrentMediaTime() + 0.2
+		//		group.animations = [animA]
+		//		layer.add(group, forKey: "borderChangeAnimationGroup")
+		//
+		//		CATransaction.commit()
+		
+	}
+	
+	func showPointOfInterest(at point: CGPoint, hideViewAfterAnimation: Bool) {
+		
+		//if isPreviousAnimationPresenting() { layer.removeAllAnimations() }
+		
+		layer.removeAllAnimations()
+		
+		
+		
+		center = point
+		transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+		self.alpha = 1
+		
+		UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut]) {
+			self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+		} completion: { animated in
+			if !animated {
+				return
+			} else {
+				UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut]) {
+					self.transform = .identity
+				} completion: { animated in
+					if !animated {
+						return
+					} else {
+						UIView.animate(withDuration: 1.5, delay: 0, options: [.curveEaseInOut]) {
+							self.alpha = 0.5
+						} completion: { animated in
+							if !animated {
+								return
+							} else {
+								UIView.animate(withDuration: 0.5, delay: 0, options: [.curveEaseInOut]) {
+									self.alpha = hideViewAfterAnimation ? 0 : 0.5
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
