@@ -1815,3 +1815,230 @@ class DotsView: UIView {
 		layer.removeAllAnimations()
 	}
 }
+
+class GapLineVC: UIViewController {
+	
+	let gapLineView = GapLineView()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		view.backgroundColor = .systemBackground
+		
+		gapLineView.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(gapLineView)
+		
+		gapLineView.backgroundColor = .black
+		
+		// respect safe area
+		let g = view.safeAreaLayoutGuide
+		
+		NSLayoutConstraint.activate([
+			
+			gapLineView.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
+			gapLineView.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+			gapLineView.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20.0),
+			
+			gapLineView.heightAnchor.constraint(equalToConstant: 60.0),
+
+		])
+		
+	}
+}
+
+class sGapLineView: UIView {
+	
+	let seg1 = UIView()
+	let seg2 = UIView()
+	let seg3 = UIView()
+	let seg4 = UIView()
+	
+	let hold1 = UILabel()
+	let hold2 = UILabel()
+	
+	let centerImageView = UIImageView()
+	
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	func commonInit() {
+		
+		// horizontal spacing ("gaps")
+		let gapWidth: CGFloat = 12.0
+		
+		// make sure we can load the center image
+		guard let img = UIImage(systemName: "clock") else {
+			fatalError("Could not create Clock image!")
+		}
+		
+		// let's use a horizontal stack view
+		let hStack = UIStackView()
+		hStack.translatesAutoresizingMaskIntoConstraints = false
+		
+		// we want the elements vertically centered
+		hStack.alignment = .center
+
+		// gap between elements
+		hStack.spacing = gapWidth
+
+		addSubview(hStack)
+		
+		// add elements to the stack view
+		[seg1, hold1, seg2, centerImageView, seg3, hold2, seg4].forEach { v in
+			hStack.addArrangedSubview(v)
+		}
+		
+		// line segments
+		[seg1, seg2, seg3, seg4].forEach { v in
+			v.backgroundColor = .lightGray
+			v.heightAnchor.constraint(equalToConstant: 1.0).isActive = true
+		}
+		
+		// hold labels
+		[hold1, hold2].forEach { v in
+			v.font = .systemFont(ofSize: 15.0, weight: .regular)
+			v.textColor = .white
+			v.text = "HOLD"
+			v.textAlignment = .center
+		}
+		
+		// center image
+		centerImageView.image = img
+		
+		NSLayoutConstraint.activate([
+			
+			// constrain the stack view to Top and Bottom
+			hStack.topAnchor.constraint(equalTo: topAnchor, constant: 0.0),
+			hStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0.0),
+			
+			// Leading and Trailing same as "gaps"
+			hStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: gapWidth),
+			hStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -gapWidth),
+
+			// now we'll add sizing constraints
+			
+			// center image view 24x24 pts
+			centerImageView.widthAnchor.constraint(equalToConstant: 24.0),
+			centerImageView.heightAnchor.constraint(equalTo: centerImageView.widthAnchor),
+			
+			// seg2 and seg3 are equal widths
+			seg2.widthAnchor.constraint(equalTo: seg3.widthAnchor),
+			
+			// seg1 and seg4 are equal widths
+			seg1.widthAnchor.constraint(equalTo: seg4.widthAnchor),
+			
+			// longer segment widths are 3x shorter segment widths
+			seg1.widthAnchor.constraint(equalTo: seg2.widthAnchor, multiplier: 3.0),
+			
+		])
+		
+	}
+	
+}
+
+class GapLineView: UIView {
+	
+	let seg1 = UIView()
+	let seg2 = UIView()
+	let seg3 = UIView()
+	let seg4 = UIView()
+
+	let hold1 = UILabel()
+	let hold2 = UILabel()
+	
+	let centerImageView = UIImageView()
+	
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	func commonInit() {
+		
+		// horizontal spacing ("gaps")
+		let gapWidth: CGFloat = 12.0
+		
+		// make sure we can load the center image
+		guard let img = UIImage(systemName: "clock") else {
+			fatalError("Could not create Clock image!")
+		}
+		
+		// all elements need this
+		[seg1, seg2, seg3, seg4, hold1, hold2, centerImageView].forEach { v in
+			v.translatesAutoresizingMaskIntoConstraints = false
+			addSubview(v)
+		}
+		
+		// line segments
+		[seg1, seg2, seg3, seg4].forEach { v in
+			v.backgroundColor = .lightGray
+			v.heightAnchor.constraint(equalToConstant: 1.0).isActive = true
+			v.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+		}
+		
+		// hold labels
+		[hold1, hold2].forEach { v in
+			v.font = .systemFont(ofSize: 15.0, weight: .regular)
+			v.textColor = .white
+			v.text = "HOLD"
+			v.textAlignment = .center
+			v.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+		}
+		
+		// center image
+		centerImageView.image = img
+		centerImageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+
+		// now we'll constrain the elements horizontally
+		NSLayoutConstraint.activate([
+			
+			// first line segment gapWidth from Leading
+			seg1.leadingAnchor.constraint(equalTo: leadingAnchor, constant: gapWidth),
+			
+			// first HOLD label gapWidth from end of line segment
+			hold1.leadingAnchor.constraint(equalTo: seg1.trailingAnchor, constant: gapWidth),
+			
+			// second line segment gapWidth from first HOLD label
+			seg2.leadingAnchor.constraint(equalTo: hold1.trailingAnchor, constant: gapWidth),
+			
+			// center image view gapWidth from end of line segment
+			centerImageView.leadingAnchor.constraint(equalTo: seg2.trailingAnchor, constant: gapWidth),
+			
+			// center image view 24x24 pts
+			centerImageView.widthAnchor.constraint(equalToConstant: 24.0),
+			centerImageView.heightAnchor.constraint(equalTo: centerImageView.widthAnchor),
+			
+			// third line segment gapWidth from center image view
+			seg3.leadingAnchor.constraint(equalTo: centerImageView.trailingAnchor, constant: gapWidth),
+
+			// second HOLD label gapWidth from end of line segment
+			hold2.leadingAnchor.constraint(equalTo: seg3.trailingAnchor, constant: gapWidth),
+			
+			// fourth line segment gapWidth from second HOLD label
+			seg4.leadingAnchor.constraint(equalTo: hold2.trailingAnchor, constant: gapWidth),
+			
+			// fourth line segment also gapWidth from Trailing
+			seg4.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -gapWidth),
+
+			// seg2 and seg3 are equal widths
+			seg2.widthAnchor.constraint(equalTo: seg3.widthAnchor),
+			
+			// seg1 and seg4 are equal widths
+			seg1.widthAnchor.constraint(equalTo: seg4.widthAnchor),
+			
+			// longer segment widths are 3x shorter segment widths
+			seg1.widthAnchor.constraint(equalTo: seg2.widthAnchor, multiplier: 3.0),
+
+		])
+		
+	}
+	
+}
