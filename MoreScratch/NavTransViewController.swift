@@ -439,28 +439,30 @@ class AnimTestVC: UIViewController {
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		if #available(iOS 13.0, *) {
-			view.backgroundColor = .systemBackground
-		} else {
-			// Fallback on earlier versions
-		}
+
+		view.backgroundColor = .systemBackground
 		
 		cView.backgroundColor = .systemBlue
-		cView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(cView)
 		
-		NSLayoutConstraint.activate([
-			cView.widthAnchor.constraint(equalToConstant: 100.0),
-			cView.heightAnchor.constraint(equalTo: cView.widthAnchor),
-			cView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-			cView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-		])
+		cView.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+		
+//		cView.translatesAutoresizingMaskIntoConstraints = false
+//
+//		NSLayoutConstraint.activate([
+//			cView.widthAnchor.constraint(equalToConstant: 100.0),
+//			cView.heightAnchor.constraint(equalTo: cView.widthAnchor),
+//			cView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+//			cView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+//		])
 		
 		cView.alpha = 0.0
 	}
 	
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-		cView.showPointOfInterestA(at: cView.center, hideViewAfterAnimation: true)
+		guard let touch = touches.first else { return }
+		let loc = touch.location(in: self.view)
+		cView.showPointOfInterestA(at: loc, hideViewAfterAnimation: true)
 	}
 }
 class MyCustomView: UIView {
@@ -477,15 +479,16 @@ class MyCustomView: UIView {
 		var relDur: Double = 0.0
 		var i: Int = 0
 		
+		self.alpha = 1.0
 		self.center = point
+		self.transform = .identity
 		
-		UIView.animateKeyframes(withDuration: totalDuration, delay: 0, options: .calculationModeCubic, animations: {
+		UIView.animateKeyframes(withDuration: totalDuration, delay: 0, options: .calculationModeLinear, animations: {
 			
 			relStart = 0.0
 			relDur = durations[i] / totalDuration
 			i += 1
 			UIView.addKeyframe(withRelativeStartTime: relStart, relativeDuration: relDur) {
-				self.alpha = 1.0
 				self.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
 			}
 			
@@ -516,23 +519,8 @@ class MyCustomView: UIView {
 			UIView.addKeyframe(withRelativeStartTime: relStart, relativeDuration: relDur) {
 				self.alpha = hideViewAfterAnimation ? 0.0 : 0.5
 			}
+			
 		})
-		
-		//		CATransaction.begin()
-		//
-		//		let animA = CABasicAnimation(keyPath: "transform.scale")
-		//		animA.fromValue = 1.0
-		//		animA.toValue = 1.5
-		//
-		//
-		//		let group = CAAnimationGroup()
-		//		group.duration = 0.75
-		//		group.timingFunction = CAMediaTimingFunction(name: .linear)
-		//		group.beginTime = CACurrentMediaTime() + 0.2
-		//		group.animations = [animA]
-		//		layer.add(group, forKey: "borderChangeAnimationGroup")
-		//
-		//		CATransaction.commit()
 		
 	}
 	
@@ -578,3 +566,163 @@ class MyCustomView: UIView {
 	}
 }
 
+class MVTestVC: UIViewController {
+	
+	let myView = MyView()
+	
+	let sampleStrings: [String] = [
+		"Short string.",
+		"This is a longer string which should wrap onto a couple lines.",
+		"Now let's use a really, really long string. This will make the label taller, but still not enough to require vertical scrolling.",
+		"We want to see what happens when we DO need scrolling.\n\nSo, let's use a long string, with some embedded newlines.\n\nThis will make the label tall enough that it would exceed one-half the screen height, so we can see that we do, in fact, get vertical scrolling.",
+	]
+	var strIndex: Int = 0
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		view.backgroundColor = .gray
+		myView.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(myView)
+		let g = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			
+			// 20-points on each side
+			myView.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+			myView.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20.0),
+			
+			// centered vertically
+			myView.centerYAnchor.constraint(equalTo: g.centerYAnchor),
+			
+			// max 1/2 screen (view) height
+			myView.heightAnchor.constraint(lessThanOrEqualTo: g.heightAnchor, multiplier: 0.5),
+			
+		])
+		
+		myView.backgroundColor = .white
+		myView.configure(with: sampleStrings[0])
+	}
+	
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		strIndex += 1
+		myView.configure(with: sampleStrings[strIndex % sampleStrings.count])
+	}
+}
+public final class MyView: UIView {
+	
+	private let titleLabel = UILabel()
+	private let scrollView = UIScrollView()
+	
+	// this will be used to set the scroll view height
+	private var svh: NSLayoutConstraint!
+	
+	override public init(frame: CGRect) {
+
+		super.init(frame: frame)
+		
+		let closeButton = UIButton(type: .system)
+		closeButton.translatesAutoresizingMaskIntoConstraints = false
+		//(button setup)
+		closeButton.setTitle("X", for: [])
+		closeButton.backgroundColor = UIColor(white: 0.9, alpha: 1.0)
+		
+		scrollView.translatesAutoresizingMaskIntoConstraints = false
+		scrollView.showsVerticalScrollIndicator = false
+		scrollView.alwaysBounceVertical = false
+		
+		titleLabel.translatesAutoresizingMaskIntoConstraints = false
+		//(label's font and alignment setup)
+		titleLabel.font = .systemFont(ofSize: 24.0, weight: .light)
+		titleLabel.numberOfLines = 0
+
+		let successButton = UIButton(type: .system)
+		successButton.translatesAutoresizingMaskIntoConstraints = false
+		//(button setup)
+		successButton.setTitle("Success", for: [])
+		successButton.backgroundColor = UIColor(white: 0.9, alpha: 1.0)
+		
+		addSubview(closeButton)
+		addSubview(scrollView)
+		addSubview(successButton)
+		scrollView.addSubview(titleLabel)
+		
+		let layoutGuide = UILayoutGuide()
+		addLayoutGuide(layoutGuide)
+		
+		let contentLayoutGuide = scrollView.contentLayoutGuide
+		
+		NSLayoutConstraint.activate([
+			layoutGuide.leadingAnchor.constraint(equalToSystemSpacingAfter: leadingAnchor, multiplier: 2),
+			trailingAnchor.constraint(equalToSystemSpacingAfter: layoutGuide.trailingAnchor, multiplier: 2),
+			
+			layoutGuide.topAnchor.constraint(equalToSystemSpacingBelow: topAnchor, multiplier: 2),
+			bottomAnchor.constraint(equalToSystemSpacingBelow: layoutGuide.bottomAnchor, multiplier: 2),
+			
+			closeButton.leadingAnchor.constraint(greaterThanOrEqualTo: layoutGuide.leadingAnchor),
+			layoutGuide.trailingAnchor.constraint(greaterThanOrEqualTo: closeButton.trailingAnchor),
+			closeButton.centerXAnchor.constraint(equalTo: layoutGuide.centerXAnchor),
+			closeButton.topAnchor.constraint(equalTo: layoutGuide.topAnchor),
+			closeButton.heightAnchor.constraint(equalToConstant: 33),
+			
+			scrollView.topAnchor.constraint(equalTo: closeButton.bottomAnchor),
+			scrollView.leadingAnchor.constraint(equalTo: layoutGuide.leadingAnchor),
+			scrollView.trailingAnchor.constraint(equalTo: layoutGuide.trailingAnchor),
+			scrollView.bottomAnchor.constraint(equalTo: successButton.topAnchor),
+			
+			successButton.leadingAnchor.constraint(equalTo: layoutGuide.leadingAnchor),
+			layoutGuide.trailingAnchor.constraint(equalTo: successButton.trailingAnchor),
+			successButton.heightAnchor.constraint(equalToConstant: 48),
+			layoutGuide.bottomAnchor.constraint(equalTo: successButton.bottomAnchor),
+			
+			// constrain the label to the scroll view's Content Layout Guide
+			titleLabel.topAnchor.constraint(equalTo: contentLayoutGuide.topAnchor, constant: 16),
+			titleLabel.leadingAnchor.constraint(equalTo: contentLayoutGuide.leadingAnchor, constant: 16),
+			titleLabel.trailingAnchor.constraint(equalTo: contentLayoutGuide.trailingAnchor, constant: -16),
+			titleLabel.bottomAnchor.constraint(equalTo: contentLayoutGuide.bottomAnchor, constant: -16),
+			
+			// label needs a width anchor, otherwise we'll get horizontal scrolling
+			titleLabel.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor, constant: -32),
+		])
+		
+		layer.cornerRadius = 12
+		
+		// so we can see the framing
+		scrollView.backgroundColor = .red
+		titleLabel.backgroundColor = .green
+	}
+	
+	public override func layoutSubviews() {
+		super.layoutSubviews()
+		
+		// we want to update the scroll view's height constraint when the text changes
+		if let c = svh {
+			c.isActive = false
+		}
+		// on initial layout, the scroll view's content size will still be zero
+		//	so force another layout pass
+		if scrollView.contentSize.height == 0 {
+			scrollView.setNeedsLayout()
+			scrollView.layoutIfNeeded()
+		}
+		// constrain the scroll view's height to the height of its content
+		//	but with a less-than-required priority so we can use a maximum height
+		svh = scrollView.heightAnchor.constraint(equalToConstant: scrollView.contentSize.height)
+		svh.priority = .required - 1
+		svh.isActive = true
+	}
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+	
+	//public func configure(with viewModel: someViewModel) {
+	//	titleLabel.text = viewModel.title
+	//}
+	public func configure(with str: String) {
+		titleLabel.text = str
+		// force the scroll view to update its layout
+		scrollView.setNeedsLayout()
+		scrollView.layoutIfNeeded()
+		// force self to update its layout
+		self.setNeedsLayout()
+		self.layoutIfNeeded()
+	}
+}
