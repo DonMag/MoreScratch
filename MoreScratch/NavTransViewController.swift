@@ -580,6 +580,7 @@ class MVTestVC: UIViewController {
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		
 		view.backgroundColor = .gray
 		myView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(myView)
@@ -724,5 +725,525 @@ public final class MyView: UIView {
 		// force self to update its layout
 		self.setNeedsLayout()
 		self.layoutIfNeeded()
+	}
+}
+
+class StackViewController: UIViewController {
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		view.backgroundColor = .white
+		view.addSubview(macroStackView)
+		macroStackView.backgroundColor = .red
+		macroStackView.translatesAutoresizingMaskIntoConstraints = false
+		constrainView()
+	}
+	
+	lazy var carbView: UIView = {
+		var view = UIView()
+		
+		//var iv = UIImageView(image: Image.planViewBg)
+		var iv = UIImageView()
+		iv.backgroundColor = .green
+		iv.frame = CGRect(x: 0, y: 0, width: 105, height: 118)
+		iv.contentMode = .scaleAspectFit
+		
+		var label1 = UILabel()
+		label1.text = "31%"
+		label1.textAlignment = .center
+		
+		var label2 = UILabel()
+		label2.text = "30g"
+		label2.textAlignment = .center
+		
+		var label3 = UILabel()
+		label3.text = "Carbs"
+		label3.textAlignment = .center
+		
+		var labelStack = UIStackView(arrangedSubviews: [label1, label2, label3])
+		labelStack.axis = .vertical
+		labelStack.translatesAutoresizingMaskIntoConstraints = false
+		
+		view.addSubview(iv)
+		iv.addSubview(labelStack)
+		
+		NSLayoutConstraint.activate([
+			labelStack.centerXAnchor.constraint(equalTo: iv.centerXAnchor),
+			labelStack.centerYAnchor.constraint(equalTo: iv.centerYAnchor),
+		])
+		
+		return view
+	}()
+	
+	lazy var proteinView: UIView = {
+		var view = UIView()
+		
+		//var iv = UIImageView(image: Image.planViewBg)
+		var iv = UIImageView()
+		iv.backgroundColor = .cyan
+		iv.frame = CGRect(x: 0, y: 0, width: 105, height: 118)
+		iv.contentMode = .scaleAspectFit
+		
+		var label1 = UILabel()
+		label1.text = "23%"
+		label1.textAlignment = .center
+		
+		var label2 = UILabel()
+		label2.text = "23g"
+		label2.textAlignment = .center
+		
+		var label3 = UILabel()
+		label3.text = "Protein"
+		label3.textAlignment = .center
+		
+		var labelStack = UIStackView(arrangedSubviews: [label1, label2, label3])
+		labelStack.axis = .vertical
+		labelStack.translatesAutoresizingMaskIntoConstraints = false
+		
+		view.addSubview(iv)
+		iv.addSubview(labelStack)
+		
+		NSLayoutConstraint.activate([
+			labelStack.centerXAnchor.constraint(equalTo: iv.centerXAnchor),
+			labelStack.centerYAnchor.constraint(equalTo: iv.centerYAnchor),
+		])
+		
+		return view
+	}()
+	
+	lazy var fatView: UIView = {
+		var view = UIView()
+		
+		//var iv = UIImageView(image: Image.planViewBg)
+		var iv = UIImageView()
+		iv.backgroundColor = .yellow
+		iv.frame = CGRect(x: 0, y: 0, width: 105, height: 118)
+		iv.contentMode = .scaleAspectFit
+		
+		var label1 = UILabel()
+		label1.text = "46%"
+		label1.textAlignment = .center
+		
+		var label2 = UILabel()
+		label2.text = "20g"
+		label2.textAlignment = .center
+		
+		var label3 = UILabel()
+		label3.text = "Fat"
+		label3.textAlignment = .center
+		
+		var labelStack = UIStackView(arrangedSubviews: [label1, label2, label3])
+		labelStack.axis = .vertical
+		labelStack.translatesAutoresizingMaskIntoConstraints = false
+		
+		view.addSubview(iv)
+		iv.addSubview(labelStack)
+		
+		NSLayoutConstraint.activate([
+			labelStack.centerXAnchor.constraint(equalTo: iv.centerXAnchor),
+			labelStack.centerYAnchor.constraint(equalTo: iv.centerYAnchor),
+		])
+		
+		return view
+	}()
+	
+	lazy var macroStackView: UIStackView = {
+		var stack = UIStackView(arrangedSubviews: [carbView, proteinView, fatView])
+		stack.axis = .horizontal
+		stack.distribution = .fillEqually
+		stack.alignment = .center
+		
+		return stack
+	}()
+	
+	func constrainView() {
+		NSLayoutConstraint.activate([
+			macroStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+			macroStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
+			macroStackView.widthAnchor.constraint(equalTo: view.widthAnchor,
+												  multiplier: 0.9)
+		])
+	}
+}
+
+class DrawViewVC: UIViewController {
+
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		if let img = UIImage(named: "sampleImage") {
+			let v = DrawImageView(image: img)
+			v.translatesAutoresizingMaskIntoConstraints = false
+			view.addSubview(v)
+			NSLayoutConstraint.activate([
+				v.widthAnchor.constraint(equalToConstant: 300.0),
+				v.heightAnchor.constraint(equalToConstant: 200.0),
+				v.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+				v.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+			])
+		}
+	}
+}
+
+class DrawImageView: UIImageView {
+	
+	// MARK: - Properties
+	
+	private var lineColor = UIColor.black
+	private var lineWidth: CGFloat = 10.0
+	private var opacity: CGFloat = 1.0
+
+	// let's make these non-optional
+	private var drawingPath: UIBezierPath!
+	private var drawingShapeLayer: CAShapeLayer!
+	
+	// MARK: - Initializers
+	
+	override init(image: UIImage?) {
+		super.init(image: image)
+		
+		isUserInteractionEnabled = true
+		clipsToBounds = true
+	}
+	
+	@available(*, unavailable)
+	private init() {
+		fatalError("init() has not been implemented")
+	}
+	
+	@available(*, unavailable)
+	private override init(frame: CGRect) {
+		fatalError("init(frame:) has not been implemented")
+	}
+	
+	@available(*, unavailable)
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+	
+}
+
+// MARK: - Draw Methods
+
+extension DrawImageView {
+	
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		guard let touch = touches.first else { return }
+		
+		let thisPoint = touch.location(in: self)
+
+		// create new shape layer
+		drawingShapeLayer = CAShapeLayer()
+		drawingShapeLayer.lineCap = .round
+		drawingShapeLayer.strokeColor = lineColor.cgColor
+		drawingShapeLayer.lineWidth = lineWidth
+		drawingShapeLayer.fillColor = UIColor.clear.cgColor
+		drawingShapeLayer.frame = bounds
+		
+		// create new path
+		drawingPath = UIBezierPath()
+		// move to touch point
+		drawingPath.move(to: thisPoint)
+		// if we want the line (an initial "dot")
+		//	to show up immediately
+		//	add line to same touch point
+		drawingPath.addLine(to: thisPoint)
+		// assign the shape layer path
+		drawingShapeLayer.path = drawingPath.cgPath
+		
+		// add the layer
+		layer.addSublayer(drawingShapeLayer)
+	}
+	
+	override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+		guard let touch = touches.first else { return }
+		
+		let thisPoint = touch.location(in: self)
+		// add line to existing path
+		drawingPath.addLine(to: thisPoint)
+		// update path of shape layer
+		drawingShapeLayer.path = drawingPath.cgPath
+	}
+	
+	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+		// don't really need to do anything here
+		//	unless you're taking some other action when
+		//	touch ends
+	}
+	
+}
+
+class xDrawImageView: UIImageView {
+	
+	// MARK: - Properties
+	
+	private var lastPoint = CGPoint.zero
+	private var lineColor = UIColor.black
+	private var lineWidth: CGFloat = 10.0
+	private var opacity: CGFloat = 1.0
+	private var path: UIBezierPath?
+	private var swiped = false
+	private var tempShapeLayer: CAShapeLayer?
+	
+	// MARK: - Initializers
+	
+	override init(image: UIImage?) {
+		super.init(image: image)
+		
+		isUserInteractionEnabled = true
+		clipsToBounds = true
+	}
+	
+	@available(*, unavailable)
+	private init() {
+		fatalError("init() has not been implemented")
+	}
+	
+	@available(*, unavailable)
+	private override init(frame: CGRect) {
+		fatalError("init(frame:) has not been implemented")
+	}
+	
+	@available(*, unavailable)
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+	
+}
+
+extension xDrawImageView {
+	
+	private func drawLine(from fromPoint: CGPoint, to toPoint: CGPoint) {
+		guard let tempShapeLayer = tempShapeLayer,
+			  let cgPath = tempShapeLayer.path
+		else { return }
+		
+		let path = UIBezierPath(cgPath: cgPath)
+		path.move(to: fromPoint)
+		path.addLine(to: toPoint)
+		
+		tempShapeLayer.path = path.cgPath
+		
+		setNeedsDisplay()
+	}
+	
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		guard let touch = touches.first else { return }
+		
+		swiped = false
+		lastPoint = touch.location(in: self)
+		
+		let shapeLayer = CAShapeLayer()
+		shapeLayer.lineCap = .round
+		shapeLayer.path = path?.cgPath
+		shapeLayer.strokeColor = lineColor.cgColor
+		shapeLayer.lineWidth = lineWidth
+		shapeLayer.fillColor = UIColor.clear.cgColor
+		shapeLayer.frame = bounds
+		
+		let path = UIBezierPath()
+		shapeLayer.path = path.cgPath
+		
+		layer.addSublayer(shapeLayer)
+		shapeLayer.fillColor = UIColor.red.cgColor
+		
+		tempShapeLayer = shapeLayer
+	}
+	
+	override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+		guard let touch = touches.first else { return }
+		
+		swiped = true
+		let currentPoint = touch.location(in: self)
+		drawLine(from: lastPoint, to: currentPoint)
+		lastPoint = currentPoint
+	}
+	
+	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+		if !swiped {
+			// Draw a single point
+			drawLine(from: lastPoint, to: lastPoint)
+		}
+	}
+	
+}
+
+class View: UILabel {
+	
+}
+class PagesVC: UIViewController {
+	var pages: [View] {
+		get {
+			var p: [View] = []
+			for i in 1...7 {
+				let v = View()
+				v.text = "Apartment A\(i)"
+				v.textAlignment = .center
+				v.backgroundColor = UIColor(white: 0.9, alpha: 1.0)
+				v.layer.borderColor = UIColor.red.cgColor
+				v.layer.borderWidth = 2
+				p.append(v)
+			}
+			return p
+		}
+	}
+
+//	var pages : [View] {
+//
+//		get {
+//			let page1: View = Bundle.main.loadNibNamed("View", owner: self, options: nil)?.first as! View
+//			page1.colorLabel.text = "Apartment A3"
+//			page1.priceLabel.text = "N$ 504 500"
+//			page1.imageView.image = UIImage(named: "apartment_a3_1")
+//
+//
+//			let page2: View = Bundle.main.loadNibNamed("View", owner: self, options: nil)?.first as! View
+//			page2.colorLabel.text = "Apartment A4"
+//			page2.priceLabel.text = "N$ 481 000"
+//			page2.imageView.image = UIImage(named: "apartment_a4_1")
+//
+//			let page3: View = Bundle.main.loadNibNamed("View", owner: self, options: nil)?.first as! View
+//			page3.colorLabel.text = "Apartment A5"
+//			page3.priceLabel.text = "N$ 541 000"
+//			page3.imageView.image = UIImage(named: "apartment_a5_1")
+//
+//			let page4: View = Bundle.main.loadNibNamed("View", owner: self, options: nil)?.first as! View
+//			page4.colorLabel.text = "Apartment A6"
+//			page4.priceLabel.text = "N$ 553 000"
+//			page4.imageView.image = UIImage(named: "apartment_a6_1")
+//
+//			let page5: View = Bundle.main.loadNibNamed("View", owner: self, options: nil)?.first as! View
+//			page5.colorLabel.text = "Apartment A8"
+//			page5.priceLabel.text = "N$ 588 000"
+//			page5.imageView.image = UIImage(named: "apartment_a8_1")
+//
+//			let page6: View = Bundle.main.loadNibNamed("View", owner: self, options: nil)?.first as! View
+//			page6.colorLabel.text = "Apartment A9"
+//			page6.priceLabel.text = "N$ 775 000"
+//			page6.imageView.image = UIImage(named: "apartment_a9a1")
+//
+//			let page7: View = Bundle.main.loadNibNamed("View", owner: self, options: nil)?.first as! View
+//			page7.colorLabel.text = "Apartment A12"
+//			page7.priceLabel.text = "N$ 775 000"
+//			page7.imageView.image = UIImage(named: "apartment_a12_a")
+//
+//
+//			return [page1, page2, page3, page4, page5, page6, page7]
+//		}
+//	}
+
+	@IBOutlet weak var scrollView: UIScrollView!
+	@IBOutlet weak var pageControl: UIPageControl!
+	
+	private var playersButton: MyGradientButton = {
+		let button = MyGradientButton()
+		button.setGradientColor(colorOne: .red, colorTwo: .blue)
+		return button
+	}()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		setupScrollView(pages: pages)
+		
+		pageControl.numberOfPages = pages.count
+		pageControl.currentPage = 0
+		
+		view.addSubview(playersButton)
+		playersButton.translatesAutoresizingMaskIntoConstraints = false
+		let g = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			playersButton.topAnchor.constraint(equalTo: pageControl.bottomAnchor, constant: 20.0),
+			playersButton.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 60.0),
+			playersButton.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -60.0),
+			playersButton.heightAnchor.constraint(equalTo: g.heightAnchor, multiplier: 1.0 / 12.82),
+		])
+	}
+	
+	var scrollViewWidth: CGFloat = 0
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+		
+		// we only want to call this once
+		if scrollViewWidth != scrollView.frame.width {
+			scrollViewWidth = scrollView.frame.width
+			scrollView.contentOffset.x = scrollView.frame.width
+		}
+	}
+	func setupScrollView(pages: [View]) {
+		
+		let stack = UIStackView()
+		stack.translatesAutoresizingMaskIntoConstraints = false
+		
+		let clg = scrollView.contentLayoutGuide
+		let flg = scrollView.frameLayoutGuide
+		
+		scrollView.addSubview(stack)
+		NSLayoutConstraint.activate([
+			// constrain all 4 sides of stack view to scroll view's Content Layout Guide
+			stack.topAnchor.constraint(equalTo: clg.topAnchor),
+			stack.leadingAnchor.constraint(equalTo: clg.leadingAnchor),
+			stack.trailingAnchor.constraint(equalTo: clg.trailingAnchor),
+			stack.bottomAnchor.constraint(equalTo: clg.bottomAnchor),
+			
+			// constrain height of stack view to scroll view's Frame Layout Guide
+			stack.heightAnchor.constraint(equalTo: flg.heightAnchor),
+		])
+		
+		for i in 0 ..< pages.count {
+			// add each page to the stack view
+			stack.addArrangedSubview(pages[i])
+			// make each page the same width as the scroll view's Frame Layout Guide width
+			pages[i].widthAnchor.constraint(equalTo: flg.widthAnchor).isActive = true
+		}
+		
+		scrollView.isPagingEnabled = true
+		scrollView.delegate = self
+
+	}
+	
+	@IBAction func pageControlChanged(_ sender: UIPageControl) {
+		UIView.animate(withDuration: 0.3, animations: {
+			self.scrollView.contentOffset.x = CGFloat(sender.currentPage) * self.scrollView.frame.width
+		})
+	}
+	
+	func showPage(_ pg: Int) {
+		UIView.animate(withDuration: 0.3, animations: {
+			self.scrollView.contentOffset.x = CGFloat(pg - 1) * self.scrollView.frame.width
+		})
+	}
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		showPage(6)
+	}
+}
+extension PagesVC: UIScrollViewDelegate {
+	func scrollViewDidScroll(_ scrollView: UIScrollView) {
+		let pageIndex = round(scrollView.contentOffset.x / scrollView.frame.width)
+		pageControl.currentPage = Int(pageIndex)
+	}
+}
+
+class MyGradientButton: UIButton {
+	let gradLayer = CAGradientLayer()
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	func commonInit() {
+		layer.insertSublayer(gradLayer, at: 0)
+	}
+	public func setGradientColor(colorOne: UIColor, colorTwo: UIColor) {
+		gradLayer.colors = [colorOne.cgColor, colorTwo.cgColor]
+		gradLayer.locations = [0.0, 1.0]
+		gradLayer.startPoint = CGPoint(x: 0.0, y: 0.0)
+		gradLayer.endPoint = CGPoint(x: 1.0, y: 1.0)
+	}
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		gradLayer.frame = bounds
 	}
 }

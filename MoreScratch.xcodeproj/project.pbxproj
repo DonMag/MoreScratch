@@ -23,6 +23,7 @@
 		FC39559727E260D30060734C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC39559527E260D30060734C /* Main.storyboard */; };
 		FC39559927E260D50060734C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FC39559827E260D50060734C /* Assets.xcassets */; };
 		FC39559C27E260D50060734C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC39559A27E260D50060734C /* LaunchScreen.storyboard */; };
+		FC3FCBF52844F16800BD6B99 /* MoreExpCellViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3FCBF42844F16800BD6B99 /* MoreExpCellViewController.swift */; };
 		FC8E10B327F4C41D00EEBC75 /* PopupView.xib in Resources */ = {isa = PBXBuildFile; fileRef = FC8E10B227F4C41D00EEBC75 /* PopupView.xib */; };
 		FC8E10B527F4C48600EEBC75 /* V2PopupTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8E10B427F4C48600EEBC75 /* V2PopupTestViewController.swift */; };
 		FC8E10D727F63C7F00EEBC75 /* Sizing.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC8E10D627F63C7F00EEBC75 /* Sizing.storyboard */; };
@@ -59,6 +60,7 @@
 		FC39559827E260D50060734C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FC39559B27E260D50060734C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FC39559D27E260D50060734C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FC3FCBF42844F16800BD6B99 /* MoreExpCellViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreExpCellViewController.swift; sourceTree = "<group>"; };
 		FC8E10B227F4C41D00EEBC75 /* PopupView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PopupView.xib; sourceTree = "<group>"; };
 		FC8E10B427F4C48600EEBC75 /* V2PopupTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = V2PopupTestViewController.swift; sourceTree = "<group>"; };
 		FC8E10D627F63C7F00EEBC75 /* Sizing.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Sizing.storyboard; sourceTree = "<group>"; };
@@ -133,6 +135,7 @@
 				FC0017BB282D2DA3009296C4 /* ServiceAnnotationView.xib */,
 				F832413B283538DD00D073EF /* FeedbackTableViewCell.swift */,
 				F832413C283538DD00D073EF /* FeedbackTableViewCell.xib */,
+				FC3FCBF42844F16800BD6B99 /* MoreExpCellViewController.swift */,
 				FCD4E3212808709000808073 /* 20x45-Model.pdf */,
 				FCD4E3232808800E00808073 /* us-states-map.pdf */,
 				FC39559827E260D50060734C /* Assets.xcassets */,
@@ -230,6 +233,7 @@
 				7C947FFE281030170051ABEB /* V2GradWorkViewController.swift in Sources */,
 				FC39559027E260D30060734C /* AppDelegate.swift in Sources */,
 				7C947FD22806F1070051ABEB /* MapPreviewViewController.swift in Sources */,
+				FC3FCBF52844F16800BD6B99 /* MoreExpCellViewController.swift in Sources */,
 				FC39559227E260D30060734C /* SceneDelegate.swift in Sources */,
 				FCA19B35281C07650010BBD1 /* SwiftHEXColors.swift in Sources */,
 				FCA19B29281967B60010BBD1 /* TableColTableViewController.swift in Sources */,
