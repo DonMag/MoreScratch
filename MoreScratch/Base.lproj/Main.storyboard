@@ -763,10 +763,10 @@ The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for t
             </objects>
             <point key="canvasLocation" x="1478" y="3737"/>
         </scene>
-        <!--Scratch Off View Controller-->
+        <!--Main View Controller-->
         <scene sceneID="4ee-va-oOi">
             <objects>
-                <viewController id="Mhd-65-Mt3" customClass="ScratchOffViewController" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="Mhd-65-Mt3" customClass="MainViewController" customModule="MoreScratch" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="1Ub-dC-VS5">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

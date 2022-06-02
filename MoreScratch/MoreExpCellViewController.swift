@@ -594,3 +594,555 @@ class ScratchOffViewController: UIViewController {
 	}
 
 }
+
+class ToastVC: UIViewController {
+	
+	let tv = ToastView()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		view.backgroundColor = .systemBlue
+		tv.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(tv)
+		let g = view.safeAreaLayoutGuide
+		
+		NSLayoutConstraint.activate([
+			tv.topAnchor.constraint(equalTo: g.topAnchor, constant: 12.0),
+			tv.widthAnchor.constraint(equalToConstant: 200.0),
+			tv.heightAnchor.constraint(equalToConstant: 40.0),
+			tv.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+		])
+		
+	}
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		self.tv.startAnimation(toastMessage: "New Message")
+	}
+	
+}
+
+class MyToastView: UIView {
+	
+	let label: UILabel = {
+		let label = UILabel()
+		label.textColor = .white
+		label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+		return label
+	}()
+	
+	// clear view with a white single-point border
+	//	on its layer
+	let whiteBorderView: UIView = {
+		let v = UIView()
+		v.layer.borderWidth = 1
+		v.layer.borderColor = UIColor.white.cgColor
+		v.layer.cornerRadius = 4
+		return v
+	}()
+
+	// clear view that will get a sublayer
+	//	that we'll use to animate the strokeEnd
+	let animBorderView: UIView = {
+		let v = UIView()
+		return v
+	}()
+	
+	let animBorderLayer: CAShapeLayer = {
+		let shapeLayer = CAShapeLayer()
+		shapeLayer.fillColor = UIColor.clear.cgColor
+		// start with a clear border so we don't see it
+		//	before the strokeEnd animation starts
+		shapeLayer.strokeColor = UIColor.clear.cgColor
+		shapeLayer.lineCap = .round
+		shapeLayer.lineWidth = 2
+		return shapeLayer
+	}()
+	
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		customInit()
+	}
+	
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		customInit()
+	}
+	
+	private func customInit() {
+		backgroundColor = .black
+		
+		// add the subviews
+		[whiteBorderView, animBorderView, label].forEach { v in
+			v.translatesAutoresizingMaskIntoConstraints = false
+			addSubview(v)
+		}
+		
+		let constraints = [
+
+			// label with a bit of "padding"
+			label.topAnchor.constraint(equalTo: self.topAnchor, constant: 2),
+			label.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -3),	// should be a negative constant
+			label.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 4),
+			label.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -4),	// should be a negative constant
+			
+			// constrain white border view to all 4 sides
+			whiteBorderView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0),
+			whiteBorderView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0),
+			whiteBorderView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 0),
+			whiteBorderView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 0),
+			
+			// constrain anim border view to all 4 sides
+			animBorderView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0),
+			animBorderView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0),
+			animBorderView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 0),
+			animBorderView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 0),
+			
+		]
+		NSLayoutConstraint.activate(constraints)
+		
+		self.layer.cornerRadius = 4
+
+		// add the anim border layer to the anim border view
+		animBorderView.layer.addSublayer(animBorderLayer)
+		
+	}
+	
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		// we want to update the animated border layer frame here
+		animBorderLayer.frame = animBorderView.bounds
+	}
+	
+	func startAnimation(toastMessage: String) {
+
+		self.label.text = toastMessage
+
+		// set the border path
+		self.animBorderLayer.path = UIBezierPath(roundedRect: self.animBorderView.bounds, cornerRadius: 4).cgPath
+		// set the strokeColor here
+		self.animBorderLayer.strokeColor = UIColor.green.cgColor
+		
+		let strokeAnimation = CABasicAnimation(keyPath: "strokeEnd")
+		strokeAnimation.beginTime = 0
+		strokeAnimation.fromValue = 0
+		strokeAnimation.toValue = 1
+		strokeAnimation.duration = 1.5
+		strokeAnimation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+		
+		self.animBorderLayer.add(strokeAnimation, forKey: "")
+
+	}
+	
+}
+
+class zToastView: UIView {
+	
+	lazy var label: UILabel = {
+		let label = UILabel()
+		label.textColor = .white
+		label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+		return label
+	}()
+	
+	lazy var subLayer: CAShapeLayer = {
+		let shapeLayer = CAShapeLayer()
+		shapeLayer.fillColor = nil
+		shapeLayer.strokeColor = UIColor.green.cgColor
+		shapeLayer.lineCap = .round
+		shapeLayer.lineWidth = 2 //2
+		return shapeLayer
+	}()
+	
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		customInit()
+	}
+	
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		customInit()
+	}
+	
+	private func customInit() {
+		backgroundColor = .black
+		self.addSubview(label)
+		label.translatesAutoresizingMaskIntoConstraints = false
+		let constraints = [
+			label.topAnchor.constraint(equalTo: self.topAnchor, constant: 2),
+			label.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -3),
+			label.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 4),
+			label.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -4)
+		]
+		NSLayoutConstraint.activate(constraints)
+		
+		layer.borderWidth = 1
+		layer.borderColor = UIColor.white.cgColor
+		layer.cornerRadius = 4
+		//layer.masksToBounds = true
+	}
+	
+	func startAnimation(toastMessage: String) {
+		self.label.text = toastMessage
+		self.label.layoutIfNeeded()
+		DispatchQueue.main.async {
+			let subLayer = self.subLayer
+			self.layer.insertSublayer(subLayer, at: 0)
+			subLayer.frame = self.bounds // self.layer.frame
+			subLayer.path = UIBezierPath(roundedRect: self.bounds, cornerRadius: 4).cgPath
+			//subLayer.masksToBounds = true
+			
+			let strokeAnimation = CABasicAnimation(keyPath: "strokeEnd")
+			strokeAnimation.beginTime = 0
+			strokeAnimation.fromValue = 0
+			strokeAnimation.toValue = 1
+			strokeAnimation.duration = 1.5
+			strokeAnimation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+			
+			subLayer.add(strokeAnimation, forKey: "")
+		}
+	}
+}
+
+
+class xToastView: UIView {
+	
+	lazy var label: UILabel = {
+		let label = UILabel()
+		label.textColor = .white
+		label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+		return label
+	}()
+	
+	lazy var subLayer: CAShapeLayer = {
+		let shapeLayer = CAShapeLayer()
+		shapeLayer.fillColor = nil
+		shapeLayer.strokeColor = UIColor.green.cgColor
+		shapeLayer.lineCap = .round
+		shapeLayer.lineWidth = 4 //2
+		return shapeLayer
+	}()
+	
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		customInit()
+	}
+	
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		customInit()
+	}
+	
+	private func customInit() {
+		backgroundColor = .black
+		self.addSubview(label)
+		label.translatesAutoresizingMaskIntoConstraints = false
+		let constraints = [
+			label.topAnchor.constraint(equalTo: self.topAnchor, constant: 2),
+			label.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 3),
+			label.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 4),
+			label.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 4)
+		]
+		NSLayoutConstraint.activate(constraints)
+		
+		layer.borderWidth = 1
+		layer.borderColor = UIColor.white.cgColor
+		layer.cornerRadius = 4
+		//layer.masksToBounds = true
+	}
+	
+	func startAnimation(toastMessage: String) {
+		label.text = toastMessage
+		
+		//self.layer.insertSublayer(subLayer, at: 0)
+		self.layer.addSublayer(subLayer)
+		subLayer.frame = bounds // layer.frame
+		subLayer.path = UIBezierPath(roundedRect: self.bounds.insetBy(dx: 0, dy: 0), cornerRadius: 4).cgPath
+		//subLayer.masksToBounds = true
+		
+		let strokeAnimation = CABasicAnimation(keyPath: "strokeEnd")
+		strokeAnimation.beginTime = 0
+		strokeAnimation.fromValue = 0
+		strokeAnimation.toValue = 1
+		strokeAnimation.duration = 1.5
+		strokeAnimation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+		
+		subLayer.add(strokeAnimation, forKey: "")
+		//animate coming up with message
+	}
+}
+
+class ToastView: UIView {
+	
+	lazy var label: UILabel = {
+		let label = UILabel()
+		label.textColor = .white
+		label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+		return label
+	}()
+	
+	lazy var subLayer: CAShapeLayer = {
+		let shapeLayer = CAShapeLayer()
+		shapeLayer.fillColor = nil
+		shapeLayer.strokeColor = UIColor.green.cgColor
+		shapeLayer.lineCap = .round
+		shapeLayer.lineWidth = 2
+		return shapeLayer
+	}()
+	
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		customInit()
+	}
+	
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		customInit()
+	}
+	
+	private func customInit() {
+		backgroundColor = .black
+		self.addSubview(label)
+		label.translatesAutoresizingMaskIntoConstraints = false
+		let constraints = [
+			label.topAnchor.constraint(equalTo: self.topAnchor, constant: 2),
+			label.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 3),
+			label.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 4),
+			label.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 4)
+		]
+		NSLayoutConstraint.activate(constraints)
+		
+		layer.borderWidth = 1
+		layer.borderColor = UIColor.white.cgColor
+		layer.cornerRadius = 4
+		//layer.masksToBounds = true
+		layer.masksToBounds = false
+	}
+	
+	func startAnimation(toastMessage: String) {
+		
+		self.label.text = toastMessage
+		self.layer.insertSublayer(subLayer, at: 0)
+		//subLayer.frame = layer.frame
+		subLayer.frame = self.bounds // layer.frame
+		subLayer.path = UIBezierPath(roundedRect: self.bounds, cornerRadius: 4).cgPath
+		//subLayer.masksToBounds = true
+		subLayer.masksToBounds = false
+		
+		let strokeAnimation = CABasicAnimation(keyPath: "strokeEnd")
+		strokeAnimation.beginTime = 0
+		strokeAnimation.fromValue = 0
+		strokeAnimation.toValue = 1
+		strokeAnimation.duration = 1.5
+		strokeAnimation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+		
+		subLayer.add(strokeAnimation, forKey: "")
+		//animate coming up with message
+	}
+}
+
+class MainViewController: UIViewController {
+	
+	let titleBarView = UIView(frame: .zero)
+	let container = UIViewController()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		setup()
+		layout()
+	}
+	
+	func setup() {
+		
+		titleBarView.backgroundColor = .red
+		view.addSubview(titleBarView)
+
+		// change this
+		//addViewController(container)
+		
+		// to this
+		addViewController(container, constrainToSuperview: false)
+
+		showViewControllerA()
+	}
+	
+	func layout() {
+		titleBarView.translatesAutoresizingMaskIntoConstraints = false
+		container.view.translatesAutoresizingMaskIntoConstraints = false
+		container.view.backgroundColor = .green
+		
+		NSLayoutConstraint.activate([
+			titleBarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+			titleBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+			titleBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+			titleBarView.heightAnchor.constraint(equalToConstant: 24),
+			
+			container.view.topAnchor.constraint(equalTo: titleBarView.bottomAnchor, constant: 0),
+			container.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+			container.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+			container.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+		])
+	}
+	
+	func showViewControllerA() {
+		let viewControllerA = ViewControllerA()
+		viewControllerA.delegate = self
+		
+		container.children.first?.remove()
+		container.addViewController(viewControllerA)
+	}
+	
+	func showViewControllerB() {
+		let viewControllerB = ViewControllerB()
+		
+		container.children.first?.remove()
+		container.addViewController(viewControllerB)
+	}
+}
+
+extension MainViewController: ViewControllerADelegate {
+	func nextViewController() {
+		showViewControllerB()
+	}
+}
+
+protocol ViewControllerADelegate: AnyObject {
+	func nextViewController()
+}
+
+class ViewControllerA: UIViewController {
+	
+	let nextButton = UIButton()
+	
+	weak var delegate: ViewControllerADelegate?
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		setup()
+		layout()
+		view.backgroundColor = .blue
+	}
+	
+	func setup() {
+		nextButton.setTitle("next", for: .normal)
+		nextButton.addTarget(self, action: #selector(nextButtonPressed), for: .primaryActionTriggered)
+		view.addSubview(nextButton)
+	}
+	
+	func layout() {
+		nextButton.translatesAutoresizingMaskIntoConstraints = false
+		
+		NSLayoutConstraint.activate([
+			nextButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+			nextButton.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+		])
+	}
+	
+	@objc func nextButtonPressed() {
+		delegate?.nextViewController()
+	}
+}
+
+class ViewControllerB: UIViewController {
+	
+	let imageView = UIImageView()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		setup()
+		layout()
+		view.backgroundColor = .orange
+	}
+	
+	func setup() {
+		view.addSubview(imageView)
+		blankImage()
+	}
+	
+	func layout() {
+		imageView.translatesAutoresizingMaskIntoConstraints = false
+		imageView.contentMode = .scaleAspectFill
+		imageView.layer.magnificationFilter = CALayerContentsFilter.nearest;
+		
+		NSLayoutConstraint.activate([
+			// change this
+			//imageView.centerYAnchor.constraint(equalTo: super.view.centerYAnchor),
+			//imageView.centerXAnchor.constraint(equalTo: super.view.centerXAnchor),
+			//imageView.heightAnchor.constraint(equalTo: super.view.heightAnchor, multiplier: 0.6),
+
+			// to this
+			imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+			imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+			imageView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.6),
+		])
+		
+		view.layoutSubviews()
+		
+	}
+	
+	func blankImage() {
+		let ciImage = CIImage(cgImage: createBlankCGImage(width: 32, height: 64)!)
+		imageView.image = cIImageToUIImage(ciimage: ciImage, context: CIContext())
+	}
+}
+
+func createBlankCGImage(width: Int, height: Int) -> CGImage? {
+	
+	let bounds = CGRect(x: 0, y:0, width: width, height: height)
+	let intWidth = Int(ceil(bounds.width))
+	let intHeight = Int(ceil(bounds.height))
+	let bitmapContext = CGContext(data: nil,
+								  width: intWidth, height: intHeight,
+								  bitsPerComponent: 8,
+								  bytesPerRow: 0,
+								  space: CGColorSpace(name: CGColorSpace.sRGB)!,
+								  bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+	
+	if let cgContext = bitmapContext {
+		cgContext.saveGState()
+		let r = CGFloat.random(in: 0...1)
+		let g = CGFloat.random(in: 0...1)
+		let b = CGFloat.random(in: 0...1)
+		
+		cgContext.setFillColor(red: r, green: g, blue: b, alpha: 1)
+		cgContext.fill(bounds)
+		cgContext.restoreGState()
+		
+		return cgContext.makeImage()
+	}
+	
+	return nil
+}
+
+func cIImageToUIImage(ciimage: CIImage, context: CIContext) -> UIImage? {
+	if let cgimg = context.createCGImage(ciimage, from: ciimage.extent) {
+		return UIImage(cgImage: cgimg)
+	}
+	return nil
+}
+
+
+extension UIViewController {
+	
+	func addViewController(_ child: UIViewController, constrainToSuperview: Bool = true) {
+		addChild(child)
+		view.addSubview(child.view)
+		
+		if constrainToSuperview {
+			child.view.translatesAutoresizingMaskIntoConstraints = false
+			NSLayoutConstraint.activate([
+				child.view.topAnchor.constraint(equalTo: view.topAnchor),
+				child.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+				child.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+				child.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+			])
+		}
+		
+		child.didMove(toParent: self)
+	}
+	
+	func remove() {
+		guard parent != nil else { return }
+		willMove(toParent: nil)
+		view.removeFromSuperview()
+		removeFromParent()
+	}
+}
