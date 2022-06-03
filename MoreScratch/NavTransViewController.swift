@@ -1247,3 +1247,360 @@ class MyGradientButton: UIButton {
 		gradLayer.frame = bounds
 	}
 }
+
+class AdvancedCutoutVC: UIViewController {
+	
+	let myView = CutoutBlurView()
+	
+	var idx: Int = 0
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		view.backgroundColor = .systemBlue
+		
+		let imgView = UIImageView()
+		if let img = UIImage(named: "sampleBG") {
+			imgView.image = img
+		}
+		
+		[imgView, myView].forEach { v in
+			v.translatesAutoresizingMaskIntoConstraints = false
+			view.addSubview(v)
+		}
+		
+		let g = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			
+			imgView.topAnchor.constraint(equalTo: g.topAnchor),
+			imgView.leadingAnchor.constraint(equalTo: g.leadingAnchor),
+			imgView.trailingAnchor.constraint(equalTo: g.trailingAnchor),
+			imgView.bottomAnchor.constraint(equalTo: g.bottomAnchor),
+			
+			myView.topAnchor.constraint(equalTo: g.topAnchor),
+			myView.leadingAnchor.constraint(equalTo: g.leadingAnchor),
+			myView.trailingAnchor.constraint(equalTo: g.trailingAnchor),
+			myView.bottomAnchor.constraint(equalTo: g.bottomAnchor),
+
+		])
+		
+		myView.effect = UIBlurEffect(style: .extraLight)
+		
+	}
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+
+		Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true, block: { _ in
+			switch self.idx % 4 {
+			case 1:
+				self.addSomeOvals()
+			case 2:
+				self.addSomeLines()
+			case 3:
+				self.addSomeShapes()
+			default:
+				self.addSomeRects()
+			}
+			self.idx += 1
+		})
+	}
+	func addSomeRects() {
+		myView.reset()
+		let w: CGFloat = myView.frame.width / 4.0
+		let h: CGFloat = myView.frame.height / 4.0
+		var x: CGFloat = ((myView.frame.width - (w * 5.0 * 0.5)) * 0.5) - (w * 0.25)
+		var y: CGFloat = ((myView.frame.height - (h * 5.0 * 0.5)) * 0.5) - (h * 0.25)
+		for _ in 1...5 {
+			let bz = UIBezierPath(rect: CGRect(x: x, y: y, width: w, height: h))
+			myView.addPath(MyPath(lineWidth: 0, isStroked: false, isFilled: true, pth: bz))
+			x += w * 0.5
+			y += h * 0.5
+		}
+	}
+	func addSomeOvals() {
+		myView.reset()
+		let w: CGFloat = myView.frame.width / 4.0
+		let h: CGFloat = myView.frame.height / 4.0
+		var x: CGFloat = ((myView.frame.width - (w * 5.0 * 0.5)) * 0.5) - (w * 0.25)
+		var y: CGFloat = ((myView.frame.height - (h * 5.0 * 0.5)) * 0.5) - (h * 0.25)
+		for _ in 1...5 {
+			let bz = UIBezierPath(ovalIn: CGRect(x: x, y: y, width: w, height: h))
+			myView.addPath(MyPath(lineWidth: 0, isStroked: false, isFilled: true, pth: bz))
+			x += w * 0.5
+			y += h * 0.5
+		}
+	}
+	func addSomeLines() {
+		myView.reset()
+		let w: CGFloat = myView.frame.width / 2.0
+		let h: CGFloat = myView.frame.height / 4.0
+		let x: CGFloat = 80
+		var y: CGFloat = 80
+		var lw: CGFloat = 4
+		for _ in 1...5 {
+			let bz = UIBezierPath()
+			bz.move(to: CGPoint(x: x, y: y))
+			bz.addLine(to: CGPoint(x: x + w, y: y + 20))
+			myView.addPath(MyPath(lineWidth: lw, lineCap: .round, isStroked: true, isFilled: false, pth: bz))
+			y += h * 0.5
+			lw += 10
+		}
+	}
+	func addSomeShapes() {
+		myView.reset()
+		var bz: UIBezierPath!
+		
+		bz = UIBezierPath(rect: CGRect(x: 80, y: 80, width: 80, height: 120))
+		myView.addPath(MyPath(isStroked: false, isFilled: true, pth: bz))
+
+		bz = UIBezierPath(rect: CGRect(x: 120, y: 120, width: 120, height: 60))
+		myView.addPath(MyPath(isStroked: false, isFilled: true, pth: bz))
+
+		bz = UIBezierPath(rect: CGRect(x: 80, y: 220, width: 220, height: 60))
+		myView.addPath(MyPath(lineWidth: 12, isStroked: true, isFilled: false, pth: bz))
+		
+		bz = UIBezierPath(ovalIn: CGRect(x: 100, y: 240, width: 220, height: 60))
+		myView.addPath(MyPath(lineWidth: 12, isStroked: true, isFilled: false, pth: bz))
+
+		var r: CGRect = CGRect(x: 40, y: 320, width: myView.frame.width - 80, height: 200)
+		for _ in 1...4 {
+			bz = UIBezierPath(rect: r)
+			myView.addPath(MyPath(lineWidth: 8, isStroked: true, isFilled: false, pth: bz))
+			r = r.insetBy(dx: 20, dy: 20)
+		}
+	}
+}
+
+class CutoutBlurView: UIVisualEffectView {
+	
+	let sl = AdvancedCutoutLayer()
+	
+	override init(effect: UIVisualEffect?) {
+		super.init(effect: effect)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	func commonInit() {
+		sl.isOpaque = false
+		layer.mask = sl
+	}
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		sl.frame = bounds
+		sl.setNeedsDisplay()
+	}
+	func addPath(_ newPath: MyPath) {
+		sl.addPath(newPath)
+	}
+	func reset() {
+		sl.reset()
+	}
+}
+
+class AppRectView: UIView {
+	let sl = AdvancedCutoutLayer()
+	
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	func commonInit() {
+		sl.isOpaque = false
+		layer.mask = sl
+	}
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		sl.frame = bounds
+		let bez1 = UIBezierPath(rect: CGRect(x: 40, y: 40, width: 100, height: 100))
+		let bez2 = UIBezierPath(rect: CGRect(x: 80, y: 80, width: 100, height: 100))
+		let b3 = UIBezierPath()
+		b3.move(to: CGPoint(x: 240, y: 40))
+		b3.addLine(to: CGPoint(x: 102, y: 260))
+		
+		var aPath: MyPath!
+		
+		aPath = MyPath(lineWidth: 0, lineCap: .square, lineJoin: .bevel, isStroked: false, isFilled: true, pth: bez1)
+		sl.addPath(aPath)
+		aPath = MyPath(lineWidth: 12, lineCap: .round, lineJoin: .round, isStroked: true, isFilled: false, pth: bez2)
+		sl.addPath(aPath)
+		aPath = MyPath(lineWidth: 10, lineCap: .round, lineJoin: .round, isStroked: true, isFilled: false, pth: b3)
+		sl.addPath(aPath)
+		
+		sl.setNeedsDisplay()
+	}
+}
+
+class BasicCutoutVC: UIViewController {
+	
+	let myBlurView = UIVisualEffectView()
+	let myCutoutLayer = BasicCutoutLayer()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		view.backgroundColor = .systemBlue
+
+		let imgView = UIImageView()
+		if let img = UIImage(named: "sampleBG") {
+			imgView.image = img
+		}
+		
+		[imgView, myBlurView].forEach { v in
+			v.translatesAutoresizingMaskIntoConstraints = false
+			view.addSubview(v)
+		}
+		
+		let g = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			
+			imgView.topAnchor.constraint(equalTo: g.topAnchor),
+			imgView.leadingAnchor.constraint(equalTo: g.leadingAnchor),
+			imgView.trailingAnchor.constraint(equalTo: g.trailingAnchor),
+			imgView.bottomAnchor.constraint(equalTo: g.bottomAnchor),
+			
+			myBlurView.topAnchor.constraint(equalTo: g.topAnchor, constant: 0.0),
+			myBlurView.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 0.0),
+			myBlurView.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: 0.0),
+			myBlurView.bottomAnchor.constraint(equalTo: g.bottomAnchor, constant: 0.0),
+			
+		])
+
+		myBlurView.effect = UIBlurEffect(style: .extraLight)
+		
+		// set mask for blur view
+		myBlurView.layer.mask = myCutoutLayer
+	}
+	
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+	
+		// set mask layer frame
+		myCutoutLayer.frame = myBlurView.bounds
+		
+		// add two overlapping rects
+		
+		let v: CGFloat = 160
+		let c: CGPoint = CGPoint(x: myBlurView.bounds.midX, y: myBlurView.bounds.midY)
+		var r: CGRect = CGRect(origin: c, size: CGSize(width: v, height: v))
+
+		r.origin.x -= v * 0.75
+		r.origin.y -= v * 0.75
+		myCutoutLayer.addRect(r)
+
+		r.origin.x += v * 0.5
+		r.origin.y += v * 0.5
+		myCutoutLayer.addRect(r)
+	}
+
+}
+
+
+class BasicCutoutLayer: CALayer {
+	
+	var rects: [CGRect] = []
+	
+	func addRect(_ newRect: CGRect) {
+		rects.append(newRect)
+		setNeedsDisplay()
+	}
+	func reset() {
+		rects = []
+		setNeedsDisplay()
+	}
+	
+	override func draw(in ctx: CGContext) {
+		
+		// fill entire layer with solid color
+		ctx.setFillColor(UIColor.gray.cgColor)
+		ctx.fill(self.bounds);
+
+		rects.forEach { r in
+			ctx.addPath(UIBezierPath(rect: r).cgPath)
+		}
+
+		// draw clear "cutouts"
+		ctx.setFillColor(UIColor.clear.cgColor)
+		ctx.setBlendMode(.sourceIn)
+		ctx.drawPath(using: .fill)
+		
+	}
+	
+}
+
+struct MyPath {
+	var lineWidth: CGFloat = 0
+	var lineCap: CGLineCap = .butt
+	var lineJoin: CGLineJoin = .bevel
+	var isStroked: Bool = true
+	var isFilled: Bool = true
+	var pth: UIBezierPath = UIBezierPath()
+}
+
+class AdvancedCutoutLayer: CALayer {
+	
+	var myPaths: [MyPath] = []
+	
+	func addPath(_ newPath: MyPath) {
+		myPaths.append(newPath)
+		setNeedsDisplay()
+	}
+	func reset() {
+		myPaths = []
+		setNeedsDisplay()
+	}
+	
+	override func draw(in ctx: CGContext) {
+		
+		// fill entire layer with solid color
+		ctx.setFillColor(UIColor.gray.cgColor)
+		ctx.fill(self.bounds);
+		ctx.setBlendMode(.sourceIn)
+
+		myPaths.forEach { thisPath in
+			ctx.setStrokeColor(thisPath.isStroked ? UIColor.clear.cgColor : UIColor.black.cgColor)
+			ctx.setFillColor(thisPath.isFilled ? UIColor.clear.cgColor : UIColor.black.cgColor)
+			ctx.setLineWidth(thisPath.isStroked ? thisPath.lineWidth : 0.0)
+			ctx.setLineCap(thisPath.lineCap)
+			ctx.setLineJoin(thisPath.lineJoin)
+			ctx.addPath(thisPath.pth.cgPath)
+			ctx.drawPath(using: .fillStroke)
+		}
+		
+	}
+	
+}
+
+class xMyCustomLayer: CALayer {
+	
+	var myPath: CGPath?
+	var lineWidth: CGFloat = 0.0
+	
+	override func draw(in ctx: CGContext) {
+		
+		// fill entire layer with solid color
+		ctx.setFillColor(UIColor.gray.cgColor)
+		ctx.fill(self.bounds);
+		
+		// we want to "clear" the stroke
+		ctx.setStrokeColor(UIColor.clear.cgColor);
+		// any color will work, as the mask uses the alpha value
+		ctx.setFillColor(UIColor.clear.cgColor)
+		ctx.setLineWidth(self.lineWidth)
+		ctx.setLineCap(.round)
+		ctx.setLineJoin(.round)
+		if let pth = self.myPath {
+			ctx.addPath(pth)
+		}
+		ctx.setBlendMode(.sourceIn)
+		ctx.drawPath(using: .fillStroke)
+		
+	}
+	
+}
