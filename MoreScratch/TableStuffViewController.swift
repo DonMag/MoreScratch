@@ -129,7 +129,6 @@ class LabelCollectionViewCell: UICollectionViewCell {
 		commonInit()
 	}
 	private func commonInit() {
-		label.textColor = .white
 		label.textAlignment = .center
 		label.translatesAutoresizingMaskIntoConstraints = false
 		contentView.addSubview(label)
@@ -140,30 +139,40 @@ class LabelCollectionViewCell: UICollectionViewCell {
 			label.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -8.0),
 			label.bottomAnchor.constraint(equalTo: g.bottomAnchor, constant: -4.0),
 		])
-		contentView.backgroundColor = .systemGreen
+		
+		// default (unselected) appearance
+		contentView.backgroundColor = UIColor(white: 0.95, alpha: 1.0)
+		label.textColor = .black
+		
+		// let's round the corners so it looks nice
 		contentView.layer.cornerRadius = 12
 	}
 	override var isSelected: Bool {
 		didSet {
-			contentView.backgroundColor = isSelected ? .systemOrange : .systemGreen
+			contentView.backgroundColor = isSelected ? .systemBlue : UIColor(white: 0.95, alpha: 1.0)
+			label.textColor = isSelected ? .white : .black
 		}
 	}
 }
 
 class SelColViewVC: UIViewController {
 	
-	var albumsCollectionView: UICollectionView!
+	var collectionView: UICollectionView!
 	
 	let myData: [String] = [
-		"Favorites",
-		"Recents",
-		"Recently Added",
-		"Something Else",
-		"Five",
-		"Six",
-		"Seven",
-		"Eight",
+		"All Venues",
+		"Venue One",
+		"Venue Two",
+		"Venue Three",
+		"Venue Four",
+		"Venue Five",
+		"Venue Six",
+		"Venue Seven",
+		"Venue Eight",
 	]
+	
+	// use this to track the currently selected item / cell
+	var currentSelection: IndexPath!
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -171,22 +180,28 @@ class SelColViewVC: UIViewController {
 		let fl = UICollectionViewFlowLayout()
 		fl.scrollDirection = .horizontal
 		fl.estimatedItemSize = CGSize(width: 120, height: 50)
-		albumsCollectionView = UICollectionView(frame: .zero, collectionViewLayout: fl)
-		albumsCollectionView.translatesAutoresizingMaskIntoConstraints = false
-		view.addSubview(albumsCollectionView)
+		collectionView = UICollectionView(frame: .zero, collectionViewLayout: fl)
+		collectionView.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(collectionView)
 		let g = view.safeAreaLayoutGuide
 		NSLayoutConstraint.activate([
-			albumsCollectionView.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
-			albumsCollectionView.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
-			albumsCollectionView.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20.0),
-			albumsCollectionView.heightAnchor.constraint(equalToConstant: 80.0),
+			collectionView.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
+			collectionView.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+			collectionView.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20.0),
+			collectionView.heightAnchor.constraint(equalToConstant: 80.0),
 		])
 		
-		albumsCollectionView.contentInset = UIEdgeInsets(top: 0.0, left: 8.0, bottom: 0.0, right: 8.0)
-		albumsCollectionView.register(LabelCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
-		albumsCollectionView.dataSource = self
-		albumsCollectionView.delegate = self
+		collectionView.contentInset = UIEdgeInsets(top: 0.0, left: 8.0, bottom: 0.0, right: 8.0)
+		collectionView.register(LabelCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+		collectionView.dataSource = self
+		collectionView.delegate = self
 		
+		// we want to "pre-select" the first item / cell
+		let idx = IndexPath(item: 0, section: 0)
+		collectionView.selectItem(at: idx, animated: false, scrollPosition: .left)
+
+		// update currentSelection var
+		currentSelection = idx
 	}
 	
 }
@@ -203,13 +218,142 @@ extension SelColViewVC: UICollectionViewDataSource, UICollectionViewDelegate {
 		return c
 	}
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		if collectionView == albumsCollectionView {
-			print("Selected item:", indexPath.item)
-//			presenter?.didChooseAlbum(with: indexPath.item) {
-//				self.picturesCollectionView.reloadData()
-//			}
+		if currentSelection == indexPath {
+			// user tapped already selected cell, so
+			//	just return
+			print("Tapped Already Selected item:", indexPath.item)
+			return
 		}
+
+		// update currentSelection var
+		currentSelection = indexPath
+		
+		print("New Selected item:", indexPath.item)
+		// run code for new selection
 	}
+}
+
+class ToggleSelColViewVC: UIViewController {
+	
+	var collectionView: UICollectionView!
+	
+	var myData: [String] = [
+		"Favorites",
+		"Recents",
+		"Recently Added",
+		"Something Else",
+		"Five",
+		"Six",
+		"Seven",
+		"Eight",
+	]
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		let fl = UICollectionViewFlowLayout()
+		fl.scrollDirection = .vertical
+		fl.estimatedItemSize = CGSize(width: 120, height: 50)
+		collectionView = UICollectionView(frame: .zero, collectionViewLayout: fl)
+		collectionView.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(collectionView)
+		let g = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			collectionView.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
+			collectionView.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+			collectionView.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20.0),
+			collectionView.heightAnchor.constraint(equalToConstant: 280.0),
+		])
+		
+		collectionView.contentInset = UIEdgeInsets(top: 0.0, left: 8.0, bottom: 0.0, right: 8.0)
+		collectionView.register(LabelCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+		collectionView.dataSource = self
+		collectionView.delegate = self
+		
+	}
+	
+}
+extension ToggleSelColViewVC: UICollectionViewDataSource, UICollectionViewDelegate {
+	func numberOfSections(in collectionView: UICollectionView) -> Int {
+		return 1
+	}
+	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+		return 50
+	}
+	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+		let c = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! LabelCollectionViewCell
+		c.label.text = "Item: \(indexPath.item)"
+		return c
+	}
+	
+	func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+		
+		// is a row already selected?
+		if let selectedItems = collectionView.indexPathsForSelectedItems {
+			if selectedItems.contains(indexPath) {
+				collectionView.deselectItem(at: indexPath, animated: true)
+				return false
+			}
+		}
+		return true
+		
+//		if let idx = tableView.indexPathForSelectedRow {
+//			if idx == indexPath {
+//				// tapped row is already selected, so
+//				//  deselect it
+//				tableView.deselectRow(at: indexPath, animated: false)
+//				//  update our data
+//				pincodes[indexPath.row].isSelected = false
+//				//  tell table view NOT to select the row
+//				return nil
+//			} else {
+//				// some other row is selected, so
+//				//  update our data
+//				//  table view will automatically deselect that row
+//				pincodes[idx.row].isSelected = false
+//			}
+//		}
+//		// tapped row should now be selected, so
+//		//  update our data
+//		pincodes[indexPath.row].isSelected = true
+//		//  tell table view TO select the row
+//		return indexPath
+
+	}
+	
+//	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//
+//		// is an item already selected?
+//		if let selectedItems = collectionView.indexPathsForSelectedItems {
+//			if selectedItems.contains(indexPath) {
+//				// tapped item is already selected, so
+//				//  deselect it
+//				collectionView.deselectItem(at: indexPath, animated: true)
+//				//  update our data
+//				//pincodes[indexPath.row].isSelected = false
+//				//  tell table view NOT to select the row
+//				return
+//			} else {
+//				// some other row is selected, so
+//				//  update our data
+//				//  table view will automatically deselect that row
+//				//pincodes[idx.row].isSelected = false
+//			}
+//		}
+//		// tapped row should now be selected, so
+//		//  update our data
+//		//pincodes[indexPath.row].isSelected = true
+//		//  tell table view TO select the row
+//		//return indexPath
+//
+//
+////		if collectionView == collectionView {
+////			print("Selected item:", indexPath.item)
+////			//			presenter?.didChooseAlbum(with: indexPath.item) {
+////			//				self.picturesCollectionView.reloadData()
+////			//			}
+////		}
+//	}
 }
 
 class CarView: UIView {

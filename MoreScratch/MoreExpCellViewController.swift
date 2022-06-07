@@ -1146,3 +1146,104 @@ extension UIViewController {
 		removeFromParent()
 	}
 }
+
+class AlertVC: UIViewController {
+
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		view.backgroundColor = .systemGreen
+	}
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		let msg = "testing"
+		showAlert(message: msg)
+	}
+
+func showAlert(message: String) {
+	let alert = UIAlertController(title: "You lost!", message: message, preferredStyle: .alert)
+	alert.addAction(UIAlertAction(title: "Retry", style: .default) { action in
+		print("Alert Action...")
+		//self.performSegue(withIdentifier: "goToHomePage", sender: nil)
+	})
+	self.present(alert, animated: true, completion: nil)
+}
+
+}
+
+class OrthViewController: UIViewController, UICollectionViewDelegate {
+	
+	var collectionView: UICollectionView!
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		// Do any additional setup after loading the view.
+		
+		collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionLayout(hasOrthogonalScroll: false))
+		collectionView.delegate = self
+		collectionView.frame = view.bounds
+		collectionView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+		view.addSubview(collectionView)
+		
+		setupDataSource()
+	}
+	
+	private func collectionLayout(hasOrthogonalScroll: Bool) -> UICollectionViewLayout {
+		let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
+		let item = NSCollectionLayoutItem(layoutSize: itemSize)
+		
+		let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalWidth(0.2))
+//		let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(0.2))
+		let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+		
+		let section = NSCollectionLayoutSection(group: group)
+		
+		section.orthogonalScrollingBehavior = hasOrthogonalScroll ? .groupPagingCentered : .none
+
+		return UICollectionViewCompositionalLayout(section: section)
+	}
+	
+	enum Section {
+		case main
+	}
+	
+	private var dataSource: UICollectionViewDiffableDataSource<Section, Int>!
+	
+	private func setupDataSource() {
+		let cellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Int> { (cell, indexPath, identifier) in
+			var configuration = cell.defaultContentConfiguration()
+			configuration.text = identifier.description
+			
+			cell.contentConfiguration = configuration
+			
+			var backgroundConfiguration = cell.backgroundConfiguration
+			backgroundConfiguration?.backgroundColor = .secondarySystemBackground
+			backgroundConfiguration?.cornerRadius = 8
+			backgroundConfiguration?.backgroundInsets = .init(top: 4, leading: 4, bottom: 4, trailing: 4)
+			
+			cell.backgroundConfiguration = backgroundConfiguration
+		}
+		
+		dataSource = UICollectionViewDiffableDataSource<Section, Int>(collectionView: collectionView) { collectionView, indexPath, identifier in
+			collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: identifier)
+		}
+		
+		var snapshot = NSDiffableDataSourceSnapshot<Section, Int>()
+		snapshot.appendSections([.main])
+		snapshot.appendItems(Array(1...100))
+		dataSource.apply(snapshot, animatingDifferences: false)
+	}
+	
+	var hasOrthogonalScroll = false
+	
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		collectionView.deselectItem(at: indexPath, animated: true)
+		
+		hasOrthogonalScroll.toggle()
+		let layout = collectionLayout(hasOrthogonalScroll: hasOrthogonalScroll)
+		collectionView.setCollectionViewLayout(layout, animated: true, completion: { b in
+			if !self.hasOrthogonalScroll {
+				collectionView.reloadData()
+			}
+		})
+	}
+}
+

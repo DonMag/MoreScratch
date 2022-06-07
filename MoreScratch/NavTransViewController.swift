@@ -1400,6 +1400,183 @@ class CutoutBlurView: UIVisualEffectView {
 	}
 }
 
+class RoundCutoutVC: UIViewController {
+	
+	let myView = CutoutBlurView()
+	
+	var idx: Int = 0
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		view.backgroundColor = .systemBlue
+		
+		let imgView = UIImageView()
+		if let img = UIImage(named: "sampleBG") {
+			imgView.image = img
+		}
+		
+		[imgView, myView].forEach { v in
+			v.translatesAutoresizingMaskIntoConstraints = false
+			view.addSubview(v)
+		}
+		
+		let g = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			
+			imgView.topAnchor.constraint(equalTo: g.topAnchor),
+			imgView.leadingAnchor.constraint(equalTo: g.leadingAnchor),
+			imgView.trailingAnchor.constraint(equalTo: g.trailingAnchor),
+			imgView.bottomAnchor.constraint(equalTo: g.bottomAnchor),
+			
+			myView.topAnchor.constraint(equalTo: g.topAnchor),
+			myView.leadingAnchor.constraint(equalTo: g.leadingAnchor),
+			myView.trailingAnchor.constraint(equalTo: g.trailingAnchor),
+			myView.bottomAnchor.constraint(equalTo: g.bottomAnchor),
+			
+		])
+		
+		myView.effect = UIBlurEffect(style: .extraLight)
+		
+	}
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+		
+		//addRoundedRects()
+		
+		//twoRects()
+		
+		twoRoundedRects()
+		
+		return()
+		
+		Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true, block: { _ in
+			switch self.idx % 4 {
+			case 1:
+				self.addSomeOvals()
+			case 2:
+				self.addSomeLines()
+			case 3:
+				self.addSomeShapes()
+			default:
+				self.addSomeRects()
+			}
+			self.idx += 1
+		})
+	}
+	func twoRects() {
+		let rect1 = CGRect(x: 16, y: 95, width: 358, height: 95)
+		let rect2 = CGRect(x: 151, y: 47, width: 88, height: 88)
+		
+		let path1 = UIBezierPath(rect: rect1) // A
+		let path2 = UIBezierPath(rect: rect2) // A
+		
+		myView.addPath(MyPath(lineWidth: 0, isStroked: false, isFilled: true, pth: path1))
+		myView.addPath(MyPath(lineWidth: 0, isStroked: false, isFilled: true, pth: path2))
+	}
+	func twoRoundedRects() {
+		let rect1 = CGRect(x: 16, y: 95, width: 358, height: 95)
+		let rect2 = CGRect(x: 151, y: 47, width: 88, height: 88)
+		
+		let rect3 = rect1.insetBy(dx: 80, dy: -40)
+		
+		let path1 = UIBezierPath(roundedRect: rect1, cornerRadius: 8) // B
+		let path2 = UIBezierPath(roundedRect: rect2, cornerRadius: 8) // B
+		
+//		let path3 = UIBezierPath(roundedRect: rect3, cornerRadius: 8) // B
+		var path3 = UIBezierPath()
+		path3.move(to: CGPoint(x: rect3.minX, y: rect3.midY))
+		path3.addLine(to: CGPoint(x: rect3.maxX, y: rect3.midY))
+
+		path3 = UIBezierPath(roundedRect: rect3, cornerRadius: 8) // B
+		
+		myView.addPath(MyPath(lineWidth: 0, isStroked: false, isFilled: true, pth: path1))
+//		myView.addPath(MyPath(lineWidth: 0, isStroked: false, isFilled: true, pth: path2))
+		//myView.addPath(MyPath(lineWidth: 0, isStroked: true, isFilled: false, isClear: true, pth: path3))
+		myView.addPath(MyPath(lineWidth: 0, isStroked: true, isFilled: false, isClear: true, pth: path3))
+	}
+	func addRoundedRects() {
+		myView.reset()
+		let w: CGFloat = myView.frame.width / 4.0
+		let h: CGFloat = myView.frame.height / 4.0
+		var x: CGFloat = ((myView.frame.width - (w * 5.0 * 0.5)) * 0.5) - (w * 0.25)
+		var y: CGFloat = ((myView.frame.height - (h * 5.0 * 0.5)) * 0.5) - (h * 0.25)
+		for _ in 1...5 {
+			let bz = UIBezierPath(roundedRect: CGRect(x: x, y: y, width: w, height: h), cornerRadius: 16.0)
+			myView.addPath(MyPath(lineWidth: 0, isStroked: false, isFilled: true, pth: bz))
+			x += w * 0.5
+			y += h * 0.5
+		}
+	}
+
+	func addSomeRects() {
+		myView.reset()
+		let w: CGFloat = myView.frame.width / 4.0
+		let h: CGFloat = myView.frame.height / 4.0
+		var x: CGFloat = ((myView.frame.width - (w * 5.0 * 0.5)) * 0.5) - (w * 0.25)
+		var y: CGFloat = ((myView.frame.height - (h * 5.0 * 0.5)) * 0.5) - (h * 0.25)
+		for _ in 1...5 {
+			let bz = UIBezierPath(rect: CGRect(x: x, y: y, width: w, height: h))
+			myView.addPath(MyPath(lineWidth: 0, isStroked: false, isFilled: true, pth: bz))
+			x += w * 0.5
+			y += h * 0.5
+		}
+	}
+	func addSomeOvals() {
+		myView.reset()
+		let w: CGFloat = myView.frame.width / 4.0
+		let h: CGFloat = myView.frame.height / 4.0
+		var x: CGFloat = ((myView.frame.width - (w * 5.0 * 0.5)) * 0.5) - (w * 0.25)
+		var y: CGFloat = ((myView.frame.height - (h * 5.0 * 0.5)) * 0.5) - (h * 0.25)
+		for _ in 1...5 {
+			let bz = UIBezierPath(ovalIn: CGRect(x: x, y: y, width: w, height: h))
+			myView.addPath(MyPath(lineWidth: 0, isStroked: false, isFilled: true, pth: bz))
+			x += w * 0.5
+			y += h * 0.5
+		}
+	}
+	func addSomeLines() {
+		myView.reset()
+		let w: CGFloat = myView.frame.width / 2.0
+		let h: CGFloat = myView.frame.height / 4.0
+		let x: CGFloat = 80
+		var y: CGFloat = 80
+		var lw: CGFloat = 4
+		for _ in 1...5 {
+			let bz = UIBezierPath()
+			bz.move(to: CGPoint(x: x, y: y))
+			bz.addLine(to: CGPoint(x: x + w, y: y + 20))
+			myView.addPath(MyPath(lineWidth: lw, lineCap: .round, isStroked: true, isFilled: false, pth: bz))
+			y += h * 0.5
+			lw += 10
+		}
+	}
+	func addSomeShapes() {
+		myView.reset()
+		var bz: UIBezierPath!
+		
+		bz = UIBezierPath(rect: CGRect(x: 80, y: 80, width: 80, height: 120))
+		myView.addPath(MyPath(isStroked: false, isFilled: true, pth: bz))
+		
+		bz = UIBezierPath(rect: CGRect(x: 120, y: 120, width: 120, height: 60))
+		myView.addPath(MyPath(isStroked: false, isFilled: true, pth: bz))
+		
+		bz = UIBezierPath(rect: CGRect(x: 80, y: 220, width: 220, height: 60))
+		myView.addPath(MyPath(lineWidth: 12, isStroked: true, isFilled: false, pth: bz))
+		
+		bz = UIBezierPath(ovalIn: CGRect(x: 100, y: 240, width: 220, height: 60))
+		myView.addPath(MyPath(lineWidth: 12, isStroked: true, isFilled: false, pth: bz))
+		
+		var r: CGRect = CGRect(x: 40, y: 320, width: myView.frame.width - 80, height: 200)
+		for _ in 1...4 {
+			bz = UIBezierPath(rect: r)
+			myView.addPath(MyPath(lineWidth: 8, isStroked: true, isFilled: false, pth: bz))
+			r = r.insetBy(dx: 20, dy: 20)
+		}
+	}
+}
+
+
 class AppRectView: UIView {
 	let sl = AdvancedCutoutLayer()
 	
@@ -1540,6 +1717,7 @@ struct MyPath {
 	var lineJoin: CGLineJoin = .bevel
 	var isStroked: Bool = true
 	var isFilled: Bool = true
+	var isClear: Bool = false
 	var pth: UIBezierPath = UIBezierPath()
 }
 
@@ -1561,7 +1739,6 @@ class AdvancedCutoutLayer: CALayer {
 		// fill entire layer with solid color
 		ctx.setFillColor(UIColor.gray.cgColor)
 		ctx.fill(self.bounds);
-		ctx.setBlendMode(.sourceIn)
 
 		myPaths.forEach { thisPath in
 			ctx.setStrokeColor(thisPath.isStroked ? UIColor.clear.cgColor : UIColor.black.cgColor)
@@ -1570,6 +1747,10 @@ class AdvancedCutoutLayer: CALayer {
 			ctx.setLineCap(thisPath.lineCap)
 			ctx.setLineJoin(thisPath.lineJoin)
 			ctx.addPath(thisPath.pth.cgPath)
+
+			//ctx.setBlendMode(thisPath.isFilled || thisPath.isStroked ? .sourceIn : .sourceOut)
+			ctx.setBlendMode(thisPath.isClear ? .sourceOut : .sourceIn)
+
 			ctx.drawPath(using: .fillStroke)
 		}
 		
