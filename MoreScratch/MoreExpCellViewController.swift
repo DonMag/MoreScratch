@@ -597,7 +597,7 @@ class ScratchOffViewController: UIViewController {
 
 class ToastVC: UIViewController {
 	
-	let tv = ToastView()
+	let tv = MyToastView()
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -614,8 +614,15 @@ class ToastVC: UIViewController {
 		])
 		
 	}
+	
+	var b: Bool = false
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-		self.tv.startAnimation(toastMessage: "New Message")
+		b.toggle()
+		if b {
+			self.tv.startAnimation(toastMessage: "New Message")
+		} else {
+			self.tv.stopAnimation()
+		}
 	}
 	
 }
@@ -716,22 +723,118 @@ class MyToastView: UIView {
 
 		self.label.text = toastMessage
 
+//		// set the border path
+//		self.animBorderLayer.path = UIBezierPath(roundedRect: self.animBorderView.bounds, cornerRadius: 4).cgPath
+//		// set the strokeColor here
+//		self.animBorderLayer.strokeColor = UIColor.green.cgColor
+		
+//		let strokeAnimation = CABasicAnimation(keyPath: "strokeEnd")
+//		strokeAnimation.beginTime = 0
+//		strokeAnimation.fromValue = 0
+//		strokeAnimation.toValue = 1
+//		strokeAnimation.duration = 1.5
+//		strokeAnimation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+//
+//		let strokeAnimationA = CABasicAnimation(keyPath: "strokeStart")
+//		strokeAnimationA.beginTime = 0.25
+//		strokeAnimationA.fromValue = 0
+//		strokeAnimationA.toValue = 1
+//		strokeAnimationA.duration = 1.0
+//		strokeAnimationA.timingFunction = CAMediaTimingFunction(name: .easeIn)
+		
+		//self.animBorderLayer.add(strokeAnimation, forKey: "a")
+		//self.animBorderLayer.add(strokeAnimationA, forKey: "b")
+
+		
 		// set the border path
-		self.animBorderLayer.path = UIBezierPath(roundedRect: self.animBorderView.bounds, cornerRadius: 4).cgPath
+		self.animBorderLayer.path = UIBezierPath(roundedRect: self.animBorderView.bounds, cornerRadius: self.animBorderView.bounds.height * 0.5).cgPath
 		// set the strokeColor here
-		self.animBorderLayer.strokeColor = UIColor.green.cgColor
+		self.animBorderLayer.strokeColor = UIColor.red.cgColor
+
+		let duration: CFTimeInterval = 2.5
 		
-		let strokeAnimation = CABasicAnimation(keyPath: "strokeEnd")
-		strokeAnimation.beginTime = 0
-		strokeAnimation.fromValue = 0
-		strokeAnimation.toValue = 1
-		strokeAnimation.duration = 1.5
-		strokeAnimation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+		// 2)
+		let end = CABasicAnimation(keyPath: "strokeEnd")
+		end.fromValue = 0
+		//end.toValue = 1.0175
+		end.toValue = 1.0
+		end.beginTime = 0
+		end.duration = duration * 0.75
+		//begin.timingFunction = CAMediaTimingFunction(controlPoints: 0.2, 0.88, 0.09, 1.0)
+		//end.timingFunction = CAMediaTimingFunction(controlPoints: 0.5, 0.2, 0.2, 1.0)
+		end.timingFunction = .easeOutSine
+		//end.timingFunction = CAMediaTimingFunction(controlPoints: 0.23, 1, 0.32, 1)
+		end.fillMode = .forwards
 		
-		self.animBorderLayer.add(strokeAnimation, forKey: "")
+		// 3)
+		let begin = CABasicAnimation(keyPath: "strokeStart")
+		begin.fromValue = 0
+		//begin.toValue = 1.0175
+		begin.toValue = 1.0
+		begin.beginTime = duration * 0.15
+		begin.duration = duration * 0.85
+//		begin.timingFunction = CAMediaTimingFunction(controlPoints: 0.2, 0.88, 0.09, 1.0)
+//		begin.timingFunction = CAMediaTimingFunction(controlPoints: 0.2, 0.88, 0.51, 0.99)
+		//begin.timingFunction = CAMediaTimingFunction(controlPoints: 0.5, 0.2, 0.2, 1.0)
+		begin.timingFunction = end.timingFunction
+		begin.timingFunction = .easeInSine
+		//begin.timingFunction = CAMediaTimingFunction(controlPoints: 0.455, 0.15, 0.855, 0.06)
+		begin.fillMode = .forwards
+		
+		// 4)
+		let group = CAAnimationGroup()
+		group.animations = [end, begin]
+		group.duration = duration
+		
+		group.repeatCount = .infinity
+		
+		// 5)
+//		strokeEnd = 1
+//		strokeStart = 1
+		
+		// 6)
+		self.animBorderLayer.add(group, forKey: "move")
 
 	}
+	func stopAnimation() {
+		self.animBorderLayer.removeAllAnimations()
+	}
+}
+
+extension CAMediaTimingFunction {
 	
+	// default
+	static let defaultTiming = CAMediaTimingFunction(name: CAMediaTimingFunctionName.default)
+	static let linear = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear)
+	static let easeIn = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeIn)
+	static let easeOut = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
+	static let easeInEaseOut = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+	
+	// custom
+	static let easeInSine = CAMediaTimingFunction(controlPoints: 0.47, 0, 0.745, 0.715)
+	static let easeInQuad = CAMediaTimingFunction(controlPoints: 0.55, 0.085, 0.68, 0.53)
+	static let easeInCubic = CAMediaTimingFunction(controlPoints: 0.55, 0.055, 0.675, 0.19)
+	static let easeInQuart = CAMediaTimingFunction(controlPoints: 0.895, 0.03, 0.685, 0.22)
+	static let easeInQuint = CAMediaTimingFunction(controlPoints: 0.755, 0.05, 0.855, 0.06)
+	static let easeInExpo = CAMediaTimingFunction(controlPoints: 0.95, 0.05, 0.795, 0.035)
+	static let easeInCirc = CAMediaTimingFunction(controlPoints: 0.6, 0.04, 0.98, 0.335)
+	static let easeInBack = CAMediaTimingFunction(controlPoints: 0.6, -0.28, 0.735, 0.045)
+	static let easeOutSine = CAMediaTimingFunction(controlPoints: 0.39, 0.575, 0.565, 1)
+	static let easeInOutSine = CAMediaTimingFunction(controlPoints: 0.445, 0.05, 0.55, 0.95)
+	static let easeOutQuad = CAMediaTimingFunction(controlPoints: 0.25, 0.46, 0.45, 0.94)
+	static let easeInOutQuad = CAMediaTimingFunction(controlPoints: 0.455, 0.03, 0.515, 0.955)
+	static let easeOutCubic = CAMediaTimingFunction(controlPoints: 0.215, 0.61, 0.355, 1)
+	static let easeInOutCubic = CAMediaTimingFunction(controlPoints: 0.645, 0.045, 0.355, 1)
+	static let easeOutQuart = CAMediaTimingFunction(controlPoints: 0.165, 0.84, 0.44, 1)
+	static let easeInOutQuart = CAMediaTimingFunction(controlPoints: 0.77, 0, 0.175, 1)
+	static let easeOutQuint = CAMediaTimingFunction(controlPoints: 0.23, 1, 0.32, 1)
+	static let easeInOutQuint = CAMediaTimingFunction(controlPoints: 0.86, 0, 0.07, 1)
+	static let easeOutExpo = CAMediaTimingFunction(controlPoints: 0.19, 1, 0.22, 1)
+	static let easeInOutExpo = CAMediaTimingFunction(controlPoints: 1, 0, 0, 1)
+	static let easeOutCirc = CAMediaTimingFunction(controlPoints: 0.075, 0.82, 0.165, 1)
+	static let easeInOutCirc = CAMediaTimingFunction(controlPoints: 0.785, 0.135, 0.15, 0.86)
+	static let easeOutBack = CAMediaTimingFunction(controlPoints: 0.175, 0.885, 0.32, 1.275)
+	static let easeInOutBack = CAMediaTimingFunction(controlPoints: 0.68, -0.55, 0.265, 1.55)
 }
 
 class zToastView: UIView {
@@ -1179,25 +1282,46 @@ class OrthViewController: UIViewController, UICollectionViewDelegate {
 		
 		collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionLayout(hasOrthogonalScroll: false))
 		collectionView.delegate = self
-		collectionView.frame = view.bounds
+		collectionView.frame = view.bounds.insetBy(dx: 40, dy: 40)
 		collectionView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
 		view.addSubview(collectionView)
-		
+		collectionView.backgroundColor = .cyan
+
 		setupDataSource()
 	}
 	
 	private func collectionLayout(hasOrthogonalScroll: Bool) -> UICollectionViewLayout {
+
 		let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
+		//let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.75), heightDimension: .fractionalHeight(1.0))
 		let item = NSCollectionLayoutItem(layoutSize: itemSize)
 		
 		let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalWidth(0.2))
-//		let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(0.2))
+
+//		var group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+//
+//		if hasOrthogonalScroll {
+//			group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+//		}
+		
 		let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
 		
 		let section = NSCollectionLayoutSection(group: group)
 		
 		section.orthogonalScrollingBehavior = hasOrthogonalScroll ? .groupPagingCentered : .none
 
+		section.visibleItemsInvalidationHandler = { visibleItems, scrollOffset, environment in
+			print("X", visibleItems.count)
+			print("Z", environment.container)
+			
+			visibleItems.forEach { i in
+				guard let cell = self.collectionView.cellForItem(at: i.indexPath) else { return }
+				print(i.indexPath, cell.frame)
+				cell.setNeedsLayout()
+				cell.layoutIfNeeded()
+			}
+		}
+		
 		return UICollectionViewCompositionalLayout(section: section)
 	}
 	
@@ -1238,12 +1362,478 @@ class OrthViewController: UIViewController, UICollectionViewDelegate {
 		collectionView.deselectItem(at: indexPath, animated: true)
 		
 		hasOrthogonalScroll.toggle()
+		
 		let layout = collectionLayout(hasOrthogonalScroll: hasOrthogonalScroll)
-		collectionView.setCollectionViewLayout(layout, animated: true, completion: { b in
+
+		let x = 3
+		
+		if x == 1 {
+			collectionView.setCollectionViewLayout(layout, animated: true, completion: { b in
+			})
+		}
+
+		if x == 3 {
+
+			
+			if !self.hasOrthogonalScroll {
+				let w = collectionView.frame.width
+				collectionView.frame.size.width = view.bounds.width + 2000
+				collectionView.collectionViewLayout.invalidateLayout()
+				collectionView.layoutIfNeeded()
+				DispatchQueue.main.async {
+					self.collectionView.setCollectionViewLayout(layout, animated: true, completion: { b in
+						self.collectionView.frame.size.width = w
+					})
+				}
+			} else {
+				collectionView.setCollectionViewLayout(layout, animated: true, completion: { b in
+				})
+			}
+
+		}
+		
+		if x == 2 {
+//			collectionView.setCollectionViewLayout(layout, animated: true, completion: { b in
+//				if !self.hasOrthogonalScroll {
+//					UIView.animate(withDuration: 0.3, animations: {
+//						collectionView.scrollToItem(at: IndexPath(item: 14, section: 0), at: .top, animated: false)
+//					}, completion: { _ in
+//						collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
+//					})
+//				}
+//			})
+//			collectionView.frame.size.height -= 1
 			if !self.hasOrthogonalScroll {
 				collectionView.reloadData()
 			}
-		})
+			collectionView.setCollectionViewLayout(layout, animated: true)
+//			collectionView.frame.size.height += 1
+//			UIView.animate(withDuration: 0.3, animations: {
+//				self.view.layoutIfNeeded()
+//			}, completion: { _ in
+//
+//			})
+		}
+		
 	}
 }
 
+class ImageTextCell: UICollectionViewCell {
+
+	public var callback: ((UICollectionViewCell, Int) -> ())?
+	
+	private var thisObject: MyObjectStruct!
+	
+	private let imageView = UIImageView()
+	private var hotSpotViews: [UIView] = []
+
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	private func commonInit() {
+
+		// be default, image view's are not enabled for user interaction
+		imageView.isUserInteractionEnabled = true
+		
+		// add the image view to the content view
+		imageView.translatesAutoresizingMaskIntoConstraints = false
+
+		contentView.addSubview(imageView)
+		
+		let g = contentView.layoutMarginsGuide
+		NSLayoutConstraint.activate([
+			imageView.topAnchor.constraint(equalTo: g.topAnchor),
+			imageView.leadingAnchor.constraint(equalTo: g.leadingAnchor),
+			imageView.trailingAnchor.constraint(equalTo: g.trailingAnchor),
+			imageView.bottomAnchor.constraint(equalTo: g.bottomAnchor),
+		])
+		
+		imageView.backgroundColor = .yellow
+		contentView.backgroundColor = .systemYellow
+
+	}
+	
+	public func configureCell(_ obj: MyObjectStruct) {
+		thisObject = obj
+		
+		while hotSpotViews.count < thisObject.hotSpots.count {
+			let v = UIView()
+			
+			let lpg = UILongPressGestureRecognizer(target: self, action: #selector(gotLongPress(_:)))
+			v.addGestureRecognizer(lpg)
+			
+			hotSpotViews.append(v)
+		}
+		if let img = UIImage(systemName: thisObject.imageName) {
+			imageView.image = img
+		}
+		imageView.subviews.forEach {
+			$0.removeFromSuperview()
+		}
+		for i in 0..<thisObject.hotSpots.count {
+			let v = hotSpotViews[i]
+			imageView.addSubview(v)
+			let hs = obj.hotSpots[i]
+			v.backgroundColor = hs.color ?? .black.withAlphaComponent(0.2)
+		}
+	}
+	
+	public func updateCell(_ obj: MyObjectStruct) {
+		thisObject = obj
+		for i in 0..<thisObject.hotSpots.count {
+			let v = hotSpotViews[i]
+			let hs = obj.hotSpots[i]
+			v.backgroundColor = hs.color ?? .black.withAlphaComponent(0.2)
+		}
+	}
+	
+	override func layoutSubviews() {
+		super.layoutSubviews()
+
+		// make sure image view layout has been completed
+		if imageView.frame.width == 0.0 {
+			imageView.layoutIfNeeded()
+		}
+		for i in 0..<thisObject.hotSpots.count {
+			let r = thisObject.hotSpots[i].rect
+			let scaledown = imageView.frame.width / 2000.0
+			let v = hotSpotViews[i]
+			v.frame = CGRect(x: r.minX * scaledown, y: r.minY * scaledown, width: r.width * scaledown, height: r.height * scaledown)
+		}
+	}
+	
+	@objc func gotLongPress(_ recognizer: UILongPressGestureRecognizer) {
+		if recognizer.state == .began {
+			guard let v = recognizer.view,
+				  let idx = hotSpotViews.firstIndex(of: v)
+			else { return }
+			print("hit", idx)
+			callback?(self, idx)
+		}
+	}
+	
+}
+
+struct HotSpot {
+	var rect: CGRect = .zero
+	var color: UIColor?
+}
+struct MyObjectStruct {
+	var imageName: String = ""
+	var hotSpots: [HotSpot] = []
+}
+
+class LongPressTestVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+	
+	var collectionView: UICollectionView!
+	
+	var myData: [MyObjectStruct] = []
+	
+	let coords: [[CGFloat]] = [
+		[1315, 522, 1547, 634],		// your coords
+		[468, 485, 1316, 668],		// your coords
+		[100, 100, 600, 600],		// upper-left
+		[1400, 100, 1900, 600],		// upper-right
+		[750, 750, 1250, 1250],		// center
+		[100, 1400, 600, 1900],		// lower-left
+		[1400, 1400, 1900, 1900],	// lower-right
+	]
+	let regions: [[Int]] = [
+		[0, 1],
+		[2],
+		[2, 3],
+		[3, 4],
+		[2, 3, 5],
+		[2, 3, 4, 5, 6],
+		[3, 4, 6],
+		[2, 4, 5, 6],
+	]
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		var obj: MyObjectStruct!
+		var aSpot: HotSpot!
+		var spots: [HotSpot]!
+		
+		for (i, r) in regions.enumerated() {
+			print(i, r)
+
+			obj = MyObjectStruct()
+			obj.imageName = "\(i).square"
+			spots = []
+
+			r.forEach { n in
+				let c = coords[n]
+				let x = c[0]
+				let y = c[1]
+				let w = c[2] - x
+				let h = c[3] - y
+				aSpot = HotSpot(rect: CGRect(x: x, y: y, width: w, height: h))
+				spots.append(aSpot)
+			}
+			
+			obj.hotSpots = spots
+			myData.append(obj)
+		}
+		
+		let fl = UICollectionViewFlowLayout()
+		fl.scrollDirection = .vertical
+		collectionView = UICollectionView(frame: .zero, collectionViewLayout: fl)
+		collectionView.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(collectionView)
+		let g = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			collectionView.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
+			collectionView.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+			collectionView.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20.0),
+			collectionView.bottomAnchor.constraint(equalTo: g.bottomAnchor, constant: -20.0),
+		])
+		
+		collectionView.register(ImageTextCell.self, forCellWithReuseIdentifier: "c")
+		collectionView.dataSource = self
+		collectionView.delegate = self
+	}
+	
+	var cvw: CGFloat = 0
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+		if cvw != collectionView.frame.width {
+			cvw = collectionView.frame.width
+			if let fl = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+				fl.itemSize = CGSize(width: cvw, height: cvw)
+			}
+		}
+	}
+	
+	func numberOfSections(in collectionView: UICollectionView) -> Int {
+		return 1
+	}
+	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+		return myData.count
+	}
+	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+		let c = collectionView.dequeueReusableCell(withReuseIdentifier: "c", for: indexPath) as! ImageTextCell
+		
+		c.configureCell(myData[indexPath.item])
+		
+		c.callback = { [weak self] cell, idx in
+			guard let self = self,
+				  let pth = collectionView.indexPath(for: cell)
+			else {
+				return
+			}
+			let ac = UIAlertController(title: "Select Color", message: nil, preferredStyle: .alert)
+			ac.addAction(UIAlertAction(title: "Red", style: .default, handler: { _ in
+				self.updateData(pth, hsIdx: idx, color: .red)
+			}))
+			ac.addAction(UIAlertAction(title: "Green", style: .default, handler: {(_: UIAlertAction!) in
+				self.updateData(pth, hsIdx: idx, color: .green)
+			}))
+			ac.addAction(UIAlertAction(title: "Blue", style: .default, handler: {(_: UIAlertAction!) in
+				self.updateData(pth, hsIdx: idx, color: .blue)
+			}))
+			ac.addAction(UIAlertAction(title: "Clear", style: .default, handler: {(_: UIAlertAction!) in
+				self.updateData(pth, hsIdx: idx, color: .clear)
+			}))
+			ac.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {(_: UIAlertAction!) in
+				print("Cancel");
+			}))
+			self.present(ac, animated: true, completion: nil)
+		}
+		return c
+	}
+	
+	func updateData(_ pth: IndexPath, hsIdx: Int, color: UIColor) {
+		myData[pth.item].hotSpots[hsIdx].color = color
+		guard let c = collectionView.cellForItem(at: pth) as? ImageTextCell else { return }
+		c.updateCell(myData[pth.item])
+	}
+	
+}
+
+class FirstCollectionViewCell: UICollectionViewCell {
+	let buttonOne = UIButton()
+}
+class SecondCollectionViewCell: UICollectionViewCell {
+	let buttonTwo = UIButton()
+}
+class TwoCollectionsViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+	
+	@IBOutlet var firstCV: UICollectionView!
+	@IBOutlet var secondCV: UICollectionView!
+
+	let firstData: [String] = [
+		"Btn 1", "Btn 2", "Btn 3", "Btn 4", "Btn 5",
+	]
+	let secondData: [String] = [
+		"Second 1", "Second 2", "Second 3", "Second 4"
+	]
+
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		firstCV.dataSource = self
+		firstCV.delegate = self
+		
+		secondCV.dataSource = self
+		secondCV.delegate = self
+	}
+	
+	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+
+		// if it's the First Collection View
+		if collectionView == firstCV {
+			return firstData.count
+		}
+
+		// it's not the First Collection View, so it's the Second one
+		return secondData.count
+	}
+	
+	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+		
+		// if it's the First Collection View
+		if collectionView == firstCV {
+			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "firstCell", for: indexPath) as! FirstCollectionViewCell
+			cell.buttonOne.setTitle(firstData[indexPath.item], for: [])
+			return cell
+		}
+		
+		// it's not the First Collection View, so it's the Second one
+		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "secondCell", for: indexPath) as! SecondCollectionViewCell
+		cell.buttonTwo.setTitle(secondData[indexPath.item], for: [])
+		return cell
+
+	}
+
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+
+		// if it's the First Collection View
+		if collectionView == firstCV {
+			// do what you want because a cell in the First Collection View was selected
+		}
+		
+		// it's not the First Collection View, so it's the Second one
+		// do what you want because a cell in the Second Collection View was selected
+		
+	}
+	
+}
+
+class DiceViewController: UIViewController {
+	
+	@IBOutlet weak var diceImageView1: UIImageView!
+	@IBOutlet weak var diceImageView2: UIImageView!
+
+	let diceNames: [String] = [
+		"DiceOne", "DiceTwo", "DiceThree", "DiceFour", "DiceFive", "DiceSix"
+	]
+	
+	var leftDiceNumber = 0
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		diceImageView1.image = UIImage(named: diceNames[leftDiceNumber % 6])
+	}
+	
+	@IBAction func rollButtonPressed(_ sender: UIButton) {
+		print("button pressed")
+
+		// increment the index
+		leftDiceNumber += 1
+		if let nm = diceNames.randomElement() {
+			print("nm:", nm)
+		}
+		//print(diceNames[leftDiceNumber % 6])
+		
+		// udpate the image view
+		diceImageView1.image = UIImage(named: diceNames[leftDiceNumber % 6])
+
+	}
+	
+}
+
+class zDiceViewController: UIViewController {
+	
+	@IBOutlet weak var diceImageView1: UIImageView!
+	@IBOutlet weak var diceImageView2: UIImageView!
+	
+	let diceNames: [String] = [
+		"DiceOne", "DiceTwo", "DiceThree", "DiceFour", "DiceFive", "DiceSix"
+	]
+	
+	var leftDiceNumber = 1
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+
+		// start with both dice at One
+		diceImageView1.image = UIImage(named: diceNames[0])
+		diceImageView2.image = UIImage(named: diceNames[0])
+
+		let n = "1.square"
+		diceImageView1.image = UIImage(systemName: n)
+		diceImageView2.image = UIImage(systemName: n)
+	}
+	
+	@IBAction func rollButtonPressed(_ sender: UIButton) {
+		print("button pressed")
+
+		let ln = Int.random(in: 1...6)
+		let rn = Int.random(in: 1...6)
+
+		diceImageView1.image = UIImage(systemName: "\(ln).square")
+		diceImageView2.image = UIImage(systemName: "\(rn).square")
+
+	}
+	
+}
+
+class yDiceViewController: UIViewController {
+	
+	@IBOutlet weak var diceImageView1: UIImageView!
+	@IBOutlet weak var diceImageView2: UIImageView!
+	
+	let diceNames: [String] = [
+		"DiceOne", "DiceTwo", "DiceThree", "DiceFour", "DiceFive", "DiceSix"
+	]
+	
+	var leftDiceNumber = 1
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		// start with both dice at One
+		diceImageView1.image = UIImage(named: diceNames[0])
+		diceImageView2.image = UIImage(named: diceNames[0])
+
+	}
+	
+	@IBAction func rollButtonPressed(_ sender: UIButton) {
+		print("button pressed")
+		
+		// arrays are Zero-based, so get a random Int
+		//	from 0 to 5
+		let l = Int.random(in: 0...5)
+		let r = Int.random(in: 0...5)
+		diceImageView1.image = UIImage(named: diceNames[l])
+		diceImageView2.image = UIImage(named: diceNames[r])
+
+		if true {
+			// more "modern swift"
+			if let nm = diceNames.randomElement() {
+				diceImageView1.image = UIImage(named: nm)
+			}
+			if let nm = diceNames.randomElement() {
+				diceImageView2.image = UIImage(named: nm)
+			}
+		}
+	}
+	
+}

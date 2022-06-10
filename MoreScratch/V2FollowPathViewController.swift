@@ -10,6 +10,275 @@ import UIKit
 import PDFKit
 import SwiftUI
 
+class DrawView: UIView {
+	
+	override func draw(_ rect: CGRect) {
+		
+	}
+}
+
+class AlphaFillVC: UIViewController {
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		guard let img = UIImage(named: "test") else { return }
+		let imgA = img.doubleRect(.zero)
+		
+		let imgView = UIImageView()
+		imgView.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(imgView)
+		let g = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			imgView.centerYAnchor.constraint(equalTo: g.centerYAnchor),
+			imgView.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+			imgView.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20.0),
+			imgView.heightAnchor.constraint(equalTo: imgView.widthAnchor, multiplier: imgA.size.height / imgA.size.width),
+		])
+		imgView.image = imgA
+		
+		print(imgA.size)
+		print()
+	}
+}
+extension UIImage {
+	func doubleRect(_ r: CGRect) -> UIImage {
+		let renderer = UIGraphicsImageRenderer(size: size)
+		let image = renderer.image { (context) in
+			// draw the full image
+			draw(at: .zero)
+
+			context.cgContext.setAlpha(0.5)
+			
+			UIColor(hue: 0.2, saturation: 1, brightness: 1, alpha: 1).setFill()
+			let p = UIBezierPath(roundedRect: CGRect(x: 100, y: 100, width: 200, height: 200), cornerRadius: 10)
+			let q = UIBezierPath(roundedRect: CGRect(x: 150, y: 150, width: 200, height: 200), cornerRadius: 10)
+			p.append(q)
+			p.fill()
+			//q.fill()
+
+//			let pth = UIBezierPath(rect: r)
+//			context.cgContext.setFillColor(UIColor.clear.cgColor)
+//			context.cgContext.setBlendMode(.clear)
+//			// "fill" the rect with clear
+//			pth.fill()
+		}
+		return image
+	}
+}
+
+
+class ManyLayersViewController: UIViewController, UIScrollViewDelegate {
+	
+	let scrollView: UIScrollView = {
+		let v = UIScrollView()
+		v.contentInsetAdjustmentBehavior = .never
+		return v
+	}()
+	let pathView: UIView = {
+		let v = UIView()
+		return v
+	}()
+	
+	let pvSize: CGFloat = 1200.0
+	
+	var pts: [CGPoint] = []
+	var markers: [UIView] = []
+	var order: [Int] = []
+	var idx: Int = 0
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		[scrollView, pathView].forEach { v in
+			v.translatesAutoresizingMaskIntoConstraints = false
+		}
+		
+		// add pathView to the scroll view
+		scrollView.addSubview(pathView)
+		
+		// add scroll view to self.view
+		view.addSubview(scrollView)
+		
+		let safeG = view.safeAreaLayoutGuide
+		let contentG = scrollView.contentLayoutGuide
+		
+		NSLayoutConstraint.activate([
+			
+			// scroll view Top/Leading/Trailing/Bottom to safe area
+			scrollView.topAnchor.constraint(equalTo: safeG.topAnchor, constant: 40.0),
+			scrollView.leadingAnchor.constraint(equalTo: safeG.leadingAnchor, constant: 40.0),
+			scrollView.trailingAnchor.constraint(equalTo: safeG.trailingAnchor, constant: -40.0),
+			scrollView.bottomAnchor.constraint(equalTo: safeG.bottomAnchor, constant: -40.0),
+			
+			// pathView Top/Leading/Trailing/Bottom to scroll view's CONTENT GUIDE
+			pathView.topAnchor.constraint(equalTo: contentG.topAnchor, constant: 0.0),
+			pathView.leadingAnchor.constraint(equalTo: contentG.leadingAnchor, constant: 0.0),
+			pathView.trailingAnchor.constraint(equalTo: contentG.trailingAnchor, constant: 0.0),
+			pathView.bottomAnchor.constraint(equalTo: contentG.bottomAnchor, constant: 0.0),
+			
+			pathView.widthAnchor.constraint(equalToConstant: 1200.0),
+			pathView.heightAnchor.constraint(equalToConstant: 1200.0),
+			
+		])
+		
+		scrollView.delegate = self
+		scrollView.minimumZoomScale = 0.25
+		scrollView.maximumZoomScale = 8.0
+		
+		// so we can see the scroll view frame
+		scrollView.layer.borderWidth = 2
+		scrollView.layer.borderColor = UIColor.red.cgColor
+
+		let colors: [UIColor] = [
+			.red, .green, .blue,
+			.cyan, .magenta, .yellow
+		]
+		
+		
+		// use a large font so we can see it easily
+		let font = UIFont(name: "Times", size: 40)!
+		
+		// Hebrew character for 8
+		var unichars = [UniChar]("ח".utf16)
+		unichars = [UniChar]("י".utf16)
+		var str: String = "ABCDEFGHI"
+		var a: [UniChar] = Array(str.utf16)
+
+		var glyphs = [CGGlyph](repeatElement(0, count: a.count))
+		
+		let gotGlyphs = CTFontGetGlyphsForCharacters(font, &a, &glyphs, a.count)
+
+		var pathsArray: [CGPath] = []
+		if gotGlyphs {
+			glyphs.forEach { g in
+				if let cgpath = CTFontCreatePathForGlyph(font, g, nil) {
+					var tr = CGAffineTransform(scaleX: 1.0, y: -1.0)
+					if let p = cgpath.copy(using: &tr) {
+						pathsArray.append(p)
+					}
+				}
+			}
+		}
+		
+
+		let num: Int = 20
+		var cIDX: Int = 0
+		var off: Int = 4
+		pathsArray.forEach { pth in
+			let clr = colors[cIDX % colors.count]
+			for c in 0..<num {
+				for r in 0..<num {
+					let sl = CAShapeLayer()
+					sl.path = pth
+					sl.strokeColor = UIColor.systemYellow.cgColor
+					sl.fillColor = clr.cgColor
+					sl.frame.origin = CGPoint(x: c * 50 + off, y: r * 50 + off + 30)
+					pathView.layer.addSublayer(sl)
+				}
+			}
+			off += 20
+			cIDX += 1
+		}
+		pathView.clipsToBounds = true
+		
+		print(pathView.layer.sublayers?.count)
+
+		return()
+		
+		// init glyphs array
+//		var glyphs = [CGGlyph](repeatElement(0, count: unichars.count))
+//
+//		let gotGlyphs = CTFontGetGlyphsForCharacters(font, &unichars, &glyphs, unichars.count)
+		
+		if gotGlyphs {
+			glyphs.forEach { g in
+				if let cgpath = CTFontCreatePathForGlyph(font, g, nil) {
+					
+					let pth = UIBezierPath(cgPath: cgpath)
+					
+					// glyph path is inverted, so flip vertically
+					let flipY = CGAffineTransform(scaleX: 1, y: -1.0)
+					
+					// glyph path may be offset on the x coord, and by the height (because it's flipped)
+//					let translate = CGAffineTransform(translationX: -pth.bounds.origin.x, y: pth.bounds.size.height + pth.bounds.origin.y)
+					
+					let translate = CGAffineTransform(translationX: -pth.bounds.origin.x, y: pth.bounds.size.height + pth.bounds.origin.y)
+
+					// apply the transforms
+					pth.apply(flipY)
+					pth.apply(translate)
+
+				let sl = CAShapeLayer()
+					sl.path = pth.cgPath
+				sl.strokeColor = UIColor.systemYellow.cgColor
+				let clr = colors[cIDX % colors.count]
+				sl.fillColor = clr.cgColor
+					sl.frame.origin.x = CGFloat(cIDX) * 40
+				pathView.layer.addSublayer(sl)
+				cIDX += 1
+				}
+			}
+			
+//			// get the cgPath for the character
+//			let cgpath = CTFontCreatePathForGlyph(font, glyphs[0], nil)!
+//
+//			// convert it to a UIBezierPath
+//			let path = UIBezierPath(cgPath: cgpath)
+//
+//			var r = path.bounds
+//
+//			// let's show it at 40,40
+//			r = r.offsetBy(dx: 40.0, dy: 40.0)
+//
+//			let pView = PathView(frame: r)
+//			pView.backgroundColor = .white
+//			//pView.myPath = path
+//
+//			view.addSubview(pView)
+//
+//			// print bounds and path data for debug / reference
+//			print("bounds of path:", path.bounds)
+//			print()
+//			print(path)
+//			print()
+		}
+
+		return()
+		
+		let n: Int = 600 / 20
+		
+		var i: Int = 0
+		
+		colors.forEach { clr in
+		for c in 0..<n {
+			for r in 0..<n {
+				let sl = CAShapeLayer()
+				let r: CGRect = CGRect(x: c * 20 + off, y: r * 20 + off, width: 12, height: 12)
+				sl.path = UIBezierPath(roundedRect: r, cornerRadius: 2).cgPath
+				sl.strokeColor = UIColor.systemYellow.cgColor
+				sl.fillColor = clr.cgColor
+				pathView.layer.addSublayer(sl)
+			}
+		}
+			off += 4
+		}
+		
+//		let c = CAShapeLayer()
+//		c.path = UIBezierPath(roundedRect: CGRect(x: 50, y: 50, width: 300, height: 200), cornerRadius: 16).cgPath
+//		c.strokeColor = UIColor.red.cgColor
+//		c.fillColor = UIColor.systemBlue.cgColor
+//		pathView.layer.addSublayer(c)
+		
+		print(pathView.layer.sublayers?.count)
+		
+	}
+	
+	func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+		return pathView
+	}
+	
+}
 
 
 class FollowPathViewController: UIViewController, UIScrollViewDelegate {
