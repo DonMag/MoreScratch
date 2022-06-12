@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>Occupancy Code</key>
+		<string>1001</string>
+		<key>Description of Occupancy</key>
+		<string>Individual Dwelling</string>
+		<key>FLEXA Rate</key>
+		<string>0.14</string>
+		<key>Colors</key>
+		<string>Green</string>
+	</dict>
+	<dict>
+		<key>Occupancy Code</key>
+		<string>1002</string>
+		<key>Description of Occupancy</key>
+		<string>Multi Dwelling</string>
+		<key>FLEXA Rate</key>
+		<string>0.15</string>
+		<key>Colors</key>
+		<string>Blue</string>
+	</dict>
+	<dict>
+		<key>Occupancy Code</key>
+		<string>1003</string>
+		<key>Description of Occupancy</key>
+		<string>Individual House</string>
+		<key>FLEXA Rate</key>
+		<string>0.16</string>
+		<key>Colors</key>
+		<string>Red</string>
+	</dict>
+<!--	<dict>
+		<key>Occupancy Code</key>
+		<string>1001</string>
+		<key>Description of Occupancy</key>
+		<string>Individual Dwelling</string>
+		<key>FLEXA Rate</key>
+		<string>0.141</string>
+		<key>Colors</key>
+		<string>Green 1</string>
+	</dict>
+	<dict>
+		<key>Occupancy Code</key>
+		<string>1002</string>
+		<key>Description of Occupancy</key>
+		<string>Multi Dwelling</string>
+		<key>FLEXA Rate</key>
+		<string>0.151</string>
+		<key>Colors</key>
+		<string>Blue 1</string>
+	</dict>
+	<dict>
+		<key>Occupancy Code</key>
+		<string>1003</string>
+		<key>Description of Occupancy</key>
+		<string>Individual House</string>
+		<key>FLEXA Rate</key>
+		<string>0.161</string>
+		<key>Colors</key>
+		<string>Red 1</string>
+	</dict> -->
+</array>
+</plist>

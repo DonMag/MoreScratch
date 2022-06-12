@@ -10,6 +10,139 @@ import UIKit
 import PDFKit
 import SwiftUI
 
+class LoadPlistVC: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
+	
+	let pickerA = UIPickerView()
+	
+	var plistData: [[String : String]] = []
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		guard let url = Bundle.main.url(forResource: "firedata", withExtension: "plist") else {
+			fatalError("Invalid URL")
+		}
+		
+		do {
+			let data = try Data(contentsOf: url)
+			plistData = try PropertyListSerialization.propertyList(from: data, options: [], format: nil) as! [[String : String]]
+		} catch {
+			fatalError("Could not load plist as [[String : Any]]")
+		}
+		
+		// debugging
+		//print(plistData)
+		
+		// successfully loaded the plist, so setup the UI
+		
+		pickerA.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(pickerA)
+		
+		let g = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			pickerA.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
+			pickerA.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+			pickerA.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20.0),
+		])
+		
+		pickerA.dataSource = self
+		pickerA.delegate = self
+		
+	}
+	
+	// MARK: Picker View Methods
+	func numberOfComponents(in pickerView: UIPickerView) -> Int {
+		return 1
+	}
+	
+	func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int{
+		return plistData.count
+	}
+	
+	func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+		let d = plistData[row]
+		return d["Occupancy Code"] ?? "No Code"
+	}
+	
+	func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+		print("Picker selection - Row: \(row)")
+	}
+	
+}
+
+
+class xLoadPlistVC: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
+	
+	let pickerA = UIPickerView()
+	
+	var plistData: [[String : String]] = []
+	var filteredData: [String] = []
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		guard let url = Bundle.main.url(forResource: "firedata", withExtension: "plist") else {
+			fatalError("Invalid URL")
+		}
+		
+		do {
+			let data = try Data(contentsOf: url)
+			plistData = try PropertyListSerialization.propertyList(from: data, options: [], format: nil) as! [[String : String]]
+		} catch {
+			fatalError("Could not load plist as [[String : Any]]")
+		}
+
+		// debugging
+		//print(plistData)
+
+		// successfully loaded the plist, so setup the UI
+		
+		pickerA.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(pickerA)
+		
+		let g = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			pickerA.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
+			pickerA.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+			pickerA.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20.0),
+		])
+
+		pickerA.dataSource = self
+		pickerA.delegate = self
+		
+		var fd = Set<String>()
+		
+		_ = plistData.filter { fd.insert($0["Occupancy Code"] ?? "No Code").inserted }
+		
+		filteredData = Array(fd).sorted()
+
+		print()
+	}
+	
+	// MARK: Picker View Methods
+	func numberOfComponents(in pickerView: UIPickerView) -> Int {
+		return 1
+	}
+	
+	func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int{
+		return filteredData.count
+	}
+
+	func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+		return filteredData[row]
+		
+		let d = plistData[row]
+		let s: String = d["Occupancy Code"] as? String ?? "Bad data"
+		return s
+	}
+	
+	func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+		print("Picker selection - Row: \(row)")
+	}
+	
+}
+
+
 class DrawView: UIView {
 	
 	override func draw(_ rect: CGRect) {
@@ -67,8 +200,218 @@ extension UIImage {
 	}
 }
 
+class CircleMoveVC: UIViewController {
+	
+	let circle = UIView()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		circle.backgroundColor = .systemBlue
+		circle.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(circle)
+		
+		let g = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			circle.widthAnchor.constraint(equalToConstant: 80.0),
+			circle.heightAnchor.constraint(equalTo: circle.widthAnchor),
+			circle.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+			circle.centerYAnchor.constraint(equalTo: g.centerYAnchor),
+		])
+	
+		circle.layer.cornerRadius = 40.0
+		
+		let pg = UIPanGestureRecognizer(target: self, action: #selector(circleMoved(_:)))
+		circle.addGestureRecognizer(pg)
+	}
+	
+	@objc func circleMoved(_ gesture: UIPanGestureRecognizer) {
+		switch gesture.state {
+		case .changed:
+			let translation = gesture.translation(in: view)
+			
+			//circle.layer.zPosition = 200
+			let spread = view.frame.width
+			let angle: CGFloat = 100
+			
+			let angleMoveX = angle * translation.x / spread
+			let angleMoveY = angle * translation.y / spread
+			
+			let angleMoveXRadians = angleMoveX * CGFloat.pi/180
+			let angleMoveYRadians = angleMoveY * CGFloat.pi/180
+			
+			var move = CATransform3DIdentity
+			move = CATransform3DRotate(move, angleMoveXRadians, 0, 1, 0)
+			move = CATransform3DRotate(move, -angleMoveYRadians, 1, 0, 0)
+			move = CATransform3DTranslate(move, translation.x, translation.y, 0)
+			
+			circle.layer.transform = CATransform3DConcat(circle.layer.transform, move)
+			
+			
+			gesture.setTranslation(.zero, in: view)
+			
+//		case .possible:
+//			<#code#>
+//		case .began:
+//			<#code#>
+//		case .ended:
+//			<#code#>
+//		case .cancelled:
+//			<#code#>
+//		case .failed:
+//			<#code#>
+		@unknown default:
+			()
+		}
+		
+	}
+}
 
 class ManyLayersViewController: UIViewController, UIScrollViewDelegate {
+	
+	let scrollView: UIScrollView = {
+		let v = UIScrollView()
+		v.contentInsetAdjustmentBehavior = .never
+		return v
+	}()
+	let imgView: UIImageView = {
+		let v = UIImageView()
+		return v
+	}()
+	
+	var theImage: UIImage!
+	
+	var pathsArray: [CGPath] = []
+
+	var idx: Int = 0
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		[scrollView, imgView].forEach { v in
+			v.translatesAutoresizingMaskIntoConstraints = false
+		}
+		
+		// add pathView to the scroll view
+		scrollView.addSubview(imgView)
+		
+		// add scroll view to self.view
+		view.addSubview(scrollView)
+		
+		let safeG = view.safeAreaLayoutGuide
+		let contentG = scrollView.contentLayoutGuide
+		
+		NSLayoutConstraint.activate([
+			
+			// scroll view Top/Leading/Trailing/Bottom to safe area
+			scrollView.topAnchor.constraint(equalTo: safeG.topAnchor, constant: 40.0),
+			scrollView.leadingAnchor.constraint(equalTo: safeG.leadingAnchor, constant: 40.0),
+			scrollView.trailingAnchor.constraint(equalTo: safeG.trailingAnchor, constant: -40.0),
+			scrollView.bottomAnchor.constraint(equalTo: safeG.bottomAnchor, constant: -40.0),
+			
+			// pathView Top/Leading/Trailing/Bottom to scroll view's CONTENT GUIDE
+			imgView.topAnchor.constraint(equalTo: contentG.topAnchor, constant: 0.0),
+			imgView.leadingAnchor.constraint(equalTo: contentG.leadingAnchor, constant: 0.0),
+			imgView.trailingAnchor.constraint(equalTo: contentG.trailingAnchor, constant: 0.0),
+			imgView.bottomAnchor.constraint(equalTo: contentG.bottomAnchor, constant: 0.0),
+			
+			imgView.widthAnchor.constraint(equalToConstant: 1600.0),
+			imgView.heightAnchor.constraint(equalToConstant: 1600.0),
+			
+		])
+		
+		scrollView.delegate = self
+		scrollView.minimumZoomScale = 0.25
+		scrollView.maximumZoomScale = 8.0
+		
+		// so we can see the scroll view frame
+		scrollView.layer.borderWidth = 2
+		scrollView.layer.borderColor = UIColor.red.cgColor
+		
+		theImage = UIColor.systemBlue.image(CGSize(width: 1600, height: 1600))
+		imgView.image = theImage
+		
+		let colors: [UIColor] = [
+			.red, .green, .blue,
+			.cyan, .magenta, .yellow
+		]
+		
+		
+		// use a large font so we can see it easily
+		let font = UIFont(name: "Times", size: 40)!
+		
+		let str: String = "ABCDEFGHI"
+		var a: [UniChar] = Array(str.utf16)
+		
+		var glyphs = [CGGlyph](repeatElement(0, count: a.count))
+		
+		let gotGlyphs = CTFontGetGlyphsForCharacters(font, &a, &glyphs, a.count)
+		
+		if gotGlyphs {
+			glyphs.forEach { g in
+				if let cgpath = CTFontCreatePathForGlyph(font, g, nil) {
+					var tr = CGAffineTransform(scaleX: 1.0, y: -1.0)
+					if let p = cgpath.copy(using: &tr) {
+						pathsArray.append(p)
+					}
+				}
+			}
+		}
+		
+		
+		let num: Int = 1
+		var cIDX: Int = 0
+		var off: Int = 4
+		pathsArray.forEach { pth in
+			let clr = colors[cIDX % colors.count]
+			for c in 0..<num {
+				for r in 0..<num {
+					let sl = CAShapeLayer()
+					sl.path = pth
+					sl.strokeColor = UIColor.systemYellow.cgColor
+					sl.fillColor = clr.cgColor
+					sl.frame.origin = CGPoint(x: c * 50 + off, y: r * 50 + off + 30)
+					//pathView.layer.addSublayer(sl)
+				}
+			}
+			off += 20
+			cIDX += 1
+		}
+		//pathView.clipsToBounds = true
+		
+		//print(pathView.layer.sublayers?.count)
+		
+		updateImage()
+		
+		scrollView.delegate = self
+		
+		return()
+		
+	}
+	func updateImage() {
+		let fmt = UIGraphicsImageRendererFormat()
+		fmt.scale = UIScreen.main.scale
+		let rdr = UIGraphicsImageRenderer(size: theImage.size, format: fmt)
+		let image = rdr.image { (context) in
+			theImage.draw(at: .zero)
+			context.cgContext.setFillColor(UIColor.red.cgColor)
+			context.cgContext.setStrokeColor(UIColor.green.cgColor)
+			UIBezierPath(roundedRect: CGRect(x: 80, y: 80, width: 200, height: 100), cornerRadius: 16).fill()
+			UIBezierPath(roundedRect: CGRect(x: 80, y: 80, width: 200, height: 100), cornerRadius: 16).stroke()
+		}
+		theImage = image
+		imgView.image = theImage
+	}
+	func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+		return imgView
+	}
+	func scrollViewDidZoom(_ scrollView: UIScrollView) {
+		imgView.contentScaleFactor = scrollView.zoomScale * UIScreen.main.scale
+	}
+	
+}
+
+class xManyLayersViewController: UIViewController, UIScrollViewDelegate {
 	
 	let scrollView: UIScrollView = {
 		let v = UIScrollView()
@@ -117,8 +460,8 @@ class ManyLayersViewController: UIViewController, UIScrollViewDelegate {
 			pathView.trailingAnchor.constraint(equalTo: contentG.trailingAnchor, constant: 0.0),
 			pathView.bottomAnchor.constraint(equalTo: contentG.bottomAnchor, constant: 0.0),
 			
-			pathView.widthAnchor.constraint(equalToConstant: 1200.0),
-			pathView.heightAnchor.constraint(equalToConstant: 1200.0),
+			pathView.widthAnchor.constraint(equalToConstant: 1600.0),
+			pathView.heightAnchor.constraint(equalToConstant: 1600.0),
 			
 		])
 		
@@ -139,10 +482,7 @@ class ManyLayersViewController: UIViewController, UIScrollViewDelegate {
 		// use a large font so we can see it easily
 		let font = UIFont(name: "Times", size: 40)!
 		
-		// Hebrew character for 8
-		var unichars = [UniChar]("ח".utf16)
-		unichars = [UniChar]("י".utf16)
-		var str: String = "ABCDEFGHI"
+		let str: String = "ABCDEFGHI"
 		var a: [UniChar] = Array(str.utf16)
 
 		var glyphs = [CGGlyph](repeatElement(0, count: a.count))
@@ -162,7 +502,7 @@ class ManyLayersViewController: UIViewController, UIScrollViewDelegate {
 		}
 		
 
-		let num: Int = 20
+		let num: Int = 1
 		var cIDX: Int = 0
 		var off: Int = 4
 		pathsArray.forEach { pth in
@@ -186,92 +526,6 @@ class ManyLayersViewController: UIViewController, UIScrollViewDelegate {
 
 		return()
 		
-		// init glyphs array
-//		var glyphs = [CGGlyph](repeatElement(0, count: unichars.count))
-//
-//		let gotGlyphs = CTFontGetGlyphsForCharacters(font, &unichars, &glyphs, unichars.count)
-		
-		if gotGlyphs {
-			glyphs.forEach { g in
-				if let cgpath = CTFontCreatePathForGlyph(font, g, nil) {
-					
-					let pth = UIBezierPath(cgPath: cgpath)
-					
-					// glyph path is inverted, so flip vertically
-					let flipY = CGAffineTransform(scaleX: 1, y: -1.0)
-					
-					// glyph path may be offset on the x coord, and by the height (because it's flipped)
-//					let translate = CGAffineTransform(translationX: -pth.bounds.origin.x, y: pth.bounds.size.height + pth.bounds.origin.y)
-					
-					let translate = CGAffineTransform(translationX: -pth.bounds.origin.x, y: pth.bounds.size.height + pth.bounds.origin.y)
-
-					// apply the transforms
-					pth.apply(flipY)
-					pth.apply(translate)
-
-				let sl = CAShapeLayer()
-					sl.path = pth.cgPath
-				sl.strokeColor = UIColor.systemYellow.cgColor
-				let clr = colors[cIDX % colors.count]
-				sl.fillColor = clr.cgColor
-					sl.frame.origin.x = CGFloat(cIDX) * 40
-				pathView.layer.addSublayer(sl)
-				cIDX += 1
-				}
-			}
-			
-//			// get the cgPath for the character
-//			let cgpath = CTFontCreatePathForGlyph(font, glyphs[0], nil)!
-//
-//			// convert it to a UIBezierPath
-//			let path = UIBezierPath(cgPath: cgpath)
-//
-//			var r = path.bounds
-//
-//			// let's show it at 40,40
-//			r = r.offsetBy(dx: 40.0, dy: 40.0)
-//
-//			let pView = PathView(frame: r)
-//			pView.backgroundColor = .white
-//			//pView.myPath = path
-//
-//			view.addSubview(pView)
-//
-//			// print bounds and path data for debug / reference
-//			print("bounds of path:", path.bounds)
-//			print()
-//			print(path)
-//			print()
-		}
-
-		return()
-		
-		let n: Int = 600 / 20
-		
-		var i: Int = 0
-		
-		colors.forEach { clr in
-		for c in 0..<n {
-			for r in 0..<n {
-				let sl = CAShapeLayer()
-				let r: CGRect = CGRect(x: c * 20 + off, y: r * 20 + off, width: 12, height: 12)
-				sl.path = UIBezierPath(roundedRect: r, cornerRadius: 2).cgPath
-				sl.strokeColor = UIColor.systemYellow.cgColor
-				sl.fillColor = clr.cgColor
-				pathView.layer.addSublayer(sl)
-			}
-		}
-			off += 4
-		}
-		
-//		let c = CAShapeLayer()
-//		c.path = UIBezierPath(roundedRect: CGRect(x: 50, y: 50, width: 300, height: 200), cornerRadius: 16).cgPath
-//		c.strokeColor = UIColor.red.cgColor
-//		c.fillColor = UIColor.systemBlue.cgColor
-//		pathView.layer.addSublayer(c)
-		
-		print(pathView.layer.sublayers?.count)
-		
 	}
 	
 	func viewForZooming(in scrollView: UIScrollView) -> UIView? {
@@ -280,6 +534,14 @@ class ManyLayersViewController: UIViewController, UIScrollViewDelegate {
 	
 }
 
+extension UIColor {
+	func image(_ size: CGSize = CGSize(width: 1, height: 1)) -> UIImage {
+		return UIGraphicsImageRenderer(size: size).image { rendererContext in
+			self.setFill()
+			rendererContext.fill(CGRect(origin: .zero, size: size))
+		}
+	}
+}
 
 class FollowPathViewController: UIViewController, UIScrollViewDelegate {
 
