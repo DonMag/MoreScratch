@@ -24,6 +24,7 @@
 		FC39559927E260D50060734C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FC39559827E260D50060734C /* Assets.xcassets */; };
 		FC39559C27E260D50060734C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC39559A27E260D50060734C /* LaunchScreen.storyboard */; };
 		FC3FCBF52844F16800BD6B99 /* MoreExpCellViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3FCBF42844F16800BD6B99 /* MoreExpCellViewController.swift */; };
+		FC3FCC7E2854BD4F00BD6B99 /* firedata.plist in Resources */ = {isa = PBXBuildFile; fileRef = FC3FCC7D2854BD4F00BD6B99 /* firedata.plist */; };
 		FC8E10B327F4C41D00EEBC75 /* PopupView.xib in Resources */ = {isa = PBXBuildFile; fileRef = FC8E10B227F4C41D00EEBC75 /* PopupView.xib */; };
 		FC8E10B527F4C48600EEBC75 /* V2PopupTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8E10B427F4C48600EEBC75 /* V2PopupTestViewController.swift */; };
 		FC8E10D727F63C7F00EEBC75 /* Sizing.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC8E10D627F63C7F00EEBC75 /* Sizing.storyboard */; };
@@ -61,6 +62,7 @@
 		FC39559B27E260D50060734C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FC39559D27E260D50060734C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FC3FCBF42844F16800BD6B99 /* MoreExpCellViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreExpCellViewController.swift; sourceTree = "<group>"; };
+		FC3FCC7D2854BD4F00BD6B99 /* firedata.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = firedata.plist; sourceTree = "<group>"; };
 		FC8E10B227F4C41D00EEBC75 /* PopupView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PopupView.xib; sourceTree = "<group>"; };
 		FC8E10B427F4C48600EEBC75 /* V2PopupTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = V2PopupTestViewController.swift; sourceTree = "<group>"; };
 		FC8E10D627F63C7F00EEBC75 /* Sizing.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Sizing.storyboard; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 				F832413B283538DD00D073EF /* FeedbackTableViewCell.swift */,
 				F832413C283538DD00D073EF /* FeedbackTableViewCell.xib */,
 				FC3FCBF42844F16800BD6B99 /* MoreExpCellViewController.swift */,
+				FC3FCC7D2854BD4F00BD6B99 /* firedata.plist */,
 				FCD4E3212808709000808073 /* 20x45-Model.pdf */,
 				FCD4E3232808800E00808073 /* us-states-map.pdf */,
 				FC39559827E260D50060734C /* Assets.xcassets */,
@@ -211,6 +214,7 @@
 				FCA19B28281967B60010BBD1 /* TableCol.storyboard in Resources */,
 				FC8E10B327F4C41D00EEBC75 /* PopupView.xib in Resources */,
 				FC8E110A28006F0400EEBC75 /* ColViewXibCell.xib in Resources */,
+				FC3FCC7E2854BD4F00BD6B99 /* firedata.plist in Resources */,
 				FC39559927E260D50060734C /* Assets.xcassets in Resources */,
 				7C947FD02805FB930051ABEB /* Temp.storyboard in Resources */,
 				FC39559727E260D30060734C /* Main.storyboard in Resources */,
