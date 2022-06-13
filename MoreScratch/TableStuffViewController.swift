@@ -155,20 +155,90 @@ class LabelCollectionViewCell: UICollectionViewCell {
 	}
 }
 
+class TagsLayout: UICollectionViewFlowLayout {
+	var rowMaxX: [CGFloat] = []
+	
+	let cellSpacing: CGFloat = 20
+	override init(){
+		super.init()
+	}
+	
+	required init(coder aDecoder: NSCoder) {
+		super.init(coder: aDecoder)!
+	}
+	func commonInit() {
+		scrollDirection = .horizontal
+	}
+	override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+		guard let attributes = super.layoutAttributesForElements(in: rect) else {
+			return nil
+		}
+		
+		guard let attributesToReturn =  attributes.map( { $0.copy() }) as? [UICollectionViewLayoutAttributes] else {
+			return nil
+		}
+		var leftMargin = sectionInset.left
+		var maxX: CGFloat = -1.0
+		var curY: CGFloat = -1.0
+		attributesToReturn.forEach { layoutAttribute in
+			if layoutAttribute.frame.origin.y > curY {
+				
+			}
+			if layoutAttribute.frame.origin.x >= maxX {
+				leftMargin = sectionInset.left
+			}
+			
+			layoutAttribute.frame.origin.x = leftMargin
+			
+			leftMargin += layoutAttribute.frame.width + cellSpacing
+			maxX = max(layoutAttribute.frame.maxX , maxX)
+		}
+		
+		return attributesToReturn
+	}
+}
+
+class LeftAlignedCollectionViewFlowLayout: UICollectionViewFlowLayout {
+	
+	override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+		let attributes = super.layoutAttributesForElements(in: rect)
+		
+		var leftMargin = sectionInset.left
+		var maxY: CGFloat = -1.0
+		attributes?.forEach { layoutAttribute in
+			if layoutAttribute.frame.origin.y >= maxY {
+				leftMargin = sectionInset.left
+			}
+			
+			layoutAttribute.frame.origin.x = leftMargin
+			
+			leftMargin += layoutAttribute.frame.width + minimumInteritemSpacing
+			maxY = max(layoutAttribute.frame.maxY , maxY)
+		}
+		
+		return attributes
+	}
+}
+
 class SelColViewVC: UIViewController {
 	
 	var collectionView: UICollectionView!
 	
 	let myData: [String] = [
-		"All Venues",
+		"All Venues - First Cell",
 		"Venue One",
-		"Venue Two",
+		"Two",
 		"Venue Three",
 		"Venue Four",
 		"Venue Five",
 		"Venue Six",
 		"Venue Seven",
 		"Venue Eight",
+		"Nine",
+		"Ten",
+		"Eleven",
+		"Twelve",
+		"Thirteen",
 	]
 	
 	// use this to track the currently selected item / cell
@@ -177,8 +247,15 @@ class SelColViewVC: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		let fl = UICollectionViewFlowLayout()
-		fl.scrollDirection = .horizontal
+//		let fl = UICollectionViewFlowLayout()
+//		fl.scrollDirection = .horizontal
+//		fl.estimatedItemSize = CGSize(width: 120, height: 50)
+//		fl.minimumLineSpacing = 4
+//		fl.minimumInteritemSpacing = 4
+
+		let fl = TagsLayout()
+		//let fl = LeftAlignedCollectionViewFlowLayout()
+		//fl.scrollDirection = .horizontal
 		fl.estimatedItemSize = CGSize(width: 120, height: 50)
 		collectionView = UICollectionView(frame: .zero, collectionViewLayout: fl)
 		collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -188,7 +265,7 @@ class SelColViewVC: UIViewController {
 			collectionView.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
 			collectionView.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
 			collectionView.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20.0),
-			collectionView.heightAnchor.constraint(equalToConstant: 80.0),
+			collectionView.heightAnchor.constraint(equalToConstant: 180.0),
 		])
 		
 		collectionView.contentInset = UIEdgeInsets(top: 0.0, left: 8.0, bottom: 0.0, right: 8.0)
@@ -231,6 +308,7 @@ extension SelColViewVC: UICollectionViewDataSource, UICollectionViewDelegate {
 		print("New Selected item:", indexPath.item)
 		// run code for new selection
 	}
+	
 }
 
 class ToggleSelColViewVC: UIViewController {
