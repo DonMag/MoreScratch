@@ -25,6 +25,8 @@
 		FC39559C27E260D50060734C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC39559A27E260D50060734C /* LaunchScreen.storyboard */; };
 		FC3FCBF52844F16800BD6B99 /* MoreExpCellViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3FCBF42844F16800BD6B99 /* MoreExpCellViewController.swift */; };
 		FC3FCC7E2854BD4F00BD6B99 /* firedata.plist in Resources */ = {isa = PBXBuildFile; fileRef = FC3FCC7D2854BD4F00BD6B99 /* firedata.plist */; };
+		FC5723EF285CD72200E5136A /* SoundAnimViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC5723EE285CD72200E5136A /* SoundAnimViewController.swift */; };
+		FC57241128649DA100E5136A /* CVCallback.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC57241028649DA100E5136A /* CVCallback.storyboard */; };
 		FC8E10B327F4C41D00EEBC75 /* PopupView.xib in Resources */ = {isa = PBXBuildFile; fileRef = FC8E10B227F4C41D00EEBC75 /* PopupView.xib */; };
 		FC8E10B527F4C48600EEBC75 /* V2PopupTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8E10B427F4C48600EEBC75 /* V2PopupTestViewController.swift */; };
 		FC8E10D727F63C7F00EEBC75 /* Sizing.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC8E10D627F63C7F00EEBC75 /* Sizing.storyboard */; };
@@ -33,6 +35,7 @@
 		FCA19B29281967B60010BBD1 /* TableColTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA19B26281967B60010BBD1 /* TableColTableViewController.swift */; };
 		FCA19B2A281967B60010BBD1 /* GradientMaskingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA19B27281967B60010BBD1 /* GradientMaskingViewController.swift */; };
 		FCA19B35281C07650010BBD1 /* SwiftHEXColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA19B34281C07650010BBD1 /* SwiftHEXColors.swift */; };
+		FCB123902858A9DC00C453CE /* HeaderXIBView.xib in Resources */ = {isa = PBXBuildFile; fileRef = FCB1238F2858A9DC00C453CE /* HeaderXIBView.xib */; };
 		FCD4E31E2807609200808073 /* V2FollowPathViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCD4E31D2807609200808073 /* V2FollowPathViewController.swift */; };
 		FCD4E32028085EB200808073 /* NavTransViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCD4E31F28085EB200808073 /* NavTransViewController.swift */; };
 		FCD4E3222808709000808073 /* 20x45-Model.pdf in Resources */ = {isa = PBXBuildFile; fileRef = FCD4E3212808709000808073 /* 20x45-Model.pdf */; };
@@ -63,6 +66,8 @@
 		FC39559D27E260D50060734C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FC3FCBF42844F16800BD6B99 /* MoreExpCellViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreExpCellViewController.swift; sourceTree = "<group>"; };
 		FC3FCC7D2854BD4F00BD6B99 /* firedata.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = firedata.plist; sourceTree = "<group>"; };
+		FC5723EE285CD72200E5136A /* SoundAnimViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundAnimViewController.swift; sourceTree = "<group>"; };
+		FC57241028649DA100E5136A /* CVCallback.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = CVCallback.storyboard; sourceTree = "<group>"; };
 		FC8E10B227F4C41D00EEBC75 /* PopupView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PopupView.xib; sourceTree = "<group>"; };
 		FC8E10B427F4C48600EEBC75 /* V2PopupTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = V2PopupTestViewController.swift; sourceTree = "<group>"; };
 		FC8E10D627F63C7F00EEBC75 /* Sizing.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Sizing.storyboard; sourceTree = "<group>"; };
@@ -71,6 +76,7 @@
 		FCA19B26281967B60010BBD1 /* TableColTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableColTableViewController.swift; sourceTree = "<group>"; };
 		FCA19B27281967B60010BBD1 /* GradientMaskingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientMaskingViewController.swift; sourceTree = "<group>"; };
 		FCA19B34281C07650010BBD1 /* SwiftHEXColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftHEXColors.swift; sourceTree = "<group>"; };
+		FCB1238F2858A9DC00C453CE /* HeaderXIBView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeaderXIBView.xib; sourceTree = "<group>"; };
 		FCD4E31D2807609200808073 /* V2FollowPathViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = V2FollowPathViewController.swift; sourceTree = "<group>"; };
 		FCD4E31F28085EB200808073 /* NavTransViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavTransViewController.swift; sourceTree = "<group>"; };
 		FCD4E3212808709000808073 /* 20x45-Model.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "20x45-Model.pdf"; sourceTree = "<group>"; };
@@ -138,6 +144,9 @@
 				F832413B283538DD00D073EF /* FeedbackTableViewCell.swift */,
 				F832413C283538DD00D073EF /* FeedbackTableViewCell.xib */,
 				FC3FCBF42844F16800BD6B99 /* MoreExpCellViewController.swift */,
+				FCB1238F2858A9DC00C453CE /* HeaderXIBView.xib */,
+				FC5723EE285CD72200E5136A /* SoundAnimViewController.swift */,
+				FC57241028649DA100E5136A /* CVCallback.storyboard */,
 				FC3FCC7D2854BD4F00BD6B99 /* firedata.plist */,
 				FCD4E3212808709000808073 /* 20x45-Model.pdf */,
 				FCD4E3232808800E00808073 /* us-states-map.pdf */,
@@ -210,6 +219,8 @@
 				FC39559C27E260D50060734C /* LaunchScreen.storyboard in Resources */,
 				7C58CC0F282023F300025C44 /* SuperViewA.xib in Resources */,
 				FCD4E35828119E3500808073 /* Tabs.storyboard in Resources */,
+				FC57241128649DA100E5136A /* CVCallback.storyboard in Resources */,
+				FCB123902858A9DC00C453CE /* HeaderXIBView.xib in Resources */,
 				FC8E10D727F63C7F00EEBC75 /* Sizing.storyboard in Resources */,
 				FCA19B28281967B60010BBD1 /* TableCol.storyboard in Resources */,
 				FC8E10B327F4C41D00EEBC75 /* PopupView.xib in Resources */,
@@ -249,6 +260,7 @@
 				FC8E10B527F4C48600EEBC75 /* V2PopupTestViewController.swift in Sources */,
 				F832413D283538DD00D073EF /* FeedbackTableViewCell.swift in Sources */,
 				FCA19B2A281967B60010BBD1 /* GradientMaskingViewController.swift in Sources */,
+				FC5723EF285CD72200E5136A /* SoundAnimViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -143,35 +143,441 @@ class xLoadPlistVC: UIViewController, UIPickerViewDataSource, UIPickerViewDelega
 }
 
 
-class DrawView: UIView {
-	
-	override func draw(_ rect: CGRect) {
-		
+class DottedBreakVC: UIViewController {
+	var x: Int = 1
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		return()
+		x = 2
 	}
+}
+
+class DocumentViewController: UIViewController, UIScrollViewDelegate {
+	
+	func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+		return scrollViewContainer
+	}
+	
+	func scrollViewDidZoom(_ scrollView: UIScrollView) {
+		let scrollViewSize = scrollView.bounds.size
+		let scrollViewContainerSize = scrollViewContainer.frame.size
+		let verticalPadding = scrollViewContainerSize.height < scrollViewSize.height ? (scrollViewSize.height - scrollViewContainerSize.height) / 2 : 0
+		let horizontalPadding = scrollViewContainerSize.width < scrollViewSize.width ? (scrollViewSize.width - scrollViewContainerSize.width) / 2 : 0
+		scrollView.contentInset = UIEdgeInsets(top: verticalPadding, left: horizontalPadding, bottom: verticalPadding, right: horizontalPadding)
+	}
+	
+	let scrollView: UIScrollView = {
+		let scrollView = UIScrollView()
+		scrollView.translatesAutoresizingMaskIntoConstraints = false
+		scrollView.minimumZoomScale = 0.1
+		scrollView.maximumZoomScale = 4.0
+		scrollView.zoomScale = 1.0
+		return scrollView
+	}()
+	
+	let scrollViewContainer: UIStackView = {
+		let view = UIStackView()
+		view.translatesAutoresizingMaskIntoConstraints = false
+		view.axis = .vertical
+		view.spacing = 15
+		view.alignment = .center
+		return view
+	}()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		scrollView.delegate = self
+		view.backgroundColor = .gray
+		view.addSubview(scrollView)
+		scrollView.addSubview(scrollViewContainer)
+		
+		let uiview1 = UIView(frame: .zero)
+		uiview1.heightAnchor.constraint(equalToConstant: 1000).isActive = true
+		uiview1.widthAnchor.constraint(equalToConstant: 1000).isActive = true
+		scrollViewContainer.addArrangedSubview(uiview1)
+		uiview1.backgroundColor = .white
+		
+		let uiview2 = UIView(frame: .zero)
+		uiview2.heightAnchor.constraint(equalToConstant: 1000).isActive = true
+		uiview2.widthAnchor.constraint(equalToConstant: 1000).isActive = true
+		scrollViewContainer.addArrangedSubview(uiview2)
+		uiview2.backgroundColor = .white
+		
+		let uiview3 = UIView(frame: .zero)
+		uiview3.heightAnchor.constraint(equalToConstant: 1000).isActive = true
+		uiview3.widthAnchor.constraint(equalToConstant: 1000).isActive = true
+		scrollViewContainer.addArrangedSubview(uiview3)
+		uiview3.backgroundColor = .white
+		
+		let uiview4 = UIView(frame: .zero)
+		uiview4.heightAnchor.constraint(equalToConstant: 1000).isActive = true
+		uiview4.widthAnchor.constraint(equalToConstant: 1000).isActive = true
+		scrollViewContainer.addArrangedSubview(uiview4)
+		uiview4.backgroundColor = .white
+		
+		let uiview5 = UIView(frame: .zero)
+		uiview5.heightAnchor.constraint(equalToConstant: 1000).isActive = true
+		uiview5.widthAnchor.constraint(equalToConstant: 2000).isActive = true
+		scrollViewContainer.addArrangedSubview(uiview5)
+		uiview5.backgroundColor = .white
+		
+		showBounds()
+		setConstraints()
+	}
+	
+	func setConstraints() {
+		scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+		scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+		scrollView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+		scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+		scrollViewContainer.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor).isActive = true
+		scrollViewContainer.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor).isActive = true
+		scrollViewContainer.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
+		scrollViewContainer.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
+	}
+	
+	func showBounds() {
+		view.layer.borderWidth = 5.0
+		view.layer.borderColor = UIColor.blue.cgColor
+		scrollViewContainer.layer.borderWidth = 5.0
+		scrollViewContainer.layer.borderColor = UIColor.red.cgColor
+		scrollView.layer.borderWidth = 3.0
+		scrollView.layer.borderColor = UIColor.yellow.cgColor
+	}
+	
+}
+
+class Page: UIView {
+	
+	var bezierMemory = [BezierRecord]()
+	var currentBezier: UIBezierPath = UIBezierPath()
+	
+	var firstPoint: CGPoint = CGPoint()
+	var previousPoint: CGPoint = CGPoint()
+	var morePreviousPoint: CGPoint = CGPoint()
+	var previousCALayer: CALayer = CALayer()
+	
+	var pointCounter = 0
+	
+	//var selectedPen: Pen = Pen(width: 3.0, strokeOpacity: 1, strokeColor: .red, fillColor: .init(gray: 0, alpha: 0.5), isPencil: true, connectsToStart: true, fillPencil: true)
+	
+	enum StandardPageSizes {
+		case A4, LEGAL, LETTER
+	}
+	
+	var firstCALayer = true
+	var pointsTotal = 0
+	
+	override init(frame: CGRect) {
+		super.init(frame: .zero)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	func commonInit() {
+		self.clipsToBounds = true
+	}
+	
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		super.touchesBegan(touches, with: event)
+		guard let touch = touches.first else { return }
+		let point = touch.location(in: self)
+		firstPoint = point
+		
+		pointCounter = 1
+		
+		currentBezier = UIBezierPath()
+		currentBezier.lineWidth = 2 //selectedPen.width
+		UIColor.red.setStroke()
+		//selectedPen.getStroke().setStroke()
+		currentBezier.move(to: point)
+		
+		previousPoint = point
+	}
+	
+	override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+		super.touchesMoved(touches, with: event)
+		guard let touch = touches.first else { return }
+		let point = touch.location(in: self)
+		pointCounter += 1
+		
+		if (pointCounter == 3) {
+			let midpoint = CGPoint(x: (morePreviousPoint.x + point.x)/2.0, y: (morePreviousPoint.y + point.y)/2.0)
+			currentBezier.addQuadCurve(to: midpoint, controlPoint: morePreviousPoint)
+			let updatedCALayer = CAShapeLayer()
+			updatedCALayer.path = currentBezier.cgPath
+			updatedCALayer.lineWidth = 2 // selectedPen.width
+			updatedCALayer.opacity = 0.5 //selectedPen.strokeOpacity
+			updatedCALayer.strokeColor = UIColor.red.cgColor // selectedPen.getStroke().cgColor
+			updatedCALayer.fillColor = UIColor.blue.cgColor // selectedPen.getFill()
+			if (firstCALayer) {
+				layer.addSublayer(updatedCALayer)
+				firstCALayer = false
+			} else {
+				layer.replaceSublayer(previousCALayer, with: updatedCALayer)
+			}
+			previousCALayer = updatedCALayer
+			pointCounter = 1
+		}
+		
+		morePreviousPoint = previousPoint
+		previousPoint = point
+	}
+	
+	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+		super.touchesEnded(touches, with: event)
+		guard let touch = touches.first else { return }
+		let point = touch.location(in: self)
+		
+		if (pointCounter != 3) {
+			if true { //} (selectedPen.connectsToStart) {
+				currentBezier.addQuadCurve(to: firstPoint, controlPoint: previousPoint)
+			} else {
+				currentBezier.addQuadCurve(to: point, controlPoint: previousPoint)
+			}
+			let updatedCALayer = CAShapeLayer()
+			updatedCALayer.path = currentBezier.cgPath
+			updatedCALayer.lineWidth = 2 // selectedPen.width
+			updatedCALayer.opacity = 0.5 //selectedPen.strokeOpacity
+			updatedCALayer.strokeColor = UIColor.red.cgColor // selectedPen.getStroke().cgColor
+			updatedCALayer.fillColor = UIColor.blue.cgColor // selectedPen.getFill()
+			if (firstCALayer) {
+				layer.addSublayer(updatedCALayer)
+				firstCALayer = false
+			} else {
+				// layer.setNeedsDisplay()
+				layer.replaceSublayer(previousCALayer, with: updatedCALayer)
+			}
+		}
+		
+		firstCALayer = true
+//		let bezierRecord = BezierRecord(bezier: currentBezier, strokeColor: selectedPen.getStroke(), fillColor: selectedPen.getFill(), strokeWidth: selectedPen.width)
+		let bezierRecord = BezierRecord(bezier: currentBezier, strokeColor: .red, fillColor: UIColor.blue.cgColor, strokeWidth: 2)
+		bezierMemory.append(bezierRecord)
+	}
+	
+	private func normPoint(point: CGPoint) -> CGPoint {
+		return CGPoint(x: point.x/frame.width, y: point.y/frame.height)
+	}
+	
+	public class BezierRecord {
+		var bezier: UIBezierPath
+		var strokeColor: UIColor
+		var strokeWidth: CGFloat
+		var fillColor: CGColor
+		
+		init(bezier: UIBezierPath, strokeColor: UIColor, fillColor: CGColor, strokeWidth: CGFloat) {
+			self.bezier = bezier
+			self.strokeColor = strokeColor
+			self.strokeWidth = strokeWidth
+			self.fillColor = fillColor
+		}
+	}
+	
 }
 
 class AlphaFillVC: UIViewController {
 	
+	let imgView = UIImageView()
+	var origImage: UIImage!
+	
+	let layerView = TranslucentLayerImageView(frame: .zero)
+	
+	var b: Bool = false
+	let logo = UIImageView()
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
 		guard let img = UIImage(named: "test") else { return }
-		let imgA = img.doubleRect(.zero)
+		origImage = img
 		
-		let imgView = UIImageView()
-		imgView.translatesAutoresizingMaskIntoConstraints = false
-		view.addSubview(imgView)
+		let stack = UIStackView()
+		stack.axis = .vertical
+		stack.spacing = 8
+		stack.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(stack)
+		
+		[imgView, layerView].forEach { v in
+			stack.addArrangedSubview(v)
+			v.heightAnchor.constraint(equalTo: v.widthAnchor, multiplier: img.size.height / img.size.width).isActive = true
+		}
 		let g = view.safeAreaLayoutGuide
 		NSLayoutConstraint.activate([
-			imgView.centerYAnchor.constraint(equalTo: g.centerYAnchor),
-			imgView.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
-			imgView.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20.0),
-			imgView.heightAnchor.constraint(equalTo: imgView.widthAnchor, multiplier: imgA.size.height / imgA.size.width),
+			stack.centerYAnchor.constraint(equalTo: g.centerYAnchor),
+			stack.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+			stack.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20.0),
 		])
-		imgView.image = imgA
 		
-		print(imgA.size)
-		print()
+		imgView.image = origImage
+		layerView.image = origImage
+		
+		stack.isHidden = true
+
+//		logo.translatesAutoresizingMaskIntoConstraints = false
+//		view.addSubview(logo)
+//		//logo.image = UIImage(named: "cafelogo")
+//		logo.image = UIImage(named: "80x80")
+//		logo.layer.cornerRadius = 25
+//		NSLayoutConstraint.activate([
+//			logo.widthAnchor.constraint(equalToConstant: 150.0),
+//			logo.heightAnchor.constraint(equalToConstant: 150.0),
+//			logo.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+//			logo.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+//		])
+
+	}
+	func configure() {
+		//MARK: Logo Image
+		view.addSubview(logo)
+		//logo.image = UIImage(named: "cafelogo")
+		logo.image = UIImage(named: "80x80")
+		logo.layer.cornerRadius = 25
+		logo.frame = CGRect(x: 0, y: 0, width: 150, height: 150)
+		logo.center = view.center
+	}
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+//		configure()
+	}
+
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+	
+		//guard let img = imgView.image else { return }
+		guard let img = origImage else { return }
+		
+		b.toggle()
+
+		// let's create 3 bezier paths
+		//	add them separated, and
+		//	add them overlapping
+		
+		if b {
+			
+			let clr = UIColor(hue: 0.2, saturation: 1, brightness: 1, alpha: 1)
+			
+			// drawing to the image is relative to the image size
+			var r = img.size
+			
+			var w = r.width * 0.25
+			var h = r.height * 0.25
+			
+			var bez: UIBezierPath!
+			var paths: [UIBezierPath] = []
+			
+			var thisR: CGRect = CGRect(origin: .zero, size: CGSize(width: w, height: h))
+			
+			thisR.origin.x = r.width * 0.10
+			thisR.origin.y = r.height * 0.10
+			bez = UIBezierPath(rect: thisR)
+			paths.append(bez)
+			
+			thisR.origin.x = r.width * 0.9 - w
+			bez = UIBezierPath(roundedRect: thisR, cornerRadius: 24.0)
+			paths.append(bez)
+			
+			thisR.origin.x = r.width * 0.5 - w * 0.5
+			thisR.origin.y = r.height * 0.25 - h * 0.5
+			bez = UIBezierPath(ovalIn: thisR)
+			paths.append(bez)
+			
+			thisR.origin.x = r.width * 0.20
+			thisR.origin.y = r.height * 0.90 - h
+			bez = UIBezierPath(rect: thisR)
+			paths.append(bez)
+			
+			thisR.origin.x = r.width * 0.80 - w
+			bez = UIBezierPath(roundedRect: thisR, cornerRadius: 24.0)
+			paths.append(bez)
+			
+			thisR.origin.x = r.width * 0.5 - w * 0.5
+			thisR.origin.y = r.height * 0.65 - h * 0.5
+			bez = UIBezierPath(ovalIn: thisR)
+			paths.append(bez)
+			
+			
+			let imgA = img.translucentPaths(arrayOfPaths: paths, usingColor: clr, andAlpha: 0.5)
+			imgView.image = imgA
+			
+			
+			// setting path of shape layer is relative to view size
+			r = self.layerView.frame.size
+			
+			w = r.width * 0.25
+			h = r.height * 0.25
+			
+			paths = []
+			
+			thisR = CGRect(origin: .zero, size: CGSize(width: w, height: h))
+			
+			thisR.origin.x = r.width * 0.10
+			thisR.origin.y = r.height * 0.10
+			bez = UIBezierPath(rect: thisR)
+			paths.append(bez)
+			
+			thisR.origin.x = r.width * 0.9 - w
+			bez = UIBezierPath(roundedRect: thisR, cornerRadius: 12.0)
+			paths.append(bez)
+			
+			thisR.origin.x = r.width * 0.5 - w * 0.5
+			thisR.origin.y = r.height * 0.25 - h * 0.5
+			bez = UIBezierPath(ovalIn: thisR)
+			paths.append(bez)
+			
+			thisR.origin.x = r.width * 0.20
+			thisR.origin.y = r.height * 0.90 - h
+			bez = UIBezierPath(rect: thisR)
+			paths.append(bez)
+			
+			thisR.origin.x = r.width * 0.80 - w
+			bez = UIBezierPath(roundedRect: thisR, cornerRadius: 12.0)
+			paths.append(bez)
+			
+			thisR.origin.x = r.width * 0.5 - w * 0.5
+			thisR.origin.y = r.height * 0.65 - h * 0.5
+			bez = UIBezierPath(ovalIn: thisR)
+			paths.append(bez)
+			
+			layerView.translucentPaths(arrayOfPaths: paths, usingColor: clr, andAlpha: 0.5)
+			
+		} else {
+			imgView.image = origImage
+			self.layerView.translucentPaths(arrayOfPaths: [], usingColor: .clear, andAlpha: 0.5)
+		}
+	}
+}
+class TranslucentLayerImageView: UIImageView {
+	let shapeLayer = CAShapeLayer()
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	func commonInit() {
+		layer.addSublayer(shapeLayer)
+	}
+	func translucentPaths(arrayOfPaths paths: [UIBezierPath], usingColor color: UIColor, andAlpha alpha: Float) {
+		if paths.count == 0 {
+			shapeLayer.path = nil
+			return
+		}
+		// disable layer implicit animation
+		//	to avoid a "flash" the first time this is set
+		CATransaction.begin()
+		CATransaction.setDisableActions(true)
+		shapeLayer.fillColor = color.cgColor
+		shapeLayer.opacity = alpha
+		let p = paths[0]
+		for i in 1..<paths.count {
+			p.append(paths[i])
+		}
+		shapeLayer.path = p.cgPath
+		CATransaction.commit()
 	}
 }
 extension UIImage {
@@ -195,6 +601,23 @@ extension UIImage {
 //			context.cgContext.setBlendMode(.clear)
 //			// "fill" the rect with clear
 //			pth.fill()
+		}
+		return image
+	}
+	func translucentPaths(arrayOfPaths paths: [UIBezierPath], usingColor color: UIColor, andAlpha alpha: CGFloat) -> UIImage {
+		let renderer = UIGraphicsImageRenderer(size: size)
+		let image = renderer.image { (context) in
+			// draw the full image
+			draw(at: .zero)
+			
+			context.cgContext.setAlpha(alpha)
+			color.setFill()
+
+			let p = paths[0]
+			for i in 1..<paths.count {
+				p.append(paths[i])
+			}
+			p.fill()
 		}
 		return image
 	}
@@ -267,7 +690,7 @@ class CircleMoveVC: UIViewController {
 	}
 }
 
-class ManyLayersViewController: UIViewController, UIScrollViewDelegate {
+class zManyLayersViewController: UIViewController, UIScrollViewDelegate {
 	
 	let scrollView: UIScrollView = {
 		let v = UIScrollView()
@@ -411,7 +834,7 @@ class ManyLayersViewController: UIViewController, UIScrollViewDelegate {
 	
 }
 
-class xManyLayersViewController: UIViewController, UIScrollViewDelegate {
+class ManyLayersViewController: UIViewController, UIScrollViewDelegate {
 	
 	let scrollView: UIScrollView = {
 		let v = UIScrollView()
@@ -502,7 +925,7 @@ class xManyLayersViewController: UIViewController, UIScrollViewDelegate {
 		}
 		
 
-		let num: Int = 1
+		let num: Int = 30
 		var cIDX: Int = 0
 		var off: Int = 4
 		pathsArray.forEach { pth in

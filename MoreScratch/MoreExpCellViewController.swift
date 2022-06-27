@@ -1837,3 +1837,110 @@ class yDiceViewController: UIViewController {
 	}
 	
 }
+
+extension UITableView {
+	func sizeHeaderToFit() {
+		guard let headerView = tableHeaderView else { return }
+		let sz = headerView.systemLayoutSizeFitting(CGSize(width: headerView.frame.width, height: .greatestFiniteMagnitude), withHorizontalFittingPriority: .required, verticalFittingPriority: .defaultLow)
+		// avoids infinite loop!
+		if headerView.frame.height != sz.height {
+			headerView.frame.size.height = sz.height
+			tableHeaderView = headerView
+		}
+	}
+}
+
+class HeaderXIBView: UIView {
+	@IBOutlet var theLabel: UILabel!
+}
+
+class AttrLabelHeaderView: UIView {
+	let theLabel = UILabel()
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	func commonInit() {
+		theLabel.translatesAutoresizingMaskIntoConstraints = false
+		theLabel.backgroundColor = .yellow
+		theLabel.numberOfLines = 0
+		addSubview(theLabel)
+		NSLayoutConstraint.activate([
+			theLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8.0),
+			theLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8.0),
+			theLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8.0),
+		])
+		// this avoids auto-layout complaints
+		let c = theLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8.0)
+		c.priority = UILayoutPriority(rawValue: 999)
+		c.isActive = true
+	}
+}
+
+class DynaHeaderTableViewController: UITableViewController {
+	
+	func sampleAttrString() -> NSMutableAttributedString {
+		let fontA: UIFont = .systemFont(ofSize: 24.0, weight: .bold)
+		let fontB: UIFont = .italicSystemFont(ofSize: 36.0)
+		let fontC: UIFont = .systemFont(ofSize: 32, weight: .light)
+		
+		let style = NSMutableParagraphStyle()
+		style.alignment = NSTextAlignment.center
+		
+		let attsA: [NSAttributedString.Key : Any] = [
+			.font: fontA,
+			.foregroundColor: UIColor.blue,
+			.paragraphStyle: style,
+		]
+		
+		let attsB: [NSAttributedString.Key : Any] = [
+			.font: fontB,
+			.foregroundColor: UIColor.red,
+		]
+		
+		let attsC: [NSAttributedString.Key : Any] = [
+			.font: fontC,
+			.foregroundColor: UIColor.systemGreen,
+		]
+		
+		let partOne = NSMutableAttributedString(string: "This is an example", attributes: attsA)
+		let partTwo = NSAttributedString(string: " Attributed String ", attributes: attsB)
+		let partThree = NSAttributedString(string: "for the dynamic Table View Header", attributes: attsC)
+		
+		partOne.append(partTwo)
+		partOne.append(partThree)
+
+		return partOne
+	}
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		tableView.register(UITableViewCell.self, forCellReuseIdentifier: "c")
+		
+//		let v = AttrLabelHeaderView()
+		let v: HeaderXIBView = HeaderXIBView.fromNib()
+		v.theLabel.attributedText = sampleAttrString()
+		tableView.tableHeaderView = v
+		
+	}
+	
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+		tableView.sizeHeaderToFit()
+	}
+	
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		return 20
+	}
+	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let c = tableView.dequeueReusableCell(withIdentifier: "c", for: indexPath)
+		c.textLabel?.text = "\(indexPath)"
+		return c
+	}
+}
+
