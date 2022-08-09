@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class StretchyHeaderViewController: UIViewController {
 	
@@ -1369,6 +1370,164 @@ class Example5VC: MyBaseVC {
 	}
 }
 
+class Example6VC: MyBaseVC {
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		var nm = "person.crop.circle.fill"
+		nm = "flag.circle.fill"
+		
+		// create UIImage from SF Symbol at "160-pts" size
+		let cfg = UIImage.SymbolConfiguration(pointSize: 160.0)
+		guard let imgA = UIImage(systemName: nm, withConfiguration: cfg)?.withTintColor(.lightGray, renderingMode: .alwaysOriginal) else {
+			fatalError("Could not load SF Symbol: \(nm)!")
+		}
+		
+		// get a cgRef from imgA
+		guard let cgRef = imgA.cgImage else {
+			fatalError("Could not get cgImage!")
+		}
+		// create imgB from the cgRef
+		let imgB = UIImage(cgImage: cgRef, scale: imgA.scale, orientation: imgA.imageOrientation)
+			.withTintColor(.white, renderingMode: .alwaysOriginal)
+		
+		print("imgA:", imgA.size, "imgB:", imgB.size)
+		
+		imgViewA.image = imgA
+		imgViewB.image = imgB
+		imgViewB.backgroundColor = .red
+		
+		[imgViewA, imgViewB].forEach { v in
+			v.layer.cornerRadius = 80
+//			v.layer.borderColor = UIColor.red.cgColor
+//			v.layer.borderWidth = 1
+		}
+		
+		let bez = UIBezierPath(ovalIn: CGRect(x: 2, y: 2, width: 156, height: 156))
+		let m = CAShapeLayer()
+		m.path = bez.cgPath
+		imgViewB.layer.mask = m
+		
+		view.backgroundColor = .systemBlue
+	}
+	
+}
+
+class FlagVC: UIViewController {
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		navigationController?.setNavigationBarHidden(true, animated: false)
+		view.backgroundColor = .systemBlue
+		
+		let greenView = UIView()
+
+		greenView.backgroundColor = .systemGreen
+
+		let flagView = FlagImageView(frame: .zero)
+		
+		flagView.backgroundColor = .red
+		
+		greenView.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(greenView)
+
+		flagView.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(flagView)
+		
+		let g = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			
+			greenView.topAnchor.constraint(equalTo: g.topAnchor, constant: 80.0),
+			greenView.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 100.0),
+			greenView.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20.0),
+			greenView.heightAnchor.constraint(equalToConstant: 80.0),
+
+			flagView.topAnchor.constraint(equalTo: greenView.topAnchor, constant: 8.0),
+			flagView.leadingAnchor.constraint(equalTo: greenView.leadingAnchor, constant: -12.0),
+			flagView.widthAnchor.constraint(equalToConstant: 40.0),
+			flagView.heightAnchor.constraint(equalTo: flagView.widthAnchor),
+			
+		])
+		
+		greenView.layer.cornerRadius = 40.0
+	}
+	
+}
+
+class FlagView: UIView {
+	let imgView = UIImageView()
+	let shapeLayer = CAShapeLayer()
+	
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		commonInit()
+	}
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+	func commonInit() {
+		shapeLayer.fillColor = UIColor.red.cgColor
+		layer.addSublayer(shapeLayer)
+		addSubview(imgView)
+		imgView.translatesAutoresizingMaskIntoConstraints = false
+		NSLayoutConstraint.activate([
+			imgView.topAnchor.constraint(equalTo: topAnchor),
+			imgView.leadingAnchor.constraint(equalTo: leadingAnchor),
+			imgView.trailingAnchor.constraint(equalTo: trailingAnchor),
+			imgView.bottomAnchor.constraint(equalTo: bottomAnchor),
+		])
+	}
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		
+		let nm = "flag.circle.fill"
+		let cfg = UIImage.SymbolConfiguration(pointSize: bounds.height)
+		guard let imgA = UIImage(systemName: nm, withConfiguration: cfg) else {
+			fatalError("Could not load SF Symbol: \(nm)!")
+		}
+		// get a cgRef from imgA
+		guard let cgRef = imgA.cgImage else {
+			fatalError("Could not get cgImage!")
+		}
+		// create imgB from the cgRef
+		let imgB = UIImage(cgImage: cgRef, scale: imgA.scale, orientation: imgA.imageOrientation)
+			.withTintColor(.white, renderingMode: .alwaysOriginal)
+		imgView.image = imgB
+		shapeLayer.path = UIBezierPath(ovalIn: bounds.insetBy(dx: 1.0, dy: 1.0)).cgPath
+	}
+}
+
+class FlagImageView: UIImageView {
+	
+	override func layoutSubviews() {
+		super.layoutSubviews()
+
+		let nm = "flag.circle.fill"
+		
+		// create SF Symbol image with point size equal to bounds height
+		let cfg = UIImage.SymbolConfiguration(pointSize: bounds.height)
+		guard let imgA = UIImage(systemName: nm, withConfiguration: cfg) else {
+			fatalError("Could not load SF Symbol: \(nm)!")
+		}
+		// get a cgRef from imgA
+		guard let cgRef = imgA.cgImage else {
+			fatalError("Could not get cgImage!")
+		}
+		// create imgB from the cgRef
+		//	this will remove the "padding"
+		let imgB = UIImage(cgImage: cgRef, scale: imgA.scale, orientation: imgA.imageOrientation)
+			.withTintColor(.white, renderingMode: .alwaysOriginal)
+		self.image = imgB
+		
+		// add a round mask, inset by 1.0 so we don't see the anti-aliased edge
+		let msk = CAShapeLayer()
+		msk.path = UIBezierPath(ovalIn: bounds.insetBy(dx: 1.0, dy: 1.0)).cgPath
+		layer.mask = msk
+	}
+	
+}
+
 class TextCell: UIView {
 	
 	let label = UILabel()
@@ -2042,3 +2201,5 @@ class GapLineView: UIView {
 	}
 	
 }
+
+
